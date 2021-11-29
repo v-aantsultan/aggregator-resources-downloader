@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <conversionRule conversionWord="coloredLevel" converterClass="play.api.libs.logback.ColoredLevel" />
+
+    <if condition='property("ENVIRONMENT").contains("production") || property("ENVIRONMENT").contains("staging") || property("ENVIRONMENT").contains("development")'>
+        <then>
+            <property name="log_home" value="/data"/>
+        </then>
+        <!-- Dev or CI -->
+        <else>
+            <property name="log_home" value="."/>
+        </else>
+    </if>
+
+    <property name="FILE_PATTERN"
+              value="%white(%date{yyyy-MM-dd'T'HH:mm:ss.SSSZ}) %highlight(%-5level) %gray(${app.name}@${HOSTNAME}) %green(%thread %X{sourceThread} - %X{akkaSource}) %cyan(%logger{5}) - %msg%n"/>
+
+
+    <property name="CONSOLE_PATTERN"
+              value="%white(%date{yy-MM-dd'T'HH:mm:ss.SSS}) %highlight(%-5level) %green(%10.10thread) %cyan(%logger{5}) - %msg%n"/>
+
+    <property name="FILE_PATH" value="${log_home}/logs/${app.name}/app.log"/>
+    <property name="ROLLING_FILENAME_PATTERN" value="${log_home}/logs/${app.name}/app.%d{yyyy-MM-dd}.log"/>
+
+    <property name="LOGSTASH_FILE_PATH" value="${log_home}/logs/${app.name}/app.log.json"/>
+    <property name="LOGSTASH_ROLLING_FILENAME_PATTERN" value="${log_home}/logs/${app.name}/app.%d{yyyy-MM-dd}.log.json"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>
+                ${CONSOLE_PATTERN}
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${FILE_PATH}</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>
+                ${FILE_PATTERN}
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${ROLLING_FILENAME_PATTERN}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="LOGSTASH" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGSTASH_FILE_PATH}</file>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <includeContext>false</includeContext>
+            <customFields>{"service_name":"${app.name}","hostname": "${HOSTNAME}"}</customFields>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOGSTASH_ROLLING_FILENAME_PATTERN}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="LOGSTASH"/>
+    </root>
+</configuration>
