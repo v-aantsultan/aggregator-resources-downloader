@@ -72,13 +72,29 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerServ
     val GVSalesB2BIDR = GVSalesB2BIDRDf.get
       .groupBy($"date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
       .agg(
-        sum($"gift_voucher_amount").as("gift_voucher_amount"),
-        countDistinct($"no_of_transactions").as("no_of_transactions"),
-        countDistinct($"no_gift_voucher").as("no_gift_voucher"),
+        sum(
+          when($"movement_type" === "CODE_GENERATION",$"gift_voucher_amount")
+            .when($"movement_type" === "CODE_CANCELLATION",$"gift_voucher_amount" * -1)
+            .otherwise(0)
+        ).as("gift_voucher_amount"),
+        sum(
+          when($"movement_type" === "CODE_GENERATION",1)
+          .when($"movement_type" === "CODE_CANCELLATION",-1)
+          .otherwise(0)
+        ).as("no_of_transactions"),
+        sum(
+          when($"movement_type" === "CODE_GENERATION",1)
+            .when($"movement_type" === "CODE_CANCELLATION",-1)
+            .otherwise(0)
+        ).as("no_gift_voucher"),
         sum($"revenue_amount").as("revenue_amount"),
         sum($"unique_code").as("unique_code"),
         sum($"coupon_value").as("coupon_value"),
-        sum($"discount_amount_in_idr" + $"discount_wht_in_idr").as("discount"),
+        sum(
+          when($"movement_type" === "CODE_GENERATION",$"discount_amount_in_idr" + $"discount_wht_in_idr")
+            .when($"movement_type" === "CODE_CANCELLATION",($"discount_amount_in_idr" + $"discount_wht_in_idr") * -1)
+            .otherwise(0)
+        ).as("discount"),
         sum($"premium").as("premium")
       )
       .select(

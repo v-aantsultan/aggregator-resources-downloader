@@ -29,6 +29,7 @@ class GVSalesB2BIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService:
         lit("None").as("voucher_redemption_product"),
         lit("B2B").as("customer"),
         lit("None").as("payment_channel_name"),
+        $"gv_sales_b2b.movement_type".as("movement_type"),
         when($"gv_sales_b2b.gift_voucher_currency" === "IDR",$"gv_sales_b2b.gift_voucher_nominal")
           .otherwise($"gv_sales_b2b.gift_voucher_nominal" * $"exchange_rate_idr.conversion_rate")
           .as("gift_voucher_amount"),
