@@ -11,6 +11,7 @@ trait PathFetcher {
   import sparkSession.implicits._
 
   val flattenerSrc: String
+  val flattenerSrcDtl: String
 
   val tenantId: String
 
@@ -29,6 +30,11 @@ trait PathFetcher {
       .filter($"conversion_date_date" >= startDate && $"conversion_date_date" <= endDate)
   }
 
+  def readMasterDataDTL(domain: String): DataFrame = {
+    sparkSession.read
+      .parquet(s"$flattenerSrcDtl/$domain")
+  }
+
   def readByMovementTimeDWH(domain: String, startDate: String, endDate: String): DataFrame = {
     sparkSession.read
       .parquet(s"$flattenerSrc/$domain")
@@ -43,6 +49,10 @@ trait PathFetcher {
 
   def readByDefaultRange(domain: String): DataFrame = {
     readByCustomRange(domain, startDateToQueryDataLake, endDateToQueryDataLake)
+  }
+
+  def readByDefaultMasterDataDTL(domain: String): DataFrame = {
+    readMasterDataDTL(domain)
   }
 
   def readByDefaultMovementTimeDWH(domain: String): DataFrame = {

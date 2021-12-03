@@ -38,7 +38,6 @@ class AnaplanLoyaltyPointSum @Inject()(spark: SparkSession, statusManagerService
             $"discount",
             $"expired"
           )
-          .as("loyalty_point_summary")
   }
 
   def joinWithColumn(): DataFrame =

@@ -15,11 +15,18 @@ class S3SourceService @Inject()(val sparkSession: SparkSession, config: Config,
                                 @Named("TENANT_ID") val tenantId: String) extends PathFetcher {
 
   // TODO: Add all the necessary dataframe source here. Each DataFrame Source will be a folder in S3
-  lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates") // (e.g: sales_delivery)
-  lazy val LPMutationDf: DataFrame = readByDefaultMovementTimeDWH("loyalty_point.point_mutation") // (e.g: sales_delivery)
-  lazy val ExchangeRateDf: DataFrame = readByDefaultConversionDateDWH("oracle.exchange_rates") // (e.g: sales_delivery)
+  lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates")
+  lazy val LPMutationDf: DataFrame = readByDefaultMovementTimeDWH("loyalty_point.point_mutation")
+  lazy val ExchangeRateDf: DataFrame = readByDefaultConversionDateDWH("oracle.exchange_rates")
+  lazy val GrandProductTypeDf: DataFrame =
+    readByDefaultMasterDataDTL("eci_sheets/ecidtpl_anaplan_fpna/Mapping Grant Product Type")
+  lazy val TransactionCategoryDf: DataFrame =
+    readByDefaultMasterDataDTL("eci_sheets/ecidtpl_anaplan_fpna/Mapping Transaction Category")
+  lazy val underlyingProductDf: DataFrame =
+    readByDefaultMasterDataDTL("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
 
   val flattenerSrc: String = config.flattenerSrc
+  val flattenerSrcDtl: String = config.flattenerSrcDtl
 
   // The start date for this aggregation Process
   val utcZonedStartDate: ZonedDateTime = config.utcZonedStartDate

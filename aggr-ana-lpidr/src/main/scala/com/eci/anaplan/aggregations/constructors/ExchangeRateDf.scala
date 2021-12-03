@@ -4,16 +4,9 @@ import com.eci.anaplan.services.S3SourceService
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import javax.inject.{Inject, Singleton}
 
-/**
-  * DataFrame constructor for Sales Invoice
-  *
-  * @param sparkSession    The spark session
-  * @param s3SourceService Service with all S3 data frames
-  */
 // TODO: Update TestDataFrame1 and queries required
 @Singleton
-class ExchangeRateDf @Inject()(val sparkSession: SparkSession,
-                               s3SourceService: S3SourceService) {
+class ExchangeRateDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3SourceService) {
 
   import sparkSession.implicits._
 
@@ -28,6 +21,6 @@ class ExchangeRateDf @Inject()(val sparkSession: SparkSession,
         $"`conversion_date`".as("conversion_date"),
         $"`conversion_type`".as("conversion_type"),
         $"`conversion_rate`".as("conversion_rate")
-      ).as("exchange_rate")
+      )
   }
 }

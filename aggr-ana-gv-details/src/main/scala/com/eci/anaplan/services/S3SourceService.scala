@@ -20,7 +20,7 @@ class S3SourceService @Inject()(val sparkSession: SparkSession, config: Config,
   lazy val GVRedeemDf: DataFrame = readByDefaultRedemptionDateDWH("gift_voucher.gv_redeemed")
   lazy val GVRevenueDf: DataFrame = readByDefaultRevenueDateDWH("gift_voucher.gv_revenue")
   lazy val GVSalesB2CDf: DataFrame = readByDefaultIssuedDateDWH("gift_voucher.gv_sales")
-  // lazy val GVSalesB2CDf: DataFrame = readByDefaultIssuedDateLocal("gift_voucher.gv_sales")
+  lazy val GVSalesB2CDfLocal: DataFrame = readByDefaultIssuedDateLocal("gift_voucher.gv_sales")
   lazy val GVSalesB2BDf: DataFrame = readByDefaultReportDateDWH("gift_voucher.gv_movement")
   lazy val ExchangeRateDf: DataFrame = readByDefaultConversionDateDWH("oracle.exchange_rates")
   lazy val UnderlyingProductDf: DataFrame =

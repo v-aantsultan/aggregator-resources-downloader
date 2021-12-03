@@ -98,7 +98,20 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerServ
         sum($"premium").as("premium")
       )
       .select(
-        $"*"
+        $"date",
+        $"product",
+        $"business_partner",
+        $"voucher_redemption_product",
+        $"customer",
+        $"payment_channel_name",
+        $"gift_voucher_amount",
+        $"no_of_transactions",
+        $"no_gift_voucher",
+        $"revenue_amount",
+        $"unique_code",
+        $"coupon_value",
+        ($"discount" * -1).as("discount") ,
+        $"premium"
       )
 
     GVRedeemIDR.union(GVRevenueIDR).union(GVSalesB2CIDR).union(GVSalesB2BIDR)

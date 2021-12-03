@@ -4,16 +4,9 @@ import com.eci.anaplan.services.S3SourceService
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-/**
-  * DataFrame constructor for Sales Invoice
-  *
-  * @param sparkSession    The spark session
-  * @param s3SourceService Service with all S3 data frames
-  */
 // TODO: Update TestDataFrame1 and queries required
 @Singleton
-class LPMutationDf @Inject()(val sparkSession: SparkSession,
-                               s3SourceService: S3SourceService) {
+class LPMutationDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3SourceService) {
 
   import sparkSession.implicits._
 
@@ -71,6 +64,6 @@ class LPMutationDf @Inject()(val sparkSession: SparkSession,
           $"`refund_issued_date`".as("refund_issued_date"),
           $"`vat_selling_points`".as("vat_selling_points"),
           $"`instant_active_point`".as("instant_active_point")
-        ).as("lp_mutation")
+        )
   }
 }
