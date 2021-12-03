@@ -38,7 +38,7 @@ trait PathFetcher {
 
   def readByIssuedDateDWH(domain: String, startDate: String, endDate: String): DataFrame = {
     sparkSession.read
-      .parquet(s"$flattenerSrcLocal/$domain")
+      .parquet(s"$flattenerSrc/$domain")
       .filter($"issued_date_date" >= startDate && $"issued_date_date" <= endDate)
   }
 

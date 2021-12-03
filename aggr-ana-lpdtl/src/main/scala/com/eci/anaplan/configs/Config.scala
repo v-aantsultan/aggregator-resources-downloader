@@ -68,6 +68,7 @@ class Config @Inject()(env: Environment) extends ETLDateValidation {
    * The data lake source path
    */
   val flattenerSrc: String = conf.getString("flattener-src")
+  val flattenerSrcDtl: String = conf.getString("flattener-src-dtl")
 
   /**
    * The schema name in data warehouse
