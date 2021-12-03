@@ -1,13 +1,13 @@
 package com.eci.anaplan.aggregations.constructors
 
-import com.eci.anaplan.services.S3SourceService
+import com.eci.anaplan.services.GVRedeemSource
 import org.apache.spark.sql.functions.{expr, to_date}
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 // TODO: Update TestDataFrame1 and queries required
 @Singleton
-class GVRedeemDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3SourceService) {
+class GVRedeemDf @Inject()(val sparkSession: SparkSession, s3SourceService: GVRedeemSource) {
 
   import sparkSession.implicits._
 

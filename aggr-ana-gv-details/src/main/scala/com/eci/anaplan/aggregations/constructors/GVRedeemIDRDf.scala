@@ -1,15 +1,15 @@
 package com.eci.anaplan.aggregations.constructors
 
-import com.eci.anaplan.services.S3SourceService
+import com.eci.anaplan.services.GVDetailsSource
 import org.apache.spark.sql.functions.{expr, lit, substring, to_date, when}
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 // TODO: Update TestDataFrame1 and queries required
 @Singleton
-class GVRedeemIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3SourceService,
-                              UnderlyingProductDf: UnderlyingProductDf,
-                              ExchangeRateDf: ExchangeRateDf) {
+class GVRedeemIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: GVDetailsSource,
+                              UnderlyingProductDf: GVDetailsUnderlyingProductDf,
+                              ExchangeRateDf: GVDetailsRateDf) {
 
   import sparkSession.implicits._
 

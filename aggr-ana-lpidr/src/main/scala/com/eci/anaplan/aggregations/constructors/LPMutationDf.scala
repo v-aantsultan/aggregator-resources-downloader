@@ -1,12 +1,12 @@
 package com.eci.anaplan.aggregations.constructors
 
-import com.eci.anaplan.services.S3SourceService
+import com.eci.anaplan.services.LPMutationSource
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 // TODO: Update TestDataFrame1 and queries required
 @Singleton
-class LPMutationDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3SourceService) {
+class LPMutationDf @Inject()(val sparkSession: SparkSession, s3SourceService: LPMutationSource) {
 
   import sparkSession.implicits._
 

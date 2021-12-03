@@ -1,12 +1,12 @@
 package com.eci.anaplan.aggregations.joiners
 
-import com.eci.anaplan.services.StatusManagerService
+import com.eci.anaplan.services.LPSummaryStatusManager
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.functions.{countDistinct, sum}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
-class AnaplanLoyaltyPointSum @Inject()(spark: SparkSession, statusManagerService: StatusManagerService,
+class AnaplanLoyaltyPointSum @Inject()(spark: SparkSession, statusManagerService: LPSummaryStatusManager,
                                        LoyaltyPointSumPrep: LoyaltyPointSumPrep) {
 
   private def joinDataFrames: DataFrame = {

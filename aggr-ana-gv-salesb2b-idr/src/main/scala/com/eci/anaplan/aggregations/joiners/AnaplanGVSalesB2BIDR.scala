@@ -1,15 +1,15 @@
 package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
-import com.eci.anaplan.services.StatusManagerService
+import com.eci.anaplan.services.GVB2BStatusManager
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.functions.{to_date, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
-class AnaplanGVSalesB2BIDR @Inject()(spark: SparkSession, statusManagerService: StatusManagerService,
+class AnaplanGVSalesB2BIDR @Inject()(spark: SparkSession, statusManagerService: GVB2BStatusManager,
                                      GVSalesB2BDf: GVSalesB2BDf,
-                                     ExchangeRateDf: ExchangeRateDf) {
+                                     ExchangeRateDf: GVB2BRateDf) {
 
   private def joinDataFrames: DataFrame = {
 

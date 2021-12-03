@@ -1,6 +1,6 @@
 package com.eci.anaplan.aggregations.constructors
 
-import com.eci.anaplan.services.S3SourceService
+import com.eci.anaplan.services.GVDetailsSource
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -8,8 +8,8 @@ import javax.inject.{Inject, Singleton}
 
 // TODO: Update TestDataFrame1 and queries required
 @Singleton
-class GVRevenueIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3SourceService,
-                               ExchangeRateDf: ExchangeRateDf) {
+class GVRevenueIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: GVDetailsSource,
+                               ExchangeRateDf: GVDetailsRateDf) {
 
   import sparkSession.implicits._
 

@@ -1,18 +1,18 @@
 package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
-import com.eci.anaplan.services.StatusManagerService
+import com.eci.anaplan.services.LPMutationStatusManager
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.functions.{to_timestamp, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
-class AnaplanLoyaltyPointIDR @Inject()(spark: SparkSession, statusManagerService: StatusManagerService,
+class AnaplanLoyaltyPointIDR @Inject()(spark: SparkSession, statusManagerService: LPMutationStatusManager,
                                        LPMutationDf: LPMutationDf,
-                                       ExchangeRateDf: ExchangeRateDf,
-                                       GrandProductTypeDf: GrandProductTypeDf,
-                                       TransactionCategoryDf: TransactionCategoryDf,
-                                       UnderlyingProductDf: UnderlyingProductDf) {
+                                       ExchangeRateDf: LPMutationRateDf,
+                                       GrandProductTypeDf: LPMutationGrandProductTypeDf,
+                                       TransactionCategoryDf: LPMutationTransactionCategoryDf,
+                                       UnderlyingProductDf: LPMutationUnderlyingProductDf) {
 
   private def joinDataFrames: DataFrame = {
 

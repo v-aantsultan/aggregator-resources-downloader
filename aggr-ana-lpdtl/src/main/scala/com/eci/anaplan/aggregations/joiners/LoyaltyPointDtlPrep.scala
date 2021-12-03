@@ -6,7 +6,7 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class LoyaltyPointDtlPrep @Inject()(spark: SparkSession, LoyaltyPointIDR: LoyaltyPointIDR) {
+class LoyaltyPointDtlPrep @Inject()(spark: SparkSession, LoyaltyPointIDR: LPDetailsIDR) {
 
 import spark.implicits._
 

@@ -1,6 +1,6 @@
 package com.eci.anaplan.aggregations.constructors
 
-import com.eci.anaplan.services.S3SourceService
+import com.eci.anaplan.services.GVRedeemSource
 import com.eci.anaplan.utils.{TestSparkSession, SharedBaseTest}
 import org.mockito.Mockito.{mock, when}
 
@@ -11,7 +11,7 @@ import org.mockito.Mockito.{mock, when}
 class TestDataFrame1Test extends SharedBaseTest with TestSparkSession {
   import testSparkSession.implicits._
 
-  private val mockS3SourceService: S3SourceService = mock(classOf[S3SourceService])
+  private val mockS3SourceService: GVRedeemSource = mock(classOf[GVRedeemSource])
   private val testDiscountPremiumDataFrame: GVRedeemDf = new GVRedeemDf(testSparkSession, mockS3SourceService)
   before {
     when(mockS3SourceService.dataFrameSource1).thenReturn(mockedDataFrameSource1)

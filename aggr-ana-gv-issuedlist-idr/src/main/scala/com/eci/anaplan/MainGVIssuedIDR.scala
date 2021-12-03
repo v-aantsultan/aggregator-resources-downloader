@@ -9,7 +9,7 @@ import com.google.inject.Guice
 object MainGVIssuedIDR {
   def main(args: Array[String]): Unit = {
     val injector = Guice.createInjector(new AnaplanModule)
-    val coordinator: Coordinator = injector.getInstance(classOf[Coordinator])
+    val coordinator: GVIssuedCoordinator = injector.getInstance(classOf[GVIssuedCoordinator])
     coordinator.coordinate()
   }
 }

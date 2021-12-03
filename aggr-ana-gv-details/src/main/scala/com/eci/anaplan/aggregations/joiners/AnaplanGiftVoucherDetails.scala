@@ -1,13 +1,13 @@
 package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
-import com.eci.anaplan.services.StatusManagerService
+import com.eci.anaplan.services.GVDetailsStatusManager
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.functions.{countDistinct, sum, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
-class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerService: StatusManagerService,
+class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerService: GVDetailsStatusManager,
                                           GVRedeemIDRDf: GVRedeemIDRDf, GVRevenueIDRDf: GVRevenueIDRDf,
                                           GVSalesB2CIDRDf: GVSalesB2CIDRDf, GVSalesB2BIDRDf: GVSalesB2BIDRDf) {
 

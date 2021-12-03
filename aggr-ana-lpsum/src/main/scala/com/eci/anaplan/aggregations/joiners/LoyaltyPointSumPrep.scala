@@ -5,7 +5,7 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class LoyaltyPointSumPrep @Inject()(spark: SparkSession, LoyaltyPointIDR: LoyaltyPointIDR) {
+class LoyaltyPointSumPrep @Inject()(spark: SparkSession, LoyaltyPointIDR: LPSummaryIDR) {
 
 import spark.implicits._
 
