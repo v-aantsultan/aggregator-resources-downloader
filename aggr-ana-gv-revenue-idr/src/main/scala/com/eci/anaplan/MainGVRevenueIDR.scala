@@ -1,6 +1,6 @@
 package com.eci.anaplan
 
-import com.eci.anaplan.module.AnaplanModule
+import com.eci.anaplan.module.GVRevenueModule
 import com.google.inject.Guice
 
 /**
@@ -8,7 +8,7 @@ import com.google.inject.Guice
  */
 object MainGVRevenueIDR {
   def main(args: Array[String]): Unit = {
-    val injector = Guice.createInjector(new AnaplanModule)
+    val injector = Guice.createInjector(new GVRevenueModule)
     val coordinator: GVRevenueCoordinator = injector.getInstance(classOf[GVRevenueCoordinator])
     coordinator.coordinate()
   }

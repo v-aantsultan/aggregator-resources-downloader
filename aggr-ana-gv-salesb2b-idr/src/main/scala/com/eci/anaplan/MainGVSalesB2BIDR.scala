@@ -1,6 +1,6 @@
 package com.eci.anaplan
 
-import com.eci.anaplan.module.AnaplanModule
+import com.eci.anaplan.module.GVB2BModule
 import com.google.inject.Guice
 
 /**
@@ -8,7 +8,7 @@ import com.google.inject.Guice
  */
 object MainGVSalesB2BIDR {
   def main(args: Array[String]): Unit = {
-    val injector = Guice.createInjector(new AnaplanModule)
+    val injector = Guice.createInjector(new GVB2BModule)
     val coordinator: GVB2BCoordinator = injector.getInstance(classOf[GVB2BCoordinator])
     coordinator.coordinate()
   }

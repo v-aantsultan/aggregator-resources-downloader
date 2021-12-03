@@ -1,6 +1,6 @@
 package com.eci.anaplan
 
-import com.eci.anaplan.module.AnaplanModule
+import com.eci.anaplan.module.GVDetailsModule
 import com.google.inject.Guice
 
 /**
@@ -8,7 +8,7 @@ import com.google.inject.Guice
  */
 object MainGVDetails {
   def main(args: Array[String]): Unit = {
-    val injector = Guice.createInjector(new AnaplanModule)
+    val injector = Guice.createInjector(new GVDetailsModule)
     val coordinator: GVDetailsCoordinator = injector.getInstance(classOf[GVDetailsCoordinator])
     coordinator.coordinate()
   }
