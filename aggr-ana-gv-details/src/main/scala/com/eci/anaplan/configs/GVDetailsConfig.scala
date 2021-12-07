@@ -68,8 +68,8 @@ class GVDetailsConfig @Inject()(env: Environment) extends GVDetailsETLDateValida
    * The data lake source path
    */
   val flattenerSrc: String = conf.getString("flattener-src")
-  val flattenerSrcDtl: String = conf.getString("flattener-src-dtl")
-  val flattenerSrcLocal: String = conf.getString("flattener-src-local")
+  val flattenerSrcDtl: String = conf.getString("flattener-srcdtl")
+  val flattenerSrcLocal: String = conf.getString("flattener-srclocal")
 
   /**
    * The schema name in data warehouse
