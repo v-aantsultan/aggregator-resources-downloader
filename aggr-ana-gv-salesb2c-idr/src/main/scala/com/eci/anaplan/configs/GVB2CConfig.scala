@@ -68,7 +68,7 @@ class GVB2CConfig @Inject()(env: Environment) extends GVB2CETLDateValidation {
    * The data lake source path
    */
   val flattenerSrc: String = conf.getString("flattener-src")
-  val flattenerSrcLocal: String = conf.getString("flattener-src-local")
+  val flattenerSrcDtl: String = conf.getString("flattener-srcdtl")
 
   /**
    * The schema name in data warehouse

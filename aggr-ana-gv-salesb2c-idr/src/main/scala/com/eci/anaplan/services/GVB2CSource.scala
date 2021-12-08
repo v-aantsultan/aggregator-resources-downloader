@@ -3,6 +3,7 @@ package com.eci.anaplan.services
 import java.time.ZonedDateTime
 import com.eci.common.TimeUtils
 import com.eci.anaplan.configs.GVB2CConfig
+import com.eci.common.services.PathFetcher
 import javax.inject.{Inject, Named, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -13,15 +14,15 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 @Singleton
 class GVB2CSource @Inject()(val sparkSession: SparkSession,
                             config: GVB2CConfig,
-                            @Named("TENANT_ID") val tenantId: String) extends GVB2CPathFetcher {
+                            @Named("TENANT_ID") val tenantId: String) extends PathFetcher {
 
   // TODO: Add all the necessary dataframe source here. Each DataFrame Source will be a folder in S3
-  lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates") // (e.g: sales_delivery)
-  lazy val GVSalesB2CDf: DataFrame = readByDefaultIssuedDateDWH("gift_voucher.gv_sales") // (e.g: sales_delivery)
-  lazy val ExchangeRateDf: DataFrame = readByDefaultConversionDateDWH("oracle.exchange_rates") // (e.g: sales_delivery)
+  lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates")
+  lazy val GVSalesB2CDf: DataFrame = readByDefaultCustom("gift_voucher.gv_sales","issued_date_date",true)
+  lazy val ExchangeRateDf: DataFrame = readByDefaultCustom("oracle.exchange_rates","conversion_date_date")
 
   val flattenerSrc: String = config.flattenerSrc
-  val flattenerSrcLocal: String = config.flattenerSrcLocal
+  val flattenerSrcDtl: String = config.flattenerSrcDtl
 
   // The start date for this aggregation Process
   val utcZonedStartDate: ZonedDateTime = config.utcZonedStartDate

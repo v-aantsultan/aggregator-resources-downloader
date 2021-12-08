@@ -77,11 +77,8 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerServ
             .when($"movement_type" === "CODE_CANCELLATION",$"gift_voucher_amount" * -1)
             .otherwise(0)
         ).as("gift_voucher_amount"),
-        sum(
-          when($"movement_type" === "CODE_GENERATION",1)
-          .when($"movement_type" === "CODE_CANCELLATION",-1)
-          .otherwise(0)
-        ).as("no_of_transactions"),
+        countDistinct($"contract_generation").as("contract_generation"),
+        countDistinct($"contract_cancellation").as("contract_cancellation"),
         sum(
           when($"movement_type" === "CODE_GENERATION",1)
             .when($"movement_type" === "CODE_CANCELLATION",-1)
@@ -105,7 +102,7 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerServ
         $"customer",
         $"payment_channel_name",
         $"gift_voucher_amount",
-        $"no_of_transactions",
+        ($"contract_generation" - $"contract_cancellation").as("no_of_transactions"),
         $"no_gift_voucher",
         $"revenue_amount",
         $"unique_code",

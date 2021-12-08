@@ -33,8 +33,10 @@ class GVSalesB2BIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService:
         when($"gv_sales_b2b.gift_voucher_currency" === "IDR",$"gv_sales_b2b.gift_voucher_nominal")
           .otherwise($"gv_sales_b2b.gift_voucher_nominal" * $"exchange_rate_idr.conversion_rate")
           .as("gift_voucher_amount"),
-        $"gv_sales_b2b.movement_id".as("no_of_transactions"),
-        $"gv_sales_b2b.gift_voucher_id".as("no_gift_voucher"),
+        when($"gv_sales_b2b.movement_type" === "CODE_GENERATION",$"gv_sales_b2b.contract_id")
+          .otherwise(null).as("contract_generation"),
+        when($"gv_sales_b2b.movement_type" === "CODE_CANCELLATION",$"gv_sales_b2b.contract_id")
+          .otherwise(null).as("contract_cancellation"),
         lit(0).as("revenue_amount"),
         lit(0).as("unique_code"),
         lit(0).as("coupon_value"),

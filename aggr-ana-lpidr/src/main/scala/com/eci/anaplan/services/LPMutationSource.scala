@@ -3,6 +3,7 @@ package com.eci.anaplan.services
 import java.time.ZonedDateTime
 import com.eci.common.TimeUtils
 import com.eci.anaplan.configs.LPMutationConfig
+import com.eci.common.services.PathFetcher
 import javax.inject.{Inject, Named, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -13,18 +14,18 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 @Singleton
 class LPMutationSource @Inject()(val sparkSession: SparkSession,
                                  config: LPMutationConfig,
-                                 @Named("TENANT_ID") val tenantId: String) extends LPMutationPathFetcher {
+                                 @Named("TENANT_ID") val tenantId: String) extends PathFetcher {
 
   // TODO: Add all the necessary dataframe source here. Each DataFrame Source will be a folder in S3
   lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates")
-  lazy val LPMutationDf: DataFrame = readByDefaultMovementTimeDWH("loyalty_point.point_mutation")
-  lazy val ExchangeRateDf: DataFrame = readByDefaultConversionDateDWH("oracle.exchange_rates")
+  lazy val LPMutationDf: DataFrame = readByDefaultCustom("loyalty_point.point_mutation","movement_time_date")
+  lazy val ExchangeRateDf: DataFrame = readByDefaultCustom("oracle.exchange_rates","conversion_date_date")
   lazy val GrandProductTypeDf: DataFrame =
-    readByDefaultMasterDataDTL("eci_sheets/ecidtpl_anaplan_fpna/Mapping Grant Product Type")
+    readByDefaultCustom("eci_sheets/ecidtpl_anaplan_fpna/Mapping Grant Product Type")
   lazy val TransactionCategoryDf: DataFrame =
-    readByDefaultMasterDataDTL("eci_sheets/ecidtpl_anaplan_fpna/Mapping Transaction Category")
+    readByDefaultCustom("eci_sheets/ecidtpl_anaplan_fpna/Mapping Transaction Category")
   lazy val underlyingProductDf: DataFrame =
-    readByDefaultMasterDataDTL("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
+    readByDefaultCustom("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl

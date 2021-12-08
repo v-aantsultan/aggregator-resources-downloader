@@ -68,6 +68,7 @@ class GVRevenueConfig @Inject()(env: Environment) extends GVRevenueETLDateValida
    * The data lake source path
    */
   val flattenerSrc: String = conf.getString("flattener-src")
+  val flattenerSrcDtl: String = conf.getString("flattener-srcdtl")
 
   /**
    * The schema name in data warehouse

@@ -1,11 +1,12 @@
-package com.eci.anaplan.services
+package com.eci.common.services
 
+import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 /**
  * Common Trait to fetch path for source
  */
-trait LPDetailsPathFetcher {
+trait PathFetcher {
   val sparkSession: SparkSession
 
   import sparkSession.implicits._
@@ -30,37 +31,28 @@ trait LPDetailsPathFetcher {
       .filter($"conversion_date_date" >= startDate && $"conversion_date_date" <= endDate)
   }
 
-  def readMasterDataDTL(domain: String): DataFrame = {
-    sparkSession.read
-      .parquet(s"$flattenerSrcDtl/$domain")
-  }
-
-  def readByMovementTimeDWH(domain: String, startDate: String, endDate: String): DataFrame = {
-    sparkSession.read
-      .parquet(s"$flattenerSrc/$domain")
-      .filter($"movement_time_date" >= startDate && $"movement_time_date" <= endDate)
-  }
-
-  def readByConversionDateDWH(domain: String, startDate: String, endDate: String): DataFrame = {
-    sparkSession.read
-      .parquet(s"$flattenerSrc/$domain")
-      .filter($"conversion_date_date" >= startDate && $"conversion_date_date" <= endDate)
+  def readByCustom(domain: String, startDate: String, endDate: String, ColumnKey: String, MergeSchema: Boolean): DataFrame = {
+    if (domain.contains("eci_sheets/")) {
+      sparkSession.read
+        .parquet(s"$flattenerSrcDtl/$domain")
+    } else if (MergeSchema) {
+      sparkSession.read
+        .option("mergeSchema", "true")
+        .parquet(s"$flattenerSrc/$domain")
+        .filter(col(ColumnKey) >= startDate && col(ColumnKey) <= endDate)
+    } else {
+      sparkSession.read
+        .parquet(s"$flattenerSrc/$domain")
+        .filter(col(ColumnKey) >= startDate && col(ColumnKey) <= endDate)
+    }
   }
 
   def readByDefaultRange(domain: String): DataFrame = {
     readByCustomRange(domain, startDateToQueryDataLake, endDateToQueryDataLake)
   }
 
-  def readByDefaultMasterDataDTL(domain: String): DataFrame = {
-    readMasterDataDTL(domain)
-  }
-
-  def readByDefaultMovementTimeDWH(domain: String): DataFrame = {
-    readByMovementTimeDWH(domain, startDateToQueryDataLake, endDateToQueryDataLake)
-  }
-
-  def readByDefaultConversionDateDWH(domain: String): DataFrame = {
-    readByConversionDateDWH(domain, startDateToQueryDataLake, endDateToQueryDataLake)
+  def readByDefaultCustom(domain: String, ColumnKey: String = "", MergeSchema: Boolean = false): DataFrame = {
+    readByCustom(domain, startDateToQueryDataLake, endDateToQueryDataLake, ColumnKey, MergeSchema)
   }
 
   def readByJoinedDomainRange(domain: String): DataFrame = {

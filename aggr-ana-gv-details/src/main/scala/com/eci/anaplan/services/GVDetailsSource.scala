@@ -3,6 +3,7 @@ package com.eci.anaplan.services
 import java.time.ZonedDateTime
 import com.eci.common.TimeUtils
 import com.eci.anaplan.configs.GVDetailsConfig
+import com.eci.common.services.PathFetcher
 import javax.inject.{Inject, Named, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -12,22 +13,20 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 // TODO: Update dataFrameSource1 column to be read
 @Singleton
 class GVDetailsSource @Inject()(val sparkSession: SparkSession, config: GVDetailsConfig,
-                                @Named("TENANT_ID") val tenantId: String) extends GVDetailsPathFetcher {
+                                @Named("TENANT_ID") val tenantId: String) extends PathFetcher {
 
   // TODO: Add all the necessary dataframe source here. Each DataFrame Source will be a folder in S3
   lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates")
-  lazy val GVIssuedlistDf: DataFrame = readByDefaultIssuedDateDWH("gift_voucher.gv_issuedlist")
-  lazy val GVRedeemDf: DataFrame = readByDefaultRedemptionDateDWH("gift_voucher.gv_redeemed")
-  lazy val GVRevenueDf: DataFrame = readByDefaultRevenueDateDWH("gift_voucher.gv_revenue")
-  lazy val GVSalesB2CDf: DataFrame = readByDefaultIssuedDateDWH("gift_voucher.gv_sales")
-  lazy val GVSalesB2BDf: DataFrame = readByDefaultReportDateDWH("gift_voucher.gv_movement")
-  lazy val ExchangeRateDf: DataFrame = readByDefaultConversionDateDWH("oracle.exchange_rates")
-  lazy val UnderlyingProductDf: DataFrame =
-    readDefaultWithoutDateDTL("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product/")
+  lazy val GVIssuedlistDf: DataFrame = readByDefaultCustom("gift_voucher.gv_issuedlist","issued_date_date")
+  lazy val GVRedeemDf: DataFrame = readByDefaultCustom("gift_voucher.gv_redeemed","redemption_date_date")
+  lazy val GVRevenueDf: DataFrame = readByDefaultCustom("gift_voucher.gv_revenue","revenue_date_date")
+  lazy val GVSalesB2CDf: DataFrame = readByDefaultCustom("gift_voucher.gv_sales","issued_date_date", true)
+  lazy val GVSalesB2BDf: DataFrame = readByDefaultCustom("gift_voucher.gv_movement","report_date_date")
+  lazy val ExchangeRateDf: DataFrame = readByDefaultCustom("oracle.exchange_rates","conversion_date_date")
+  lazy val UnderlyingProductDf: DataFrame = readByDefaultCustom("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product/")
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl
-  val flattenerSrcLocal: String = config.flattenerSrcLocal
 
   // The start date for this aggregation Process
   val utcZonedStartDate: ZonedDateTime = config.utcZonedStartDate

@@ -3,6 +3,7 @@ package com.eci.anaplan.services
 import java.time.ZonedDateTime
 import com.eci.common.TimeUtils
 import com.eci.anaplan.configs.GVRedeemConfig
+import com.eci.common.services.PathFetcher
 import javax.inject.{Inject, Named, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -13,14 +14,13 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 @Singleton
 class GVRedeemSource @Inject()(val sparkSession: SparkSession,
                                config: GVRedeemConfig,
-                               @Named("TENANT_ID") val tenantId: String) extends GVRedeemPathFetcher {
+                               @Named("TENANT_ID") val tenantId: String) extends PathFetcher {
 
   // TODO: Add all the necessary dataframe source here. Each DataFrame Source will be a folder in S3
-  lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates") // (e.g: sales_delivery)
-  lazy val GVRedeemDf: DataFrame = readByDefaultRedemptionDateDWH("gift_voucher.gv_redeemed") // (e.g: sales_delivery)
-  lazy val ExchangeRateDf: DataFrame = readByDefaultConversionDateDWH("oracle.exchange_rates") // (e.g: sales_delivery)
-  lazy val UnderlyingProductDf: DataFrame =
-    readDefaultWithoutDateDWH("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product/") // (e.g: sales_delivery)
+  lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates")
+  lazy val GVRedeemDf: DataFrame = readByDefaultCustom("gift_voucher.gv_redeemed","redemption_date_date")
+  lazy val ExchangeRateDf: DataFrame = readByDefaultCustom("oracle.exchange_rates","conversion_date_date")
+  lazy val UnderlyingProductDf: DataFrame = readByDefaultCustom("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl

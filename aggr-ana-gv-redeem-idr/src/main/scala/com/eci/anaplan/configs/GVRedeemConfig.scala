@@ -68,7 +68,7 @@ class GVRedeemConfig @Inject()(env: Environment) extends GVRedeemETLDateValidati
    * The data lake source path
    */
   val flattenerSrc: String = conf.getString("flattener-src")
-  val flattenerSrcDtl: String = conf.getString("flattener-src-dtl")
+  val flattenerSrcDtl: String = conf.getString("flattener-srcdtl")
 
   /**
    * The schema name in data warehouse
