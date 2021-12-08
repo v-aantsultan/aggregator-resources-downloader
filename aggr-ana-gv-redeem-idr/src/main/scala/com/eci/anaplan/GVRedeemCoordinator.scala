@@ -35,7 +35,7 @@ class GVRedeemCoordinator @Inject()(spark: SparkSession,
     val (utcStartDateTime, utcEndDateTime) = (config.utcZonedStartDate, config.utcZonedEndDate)
     val destinationFolder = s"${config.utcZonedStartDate.toInstant}_${config.utcZonedEndDate.toInstant}_" +
       s"${spark.sparkContext.applicationId}"
-    val destination = s"$aggregatorBucket/$tenantId/$schemaName/$tableName/$destinationFolder"
+    val destination = s"$aggregatorBucket/$schemaName/$tableName/$destinationFolder"
     val applicationId = spark.sparkContext.applicationId
     val applicationInfo = s"Application id = $applicationId, schema = $schemaName, table = $tableName," +
       s" date range = $utcStartDateTime - $utcEndDateTime"

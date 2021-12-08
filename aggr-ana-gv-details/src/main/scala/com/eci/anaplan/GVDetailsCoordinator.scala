@@ -36,7 +36,7 @@ class GVDetailsCoordinator @Inject()(spark: SparkSession,
     val (utcStartDateTime, utcEndDateTime) = (config.utcZonedStartDate, config.utcZonedEndDate)
     val destinationFolder = s"${config.utcZonedStartDate.toInstant}_${config.utcZonedEndDate.toInstant}_" +
       s"${spark.sparkContext.applicationId}"
-    val destination = s"$aggregatorBucket/$tenantId/$schemaName/$tableName/$destinationFolder"
+    val destination = s"$aggregatorBucket/$schemaName/$tableName/$destinationFolder"
     val applicationId = spark.sparkContext.applicationId
     val applicationInfo = s"Application id = $applicationId, schema = $schemaName, table = $tableName," +
       s" date range = $utcStartDateTime - $utcEndDateTime"
@@ -56,6 +56,25 @@ class GVDetailsCoordinator @Inject()(spark: SparkSession,
           case Success(filePath) => {
             logger.info(s"Successfully upload CSV aggregator output to S3. filepath = $filePath")
 
+            // Write to status DB
+            Try(statusManagerService.markUnprocessed(
+              applicationId,
+              config.flattenerSrcDtl,
+              utcStartDateTime,
+              utcEndDateTime,
+              schemaName,
+              tableName,
+              replaceKey,
+              filePath)
+            ) match {
+              case Failure(exception) => {
+                logger.error(s"Error in marking an Unprocessed ticket to status manager." +
+                  s" $applicationInfo", exception)
+              }
+              case Success(_) => {
+                logger.info("Successfully run aggregator spark job")
+              }
+            }
           }
         }
       }
