@@ -23,7 +23,7 @@ class GVRevenueIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: 
         , "left")
 
       .select(
-        to_date($"gv_revenue.revenue_date" + expr("INTERVAL 7 HOURS")).as("date"),
+        to_date($"gv_revenue.revenue_date" + expr("INTERVAL 7 HOURS")).as("report_date"),
         when($"gv_revenue.status" === "REDEEMED","UNUSED VOUCHER")
           .otherwise($"gv_revenue.status").as("product"),
         lit("Traveloka").as("business_partner"),

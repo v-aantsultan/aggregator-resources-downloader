@@ -25,7 +25,7 @@ class GVRedeemIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: G
           , "left")
 
       .select(
-        to_date($"gv_redeem.redemption_date" + expr("INTERVAL 7 HOURS")).as("date"),
+        to_date($"gv_redeem.redemption_date" + expr("INTERVAL 7 HOURS")).as("report_date"),
         lit("Redeemed").as("product"),
         lit("Traveloka").as("business_partner"),
         $"underlying_product.underlying_product".as("voucher_redemption_product"),

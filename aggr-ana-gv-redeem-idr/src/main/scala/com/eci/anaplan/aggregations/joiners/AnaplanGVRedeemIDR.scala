@@ -7,7 +7,7 @@ import org.apache.spark.sql.functions.{to_date, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
-class AnaplanGVRedeemIDR @Inject()(spark: SparkSession, statusManagerService: GVRedeemStatusManager,
+class AnaplanGVRedeemIDR @Inject()(spark: SparkSession,
                                    GVRedeemDf: GVRedeemDf,
                                    ExchangeRateDf: GVRedeemRateDf,
                                    UnderlyingProductDf: GVRedeemUnderlyingProductDf) {

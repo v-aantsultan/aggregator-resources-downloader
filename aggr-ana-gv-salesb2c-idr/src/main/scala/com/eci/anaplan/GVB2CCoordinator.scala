@@ -55,6 +55,25 @@ class GVB2CCoordinator @Inject()(spark: SparkSession,
           case Success(filePath) => {
             logger.info(s"Successfully upload CSV aggregator output to S3. filepath = $filePath")
 
+            // Write to status DB
+            Try(statusManagerService.markUnprocessed(
+              applicationId,
+              config.flattenerSrcDtl,
+              utcStartDateTime,
+              utcEndDateTime,
+              schemaName,
+              tableName,
+              replaceKey,
+              filePath)
+            ) match {
+              case Failure(exception) => {
+                logger.error(s"Error in marking an Unprocessed ticket to status manager." +
+                  s" $applicationInfo", exception)
+              }
+              case Success(_) => {
+                logger.info("Successfully run aggregator spark job")
+              }
+            }
           }
         }
       }

@@ -16,8 +16,7 @@ def get: DataFrame = {
       ($"mapping_transaction_category" === "Grant" && !$"mapping_grant_product_type".isin("Selling Points","Employee Benefits Points"))
         || ($"mapping_transaction_category" === "Redeem" && !$"mapping_underlying_product".isin("LP")))
     .select(
-      $"posting_date",
-      $"posting_date".as("date"),
+      $"posting_date".as("report_date"),
       $"mapping_transaction_category".as("category"),
       $"customer",
       when($"mapping_transaction_category" === "Grant", $"mapping_grant_product_type")

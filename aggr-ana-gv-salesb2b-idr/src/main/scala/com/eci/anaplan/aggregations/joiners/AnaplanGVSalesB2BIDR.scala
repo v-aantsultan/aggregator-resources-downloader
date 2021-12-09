@@ -1,13 +1,12 @@
 package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
-import com.eci.anaplan.services.GVB2BStatusManager
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.functions.{to_date, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
-class AnaplanGVSalesB2BIDR @Inject()(spark: SparkSession, statusManagerService: GVB2BStatusManager,
+class AnaplanGVSalesB2BIDR @Inject()(spark: SparkSession,
                                      GVSalesB2BDf: GVSalesB2BDf,
                                      ExchangeRateDf: GVB2BRateDf) {
 

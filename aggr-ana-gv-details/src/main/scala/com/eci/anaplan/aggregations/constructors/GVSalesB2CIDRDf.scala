@@ -26,7 +26,7 @@ class GVSalesB2CIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService:
         , "left")
 
       .select(
-        to_date($"gv_sales_b2c.issued_date" + expr("INTERVAL 7 HOURS")).as("date"),
+        to_date($"gv_sales_b2c.issued_date" + expr("INTERVAL 7 HOURS")).as("report_date"),
         lit("Purchase").as("product"),
         lit("Traveloka").as("business_partner"),
         lit("None").as("voucher_redemption_product"),

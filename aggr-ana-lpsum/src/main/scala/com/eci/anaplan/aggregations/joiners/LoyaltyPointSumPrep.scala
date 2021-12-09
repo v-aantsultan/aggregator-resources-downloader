@@ -12,8 +12,7 @@ import spark.implicits._
 def get: DataFrame = {
   LoyaltyPointIDR.get
     .select(
-      $"posting_date",
-      $"posting_date".as("date"),
+      $"posting_date".as("report_date"),
       $"customer",
       when($"mapping_transaction_category" === "Grant" && $"mapping_grant_product_type" === "Selling Points",
         $"original_transaction_id")

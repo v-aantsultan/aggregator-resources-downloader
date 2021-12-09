@@ -1,13 +1,12 @@
 package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
-import com.eci.anaplan.services.GVIssuedStatusManager
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.functions.{to_date, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
-class AnaplanGVIssuedlistIDR @Inject()(spark: SparkSession, statusManagerService: GVIssuedStatusManager,
+class AnaplanGVIssuedlistIDR @Inject()(spark: SparkSession,
                                        GVIssuedistDf: GVIssuedlistDf,
                                        ExchangeRateDf: GVIssuedRateDf) {
 

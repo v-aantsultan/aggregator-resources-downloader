@@ -1,13 +1,12 @@
 package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
-import com.eci.anaplan.services.GVDetailsStatusManager
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.functions.{countDistinct, sum, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
-class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerService: GVDetailsStatusManager,
+class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
                                           GVRedeemIDRDf: GVRedeemIDRDf, GVRevenueIDRDf: GVRevenueIDRDf,
                                           GVSalesB2CIDRDf: GVSalesB2CIDRDf, GVSalesB2BIDRDf: GVSalesB2BIDRDf) {
 
@@ -16,7 +15,7 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerServ
     import spark.implicits._
 
     val GVRedeemIDR = GVRedeemIDRDf.get
-      .groupBy($"date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
+      .groupBy($"report_date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
       .agg(
         sum($"gift_voucher_amount").as("gift_voucher_amount"),
         countDistinct($"no_of_transactions").as("no_of_transactions"),
@@ -32,7 +31,7 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerServ
       )
 
     val GVRevenueIDR = GVRevenueIDRDf.get
-      .groupBy($"date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
+      .groupBy($"report_date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
       .agg(
         sum($"gift_voucher_amount").as("gift_voucher_amount"),
         countDistinct($"no_of_transactions").as("no_of_transactions"),
@@ -48,7 +47,7 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerServ
       )
 
     val GVSalesB2CIDR = GVSalesB2CIDRDf.get
-      .groupBy($"date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
+      .groupBy($"report_date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
       .agg(
         sum($"gift_voucher_amount").as("gift_voucher_amount"),
         countDistinct($"no_of_transactions").as("no_of_transactions"),
@@ -70,7 +69,7 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerServ
       )
 
     val GVSalesB2BIDR = GVSalesB2BIDRDf.get
-      .groupBy($"date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
+      .groupBy($"report_date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
       .agg(
         sum(
           when($"movement_type" === "CODE_GENERATION",$"gift_voucher_amount")
@@ -95,7 +94,7 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession, statusManagerServ
         sum($"premium").as("premium")
       )
       .select(
-        $"date",
+        $"report_date",
         $"product",
         $"business_partner",
         $"voucher_redemption_product",
