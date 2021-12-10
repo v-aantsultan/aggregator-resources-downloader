@@ -56,6 +56,11 @@ object TimeUtils {
     format.format(dateTime)
   }
 
+  def utcDateTimeStringReport(dateTime: ZonedDateTime): String = {
+    val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    format.format(dateTime)
+  }
+
   /**
    *  Determine if a date is before or equal now
    *

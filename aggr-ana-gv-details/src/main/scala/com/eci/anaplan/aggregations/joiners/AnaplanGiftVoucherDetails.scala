@@ -1,8 +1,9 @@
 package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
+
 import javax.inject.{Inject, Singleton}
-import org.apache.spark.sql.functions.{countDistinct, sum, when}
+import org.apache.spark.sql.functions.{coalesce, countDistinct, lit, sum, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
@@ -17,14 +18,14 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
     val GVRedeemIDR = GVRedeemIDRDf.get
       .groupBy($"report_date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
       .agg(
-        sum($"gift_voucher_amount").as("gift_voucher_amount"),
-        countDistinct($"no_of_transactions").as("no_of_transactions"),
-        countDistinct($"no_gift_voucher").as("no_gift_voucher"),
-        sum($"revenue_amount").as("revenue_amount"),
-        sum($"unique_code").as("unique_code"),
-        sum($"coupon_value").as("coupon_value"),
-        sum($"discount").as("discount"),
-        sum($"premium").as("premium")
+        coalesce(sum($"gift_voucher_amount"),lit(0)).as("gift_voucher_amount"),
+        coalesce(countDistinct($"no_of_transactions"),lit(0)).as("no_of_transactions"),
+        coalesce(countDistinct($"no_gift_voucher"),lit(0)).as("no_gift_voucher"),
+        coalesce(sum($"revenue_amount"),lit(0)).as("revenue_amount"),
+        coalesce(sum($"unique_code"),lit(0)).as("unique_code"),
+        coalesce(sum($"coupon_value"),lit(0)).as("coupon_value"),
+        coalesce(sum($"discount"),lit(0)).as("discount"),
+        coalesce(sum($"premium"),lit(0)).as("premium")
       )
       .select(
         $"*"
@@ -33,14 +34,14 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
     val GVRevenueIDR = GVRevenueIDRDf.get
       .groupBy($"report_date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
       .agg(
-        sum($"gift_voucher_amount").as("gift_voucher_amount"),
-        countDistinct($"no_of_transactions").as("no_of_transactions"),
-        countDistinct($"no_gift_voucher").as("no_gift_voucher"),
-        sum($"revenue_amount").as("revenue_amount"),
-        sum($"unique_code").as("unique_code"),
-        sum($"coupon_value").as("coupon_value"),
-        sum($"discount").as("discount"),
-        sum($"premium").as("premium")
+        coalesce(sum($"gift_voucher_amount"),lit(0)).as("gift_voucher_amount"),
+        coalesce(countDistinct($"no_of_transactions"),lit(0)).as("no_of_transactions"),
+        coalesce(countDistinct($"no_gift_voucher"),lit(0)).as("no_gift_voucher"),
+        coalesce(sum($"revenue_amount"),lit(0)).as("revenue_amount"),
+        coalesce(sum($"unique_code"),lit(0)).as("unique_code"),
+        coalesce(sum($"coupon_value"),lit(0)).as("coupon_value"),
+        coalesce(sum($"discount"),lit(0)).as("discount"),
+        coalesce(sum($"premium"),lit(0)).as("premium")
       )
       .select(
         $"*"
@@ -49,20 +50,20 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
     val GVSalesB2CIDR = GVSalesB2CIDRDf.get
       .groupBy($"report_date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
       .agg(
-        sum($"gift_voucher_amount").as("gift_voucher_amount"),
-        countDistinct($"no_of_transactions").as("no_of_transactions"),
-        countDistinct($"no_gift_voucher").as("no_gift_voucher"),
-        sum($"revenue_amount").as("revenue_amount"),
-        sum($"unique_code").as("unique_code"),
-        sum($"coupon_value").as("coupon_value"),
-        sum(
+        coalesce(sum($"gift_voucher_amount"),lit(0)).as("gift_voucher_amount"),
+        coalesce(countDistinct($"no_of_transactions"),lit(0)).as("no_of_transactions"),
+        coalesce(countDistinct($"no_gift_voucher"),lit(0)).as("no_gift_voucher"),
+        coalesce(sum($"revenue_amount"),lit(0)).as("revenue_amount"),
+        coalesce(sum($"unique_code"),lit(0)).as("unique_code"),
+        coalesce(sum($"coupon_value"),lit(0)).as("coupon_value"),
+        coalesce(sum(
           when($"discount_or_premium_in_idr" < 0 ,$"discount_or_premium_in_idr" + $"discount_wht_in_idr")
             .otherwise(0)
-        ).as("discount"),
-        sum(
+        ),lit(0)).as("discount"),
+        coalesce(sum(
           when($"discount_or_premium_in_idr" >= 0 ,$"discount_or_premium_in_idr")
             .otherwise(0)
-        ).as("premium")
+        ),lit(0)).as("premium")
       )
       .select(
         $"*"
@@ -71,27 +72,27 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
     val GVSalesB2BIDR = GVSalesB2BIDRDf.get
       .groupBy($"report_date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
       .agg(
-        sum(
+        coalesce(sum(
           when($"movement_type" === "CODE_GENERATION",$"gift_voucher_amount")
             .when($"movement_type" === "CODE_CANCELLATION",$"gift_voucher_amount" * -1)
             .otherwise(0)
-        ).as("gift_voucher_amount"),
-        countDistinct($"contract_generation").as("contract_generation"),
-        countDistinct($"contract_cancellation").as("contract_cancellation"),
-        sum(
+        ),lit(0)).as("gift_voucher_amount"),
+        coalesce(countDistinct($"contract_generation"),lit(0)).as("contract_generation"),
+        coalesce(countDistinct($"contract_cancellation"),lit(0)).as("contract_cancellation"),
+        coalesce(sum(
           when($"movement_type" === "CODE_GENERATION",1)
             .when($"movement_type" === "CODE_CANCELLATION",-1)
             .otherwise(0)
-        ).as("no_gift_voucher"),
-        sum($"revenue_amount").as("revenue_amount"),
-        sum($"unique_code").as("unique_code"),
-        sum($"coupon_value").as("coupon_value"),
-        sum(
+        ),lit(0)).as("no_gift_voucher"),
+        coalesce(sum($"revenue_amount"),lit(0)).as("revenue_amount"),
+        coalesce(sum($"unique_code"),lit(0)).as("unique_code"),
+        coalesce(sum($"coupon_value"),lit(0)).as("coupon_value"),
+        coalesce(sum(
           when($"movement_type" === "CODE_GENERATION",$"discount_amount_in_idr" + $"discount_wht_in_idr")
             .when($"movement_type" === "CODE_CANCELLATION",($"discount_amount_in_idr" + $"discount_wht_in_idr") * -1)
             .otherwise(0)
-        ).as("discount"),
-        sum($"premium").as("premium")
+        ),lit(0)).as("discount"),
+        coalesce(sum($"premium"),lit(0)).as("premium")
       )
       .select(
         $"report_date",
