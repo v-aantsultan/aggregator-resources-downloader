@@ -99,4 +99,9 @@ class GVB2BConfig @Inject()(env: Environment) extends GVB2BETLDateValidation {
   val statusManagerUsername: String = conf.getString("statusmanager.username")
   val statusManagerPassword: String = conf.getString("statusmanager.password")
   val statusManagerTimeout: Duration = Duration(conf.getDuration("statusmanager.timeout").getSeconds, TimeUnit.SECONDS)
+
+  val slackChannelKey: String = conf.getString("slack.channel")
+  val slackBotToken: String = conf.getString("slack.token")
+
+  val appName: String = conf.getString("app.name")
 }

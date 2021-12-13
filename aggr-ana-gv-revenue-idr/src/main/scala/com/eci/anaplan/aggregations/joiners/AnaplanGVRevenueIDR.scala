@@ -2,7 +2,7 @@ package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
 import javax.inject.{Inject, Singleton}
-import org.apache.spark.sql.functions.{to_date, when}
+import org.apache.spark.sql.functions.{to_date, when, coalesce, lit}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
@@ -35,8 +35,8 @@ class AnaplanGVRevenueIDR @Inject()(spark: SparkSession,
         $"gv_revenue.partner_name".as("partner_name"),
         $"gv_revenue.partner_id".as("partner_id"),
         $"gv_revenue.business_model".as("business_model"),
-        when($"gv_revenue.revenue_currency" === "IDR",$"gv_revenue.gift_voucher_amount")
-          .otherwise($"gv_revenue.gift_voucher_amount" * $"exchange_rate_idr.conversion_rate")
+        coalesce(when($"gv_revenue.revenue_currency" === "IDR",$"gv_revenue.gift_voucher_amount")
+          .otherwise($"gv_revenue.gift_voucher_amount" * $"exchange_rate_idr.conversion_rate"),lit(0))
           .as("gift_voucher_amount_idr"),
         $"gv_revenue.redeemed_booking_id".as("redeemed_booking_id"),
         $"gv_revenue.redeemed_product_type".as("redeemed_product_type"),
@@ -47,8 +47,8 @@ class AnaplanGVRevenueIDR @Inject()(spark: SparkSession,
         $"gv_revenue.revenue_currency".as("revenue_currency"),
         $"gv_revenue.revenue_date".as("revenue_date"),
         $"gv_revenue.status".as("status"),
-        when($"gv_revenue.revenue_currency" === "IDR",$"gv_revenue.revenue_amount")
-          .otherwise($"gv_revenue.revenue_amount" * $"exchange_rate_idr.conversion_rate")
+        coalesce(when($"gv_revenue.revenue_currency" === "IDR",$"gv_revenue.revenue_amount")
+          .otherwise($"gv_revenue.revenue_amount" * $"exchange_rate_idr.conversion_rate"),lit(0))
           .as("revenue_amount_idr"),
         $"gv_revenue.selling_price".as("selling_price"),
         $"gv_revenue.discount_amount".as("discount_amount")

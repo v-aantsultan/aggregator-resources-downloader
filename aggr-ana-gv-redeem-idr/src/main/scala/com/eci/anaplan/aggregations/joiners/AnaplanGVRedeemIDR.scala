@@ -1,9 +1,8 @@
 package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
-import com.eci.anaplan.services.GVRedeemStatusManager
 import javax.inject.{Inject, Singleton}
-import org.apache.spark.sql.functions.{to_date, when}
+import org.apache.spark.sql.functions.{to_date, when, coalesce, lit}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
@@ -40,8 +39,8 @@ class AnaplanGVRedeemIDR @Inject()(spark: SparkSession,
         $"gv_redeem.partner_name".as("partner_name"),
         $"gv_redeem.partner_id".as("partner_id"),
         $"gv_redeem.business_model".as("business_model"),
-        when($"gv_redeem.gift_voucher_currency" === "IDR",$"gv_redeem.gift_voucher_amount")
-          .otherwise($"gv_redeem.gift_voucher_amount" * $"exchange_rate_idr.conversion_rate")
+        coalesce(when($"gv_redeem.gift_voucher_currency" === "IDR",$"gv_redeem.gift_voucher_amount")
+          .otherwise($"gv_redeem.gift_voucher_amount" * $"exchange_rate_idr.conversion_rate"),lit(0))
           .as("gift_voucher_amount_idr"),
         $"gv_redeem.redeemed_booking_id".as("redeemed_booking_id"),
         $"gv_redeem.redeemed_product_type".as("redeemed_product_type"),
@@ -50,8 +49,8 @@ class AnaplanGVRedeemIDR @Inject()(spark: SparkSession,
         $"gv_redeem.redemption_date_ori".as("redemption_date_ori"),
         $"gv_redeem.redemption_date".as("redemption_date"),
         $"gv_redeem.gift_voucher_redeemed_amount".as("gift_voucher_redeemed_amount"),
-        when($"gv_redeem.gift_voucher_currency" === "IDR",$"gv_redeem.gift_voucher_redeemed_amount")
-          .otherwise($"gv_redeem.gift_voucher_redeemed_amount" * $"exchange_rate_idr.conversion_rate")
+        coalesce(when($"gv_redeem.gift_voucher_currency" === "IDR",$"gv_redeem.gift_voucher_redeemed_amount")
+          .otherwise($"gv_redeem.gift_voucher_redeemed_amount" * $"exchange_rate_idr.conversion_rate"),lit(0))
           .as("gift_voucher_redeemed_amount_idr"),
         $"gv_redeem.selling_price".as("selling_price"),
         $"gv_redeem.discount_amount".as("discount_amount")

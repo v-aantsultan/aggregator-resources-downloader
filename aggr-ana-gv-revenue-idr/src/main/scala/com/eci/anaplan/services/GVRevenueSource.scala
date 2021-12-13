@@ -35,10 +35,10 @@ class GVRevenueSource @Inject()(val sparkSession: SparkSession,
   // Aggregator only takes in booking issue date. So to query datalake by created at, we need to plus one month
   // from the passed in end date, due to hanging task
   // TODO: You may want to edit this data according to your report logic
-  val endDateToQueryDataLake: String = TimeUtils.utcDateTimeString(utcZonedEndDate.plusMonths(1))
+  val endDateToQueryDataLake: String = TimeUtils.utcDateTimeString(utcZonedEndDate.plusDays(1))
 
   // DataLake stores the data in yyyyMMdd format. To Query DataLake we need to trim out all the time component from the start date
-  val startDateToQueryDataLake: String = TimeUtils.utcDateTimeString(utcZonedStartDate)
+  val startDateToQueryDataLake: String = TimeUtils.utcDateTimeString(utcZonedStartDate.minusDays(1))
 
   // Joined domains such as sales invoice, purchase delivery etc. can be one month before the sales delivery
   // Or to be exactly, one month before the booking issue date

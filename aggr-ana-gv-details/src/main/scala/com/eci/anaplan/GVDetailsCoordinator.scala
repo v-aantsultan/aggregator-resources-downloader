@@ -27,11 +27,10 @@ class GVDetailsCoordinator @Inject()(spark: SparkSession,
 
   private val fromDate = utcDateTimeStringReport(config.utcZonedStartDate)
   private val toDate = utcDateTimeStringReport(config.utcZonedEndDate)
-  private val appName = config.appName
 
   def coordinate(): Unit = {
     logger.info("Starting the aggregator spark job")
-    slack.info(s"Starting $appName from: $fromDate to: $toDate")
+    slack.info(s"Starting Gift Voucher Details Aggregator from: $fromDate to: $toDate")
 
     val aggregatorBucket = config.aggregatorDest
     val schemaName = config.schemaName

@@ -2,7 +2,7 @@ package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
 import javax.inject.{Inject, Singleton}
-import org.apache.spark.sql.functions.{to_timestamp, when}
+import org.apache.spark.sql.functions.{to_date, to_timestamp, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
@@ -37,7 +37,7 @@ class AnaplanLoyaltyPointIDR @Inject()(spark: SparkSession,
         $"lp_mutation.wallet_content_id".as("wallet_content_id"),
         $"lp_mutation.movement_type".as("movement_type"),
         $"lp_mutation.movement_time".as("movement_time"),
-        $"lp_mutation.posting_date".as("posting_date"),
+        to_date($"lp_mutation.posting_date").as("posting_date"),
         $"lp_mutation.external_transaction_id".as("external_transaction_id"),
         $"lp_mutation.original_transaction_id".as("original_transaction_id"),
         $"lp_mutation.trip_type".as("trip_type"),

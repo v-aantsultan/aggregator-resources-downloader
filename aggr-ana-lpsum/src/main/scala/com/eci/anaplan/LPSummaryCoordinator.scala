@@ -1,10 +1,12 @@
 package com.eci.anaplan
 
 import com.eci.common.LoggerSupport
-import com.eci.common.TimeUtils.toTimestamp
+import com.eci.common.TimeUtils.{toTimestamp, utcDateTimeStringReport}
 import com.eci.anaplan.configs.LPSummaryConfig
 import com.eci.anaplan.aggregations.joiners.AnaplanLoyaltyPointSum
 import com.eci.anaplan.services.{LPSummaryDestination, LPSummaryStatusManager}
+import com.eci.common.slack.SlackClient
+
 import javax.inject.{Inject, Named}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.col
@@ -20,14 +22,15 @@ class LPSummaryCoordinator @Inject()(spark: SparkSession,
                                      @Named("TENANT_ID") tenantId: String,
                                      anaplanDataframeJoiner: AnaplanLoyaltyPointSum,
                                      statusManagerService: LPSummaryStatusManager,
-                                     s3DestinationService: LPSummaryDestination) extends LoggerSupport {
+                                     s3DestinationService: LPSummaryDestination,
+                                     slack: SlackClient) extends LoggerSupport {
 
-  /**
-   * Get the data sets in a time range, and then join them together.
-   * Also write to S3 in CSV format and update statusmanager
-   */
+  private val fromDate = utcDateTimeStringReport(config.utcZonedStartDate)
+  private val toDate = utcDateTimeStringReport(config.utcZonedEndDate)
+
   def coordinate(): Unit = {
     logger.info("Starting the aggregator spark job")
+    slack.info(s"Starting Loyalty Point Summary Aggregator from: $fromDate to: $toDate")
 
     val aggregatorBucket = config.aggregatorDest
     val schemaName = config.schemaName
@@ -46,15 +49,23 @@ class LPSummaryCoordinator @Inject()(spark: SparkSession,
       .joinWithColumn()
       .filter(col(replaceKey).between(toTimestamp(utcStartDateTime), toTimestamp(utcEndDateTime)) )
     ) match {
-      case Failure(exception) => logger.error(s"Error in performing ETL. $applicationInfo", exception)
+      case Failure(exception) => {
+        logger.error(s"Error in performing ETL. $applicationInfo", exception)
+        slack.error(s"Error in performing ETL. $applicationInfo", exception)
+      }
       case Success(anaplanDF) => {
         logger.info("Successfully perform ETL ")
+        slack.info("Successfully perform ETL ")
 
         // Perform 'action' on the Dataframe
         Try(s3DestinationService.publishToS3(anaplanDF, destination)) match {
-          case Failure(exception) => logger.error(s"Error in publishing the aggregator result to S3. $applicationInfo", exception)
+          case Failure(exception) => {
+            logger.error(s"Error in publishing the aggregator result to S3. $applicationInfo", exception)
+            slack.error(s"Error in publishing the aggregator result to S3. $applicationInfo", exception)
+          }
           case Success(filePath) => {
             logger.info(s"Successfully upload CSV aggregator output to S3. filepath = $filePath")
+            slack.info(s"Successfully upload CSV aggregator output to S3. filepath = $filePath")
 
             // Write to status DB
             Try(statusManagerService.markUnprocessed(
@@ -70,9 +81,12 @@ class LPSummaryCoordinator @Inject()(spark: SparkSession,
               case Failure(exception) => {
                 logger.error(s"Error in marking an Unprocessed ticket to status manager." +
                   s" $applicationInfo", exception)
+                slack.error(s"Error in marking an Unprocessed ticket to status manager." +
+                  s" $applicationInfo", exception)
               }
               case Success(_) => {
                 logger.info("Successfully run aggregator spark job")
+                slack.info("Successfully run aggregator spark job")
               }
             }
           }

@@ -1,11 +1,13 @@
 package com.eci.anaplan.module
 
 import com.eci.common.config.Environment
-import com.eci.anaplan.providers.GVRevenueSparkSession
+import com.eci.anaplan.providers.{GVRevenueSlackClient, GVRevenueSparkSession}
+import com.eci.common.slack.SlackClient
 import com.google.inject.AbstractModule
 import com.google.inject.name.Names
 import com.traveloka.eci.statusmanager.client.{DefaultStatusDbClientFactory, StatusManagerClientFactory}
 import org.apache.spark.sql.SparkSession
+
 import scala.util.Properties
 
 /**
@@ -18,5 +20,6 @@ class GVRevenueModule extends AbstractModule {
     bind(classOf[SparkSession]).toProvider(classOf[GVRevenueSparkSession]).asEagerSingleton()
     bindConstant().annotatedWith(Names.named("TENANT_ID")).to("1")
     bind(classOf[StatusManagerClientFactory]).toInstance(DefaultStatusDbClientFactory)
+    bind(classOf[SlackClient]).toProvider(classOf[GVRevenueSlackClient]).asEagerSingleton()
   }
 }

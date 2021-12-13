@@ -2,7 +2,7 @@ package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
 import javax.inject.{Inject, Singleton}
-import org.apache.spark.sql.functions.{to_date, when}
+import org.apache.spark.sql.functions.{to_date, when, coalesce, lit}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
@@ -35,8 +35,8 @@ class AnaplanGVSalesB2BIDR @Inject()(spark: SparkSession,
         $"gv_sales_b2b.gift_voucher_valid_until".as("gift_voucher_valid_until"),
         $"gv_sales_b2b.gift_voucher_nominal".as("gift_voucher_nominal"),
         $"gv_sales_b2b.gift_voucher_currency".as("gift_voucher_currency"),
-        when($"gv_sales_b2b.gift_voucher_currency" === "IDR",$"gv_sales_b2b.gift_voucher_nominal")
-          .otherwise($"gv_sales_b2b.gift_voucher_nominal" * $"exchange_rate_idr.conversion_rate")
+        coalesce(when($"gv_sales_b2b.gift_voucher_currency" === "IDR",$"gv_sales_b2b.gift_voucher_nominal")
+          .otherwise($"gv_sales_b2b.gift_voucher_nominal" * $"exchange_rate_idr.conversion_rate"),lit(0))
           .as("gift_voucher_nominal_idr"),
         $"gv_sales_b2b.profit_center".as("profit_center"),
         $"gv_sales_b2b.cost_center".as("cost_center"),
@@ -53,19 +53,19 @@ class AnaplanGVSalesB2BIDR @Inject()(spark: SparkSession,
         $"gv_sales_b2b.deduction_type".as("deduction_type"),
         $"gv_sales_b2b.discount_percentage".as("discount_percentage"),
         $"gv_sales_b2b.discount_amount".as("discount_amount"),
-        when($"gv_sales_b2b.gift_voucher_currency" === "IDR",$"gv_sales_b2b.discount_amount")
-          .otherwise($"gv_sales_b2b.discount_amount" * $"exchange_rate_idr.conversion_rate")
+        coalesce(when($"gv_sales_b2b.gift_voucher_currency" === "IDR",$"gv_sales_b2b.discount_amount")
+          .otherwise($"gv_sales_b2b.discount_amount" * $"exchange_rate_idr.conversion_rate"),lit(0))
           .as("discount_amount_idr"),
         $"gv_sales_b2b.gift_voucher_net_amount".as("gift_voucher_net_amount"),
-        when($"gv_sales_b2b.gift_voucher_currency" === "IDR",$"gv_sales_b2b.gift_voucher_net_amount")
-          .otherwise($"gv_sales_b2b.gift_voucher_net_amount" * $"exchange_rate_idr.conversion_rate")
+        coalesce(when($"gv_sales_b2b.gift_voucher_currency" === "IDR",$"gv_sales_b2b.gift_voucher_net_amount")
+          .otherwise($"gv_sales_b2b.gift_voucher_net_amount" * $"exchange_rate_idr.conversion_rate"),lit(0))
           .as("gift_voucher_net_amount_idr"),
         $"gv_sales_b2b.deposit_liabilities_amount".as("deposit_liabilities_amount"),
         $"gv_sales_b2b.deposit_liabilities_currency".as("deposit_liabilities_currency"),
         $"gv_sales_b2b.report_date".as("report_date"),
         $"gv_sales_b2b.discount_wht".as("discount_wht"),
-        when($"gv_sales_b2b.gift_voucher_currency" === "IDR",$"gv_sales_b2b.discount_wht")
-          .otherwise($"gv_sales_b2b.discount_wht" * $"exchange_rate_idr.conversion_rate")
+        coalesce(when($"gv_sales_b2b.gift_voucher_currency" === "IDR",$"gv_sales_b2b.discount_wht")
+          .otherwise($"gv_sales_b2b.discount_wht" * $"exchange_rate_idr.conversion_rate"),lit(0))
           .as("discount_wht_idr")
       )
   }
