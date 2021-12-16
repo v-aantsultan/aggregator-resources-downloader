@@ -20,7 +20,7 @@ class GVRedeemSource @Inject()(val sparkSession: SparkSession,
   lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates")
   lazy val GVRedeemDf: DataFrame = readByDefaultCustom("gift_voucher.gv_redeemed","redemption_date_date")
   lazy val ExchangeRateDf: DataFrame = readByDefaultCustom("oracle.exchange_rates","conversion_date_date")
-  lazy val UnderlyingProductDf: DataFrame = readByDefaultCustom("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
+  lazy val UnderlyingProductDf: DataFrame = readByDefaultCustomDtl("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl

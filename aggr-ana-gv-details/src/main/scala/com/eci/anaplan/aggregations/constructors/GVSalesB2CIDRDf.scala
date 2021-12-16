@@ -19,7 +19,7 @@ class GVSalesB2CIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService:
     s3SourceService.GVSalesB2CDf.as("gv_sales_b2c")
       .join(ExchangeRateDf.get.as("exchange_rate_idr"),
         $"gv_sales_b2c.invoice_currency" === $"exchange_rate_idr.from_currency"
-          && to_date($"gv_sales_b2c.issued_date" + expr("INTERVAL 7 HOURS")) === to_date($"exchange_rate_idr.conversion_date")
+          && to_date($"gv_sales_b2c.issued_date" + expr("INTERVAL 7 HOURS")) === $"exchange_rate_idr.conversion_date"
         , "left")
       .join(GVIssuedlisteDf.get.as("gv_issuedlist"),
         $"gv_sales_b2c.booking_id" === $"gv_issuedlist.transaction_id"

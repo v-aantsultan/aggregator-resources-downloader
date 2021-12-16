@@ -1,6 +1,7 @@
 package com.eci.anaplan.aggregations.constructors
 
 import com.eci.anaplan.services.LPSummarySource
+import org.apache.spark.sql.functions.to_date
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -14,7 +15,7 @@ class LPSummaryDf @Inject()(val sparkSession: SparkSession, s3SourceService: LPS
     // TODO : Update this part of the code to get Domain data from S3
     s3SourceService.LPMutationDf
         .select(
-          $"`posting_date`".as("posting_date"),
+          to_date($"`posting_date`").as("posting_date"),
           $"`original_transaction_id`".as("original_transaction_id"),
           $"`booking_product_type`".as("booking_product_type"),
           $"`transaction_type`".as("transaction_type"),

@@ -1,7 +1,7 @@
 package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
-import org.apache.spark.sql.functions.{substring, to_timestamp, when}
+import org.apache.spark.sql.functions.{substring, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import javax.inject.{Inject, Singleton}
 
@@ -16,7 +16,7 @@ def get: DataFrame = {
     LPMutationDf.get.as("lp_mutation")
       .join(ExchangeRateDf.get.as("exchange_rate_idr"),
           $"lp_mutation.transaction_currency" === $"exchange_rate_idr.from_currency"
-            && to_timestamp($"lp_mutation.posting_date") === $"exchange_rate_idr.conversion_date"
+            && $"lp_mutation.posting_date" === $"exchange_rate_idr.conversion_date"
           , "left")
       .join(GrandProductTypeDf.get.as("mapping_grant_product_type"),
           $"lp_mutation.cost_type_id" === $"mapping_grant_product_type.cost_type_id"

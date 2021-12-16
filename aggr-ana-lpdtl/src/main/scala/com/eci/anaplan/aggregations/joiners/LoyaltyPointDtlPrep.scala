@@ -1,6 +1,6 @@
 package com.eci.anaplan.aggregations.joiners
 
-import org.apache.spark.sql.functions.{to_date, when}
+import org.apache.spark.sql.functions.when
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import javax.inject.{Inject, Singleton}
 
@@ -15,7 +15,7 @@ def get: DataFrame = {
       ($"mapping_transaction_category" === "Grant" && !$"mapping_grant_product_type".isin("Selling Points","Employee Benefits Points"))
         || ($"mapping_transaction_category" === "Redeem" && !$"mapping_underlying_product".isin("LP")))
     .select(
-      to_date($"posting_date").as("report_date"),
+      $"posting_date".as("report_date"),
       $"mapping_transaction_category".as("category"),
       $"customer",
       when($"mapping_transaction_category" === "Grant", $"mapping_grant_product_type")

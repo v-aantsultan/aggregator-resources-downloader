@@ -52,7 +52,7 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
       .agg(
         coalesce(sum($"gift_voucher_amount"),lit(0)).as("gift_voucher_amount"),
         coalesce(countDistinct($"no_of_transactions"),lit(0)).as("no_of_transactions"),
-        coalesce(countDistinct($"no_gift_voucher"),lit(0)).as("no_gift_voucher"),
+        coalesce(sum($"no_gift_voucher"),lit(0)).as("no_gift_voucher"),
         coalesce(sum($"revenue_amount"),lit(0)).as("revenue_amount"),
         coalesce(sum($"unique_code"),lit(0)).as("unique_code"),
         coalesce(sum($"coupon_value"),lit(0)).as("coupon_value"),

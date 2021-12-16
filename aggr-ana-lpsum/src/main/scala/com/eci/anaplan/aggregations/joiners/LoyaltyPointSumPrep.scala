@@ -1,6 +1,6 @@
 package com.eci.anaplan.aggregations.joiners
 
-import org.apache.spark.sql.functions.{to_date, when}
+import org.apache.spark.sql.functions.when
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import javax.inject.{Inject, Singleton}
 
@@ -12,7 +12,7 @@ import spark.implicits._
 def get: DataFrame = {
   LoyaltyPointIDR.get
     .select(
-      to_date($"posting_date").as("report_date"),
+      $"posting_date".as("report_date"),
       $"customer",
       when($"mapping_transaction_category" === "Grant" && $"mapping_grant_product_type" === "Selling Points",
         $"original_transaction_id")

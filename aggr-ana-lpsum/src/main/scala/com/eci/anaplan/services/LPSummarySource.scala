@@ -21,11 +21,11 @@ class LPSummarySource @Inject()(val sparkSession: SparkSession, config: LPSummar
   lazy val LPMutationDf: DataFrame = readByDefaultCustom("loyalty_point.point_mutation","movement_time_date")
   lazy val ExchangeRateDf: DataFrame = readByDefaultCustom("oracle.exchange_rates","conversion_date_date")
   lazy val GrandProductTypeDf: DataFrame =
-    readByDefaultCustom("eci_sheets/ecidtpl_anaplan_fpna/Mapping Grant Product Type")
+    readByDefaultCustomDtl("eci_sheets/ecidtpl_anaplan_fpna/Mapping Grant Product Type")
   lazy val TransactionCategoryDf: DataFrame =
-    readByDefaultCustom("eci_sheets/ecidtpl_anaplan_fpna/Mapping Transaction Category")
+    readByDefaultCustomDtl("eci_sheets/ecidtpl_anaplan_fpna/Mapping Transaction Category")
   lazy val underlyingProductDf: DataFrame =
-    readByDefaultCustom("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
+    readByDefaultCustomDtl("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl

@@ -2,7 +2,7 @@ package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
 import javax.inject.{Inject, Singleton}
-import org.apache.spark.sql.functions.{to_date, when, coalesce, lit}
+import org.apache.spark.sql.functions.{when, coalesce, lit}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
@@ -17,7 +17,7 @@ class AnaplanGVSalesB2BIDR @Inject()(spark: SparkSession,
     GVSalesB2BDf.get.as("gv_sales_b2b")
       .join(ExchangeRateDf.get.as("exchange_rate_idr"),
         $"gv_sales_b2b.gift_voucher_currency" === $"exchange_rate_idr.from_currency"
-          && $"gv_sales_b2b.report_date" === to_date($"exchange_rate_idr.conversion_date")
+          && $"gv_sales_b2b.report_date" === $"exchange_rate_idr.conversion_date"
         ,"left")
 
       .select(

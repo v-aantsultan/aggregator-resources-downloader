@@ -115,12 +115,38 @@ lazy val `aggr-ana-gv-details` = (project in file("aggr-ana-gv-details"))
     libraryDependencies ++= sparkDeps
   ).dependsOn(common).aggregate(common)
 
+lazy val `aggr-ana-ins-nonauto-idr` = (project in file("aggr-ana-ins-nonauto-idr"))
+  .settings(
+    name := "aggr-ana-ins-nonauto-idr",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
 lazy val `aggregator-anaplan` = (project in file("."))
   .settings(commonSettings: _*)
   .enablePlugins(GitVersioning)
-  .dependsOn(`aggr-ana-lpidr`,`aggr-ana-lpsum`,`aggr-ana-lpdtl`,`aggr-ana-gv-issuedlist-idr`,`aggr-ana-gv-redeem-idr`,
-    `aggr-ana-gv-revenue-idr`,`aggr-ana-gv-salesb2c-idr`,`aggr-ana-gv-salesb2b-idr`,`aggr-ana-gv-details`)
-  .aggregate(`aggr-ana-lpidr`,`aggr-ana-lpsum`,`aggr-ana-lpdtl`,`aggr-ana-gv-issuedlist-idr`,`aggr-ana-gv-redeem-idr`,
-    `aggr-ana-gv-revenue-idr`,`aggr-ana-gv-salesb2c-idr`,`aggr-ana-gv-salesb2b-idr`,`aggr-ana-gv-details`)
+  .dependsOn(
+    `aggr-ana-lpidr`,
+    `aggr-ana-lpsum`,
+    `aggr-ana-lpdtl`,
+    `aggr-ana-gv-issuedlist-idr`,
+    `aggr-ana-gv-redeem-idr`,
+    `aggr-ana-gv-revenue-idr`,
+    `aggr-ana-gv-salesb2c-idr`,
+    `aggr-ana-gv-salesb2b-idr`,
+    `aggr-ana-gv-details`,
+    `aggr-ana-ins-nonauto-idr`)
+  .aggregate(
+    `aggr-ana-lpidr`,
+    `aggr-ana-lpsum`,
+    `aggr-ana-lpdtl`,
+    `aggr-ana-gv-issuedlist-idr`,
+    `aggr-ana-gv-redeem-idr`,
+    `aggr-ana-gv-revenue-idr`,
+    `aggr-ana-gv-salesb2c-idr`,
+    `aggr-ana-gv-salesb2b-idr`,
+    `aggr-ana-gv-details`,
+    `aggr-ana-ins-nonauto-idr`)
 
 

@@ -1,6 +1,7 @@
 package com.eci.anaplan.aggregations.constructors
 
 import com.eci.anaplan.services.LPMutationSource
+import org.apache.spark.sql.functions.to_date
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -19,7 +20,7 @@ class LPMutationDf @Inject()(val sparkSession: SparkSession, s3SourceService: LP
           $"`wallet_content_id`".as("wallet_content_id"),
           $"`movement_type`".as("movement_type"),
           $"`movement_time`".as("movement_time"),
-          $"`posting_date`".as("posting_date"),
+          to_date($"`posting_date`").as("posting_date"),
           $"`external_transaction_id`".as("external_transaction_id"),
           $"`original_transaction_id`".as("original_transaction_id"),
           $"`trip_type`".as("trip_type"),

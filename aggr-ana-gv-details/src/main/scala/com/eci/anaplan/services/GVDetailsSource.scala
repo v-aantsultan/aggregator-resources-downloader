@@ -23,7 +23,7 @@ class GVDetailsSource @Inject()(val sparkSession: SparkSession, config: GVDetail
   lazy val GVSalesB2CDf: DataFrame = readByDefaultCustom("gift_voucher.gv_sales","issued_date_date", true)
   lazy val GVSalesB2BDf: DataFrame = readByDefaultCustom("gift_voucher.gv_movement","report_date_date")
   lazy val ExchangeRateDf: DataFrame = readByDefaultCustom("oracle.exchange_rates","conversion_date_date")
-  lazy val UnderlyingProductDf: DataFrame = readByDefaultCustom("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product/")
+  lazy val UnderlyingProductDf: DataFrame = readByDefaultCustomDtl("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl

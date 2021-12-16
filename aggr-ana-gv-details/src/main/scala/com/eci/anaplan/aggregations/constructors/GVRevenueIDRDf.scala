@@ -19,7 +19,7 @@ class GVRevenueIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: 
     s3SourceService.GVRevenueDf.as("gv_revenue")
       .join(ExchangeRateDf.get.as("exchange_rate_idr"),
         $"gv_revenue.revenue_currency" === $"exchange_rate_idr.from_currency"
-          && to_date($"gv_revenue.revenue_date" + expr("INTERVAL 7 HOURS")) === to_date($"exchange_rate_idr.conversion_date")
+          && to_date($"gv_revenue.revenue_date" + expr("INTERVAL 7 HOURS")) === $"exchange_rate_idr.conversion_date"
         , "left")
 
       .select(
@@ -28,8 +28,7 @@ class GVRevenueIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: 
           .otherwise($"gv_revenue.status").as("product"),
         lit("Traveloka").as("business_partner"),
         lit("None").as("voucher_redemption_product"),
-        when($"gv_revenue.transaction_type" === "B2B","B2B")
-          .otherwise(substring($"gv_revenue.revenue_currency",1,2)).as("customer"),
+        substring($"gv_revenue.revenue_currency",1,2).as("customer"),
         lit("None").as("payment_channel_name"),
         when($"gv_revenue.revenue_currency" === "IDR",$"gv_revenue.gift_voucher_amount")
           .otherwise($"gv_revenue.gift_voucher_amount" * $"exchange_rate_idr.conversion_rate")

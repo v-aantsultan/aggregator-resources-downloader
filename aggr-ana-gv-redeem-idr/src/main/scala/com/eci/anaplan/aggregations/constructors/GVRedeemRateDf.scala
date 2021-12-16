@@ -1,6 +1,7 @@
 package com.eci.anaplan.aggregations.constructors
 
 import com.eci.anaplan.services.GVRedeemSource
+import org.apache.spark.sql.functions.to_date
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import javax.inject.{Inject, Singleton}
 
@@ -18,7 +19,7 @@ class GVRedeemRateDf @Inject()(val sparkSession: SparkSession,
       .select(
         $"`from_currency`".as("from_currency"),
         $"`to_currency`".as("to_currency"),
-        $"`conversion_date`".as("conversion_date"),
+        to_date($"`conversion_date`").as("conversion_date"),
         $"`conversion_type`".as("conversion_type"),
         $"`conversion_rate`".as("conversion_rate")
       )
