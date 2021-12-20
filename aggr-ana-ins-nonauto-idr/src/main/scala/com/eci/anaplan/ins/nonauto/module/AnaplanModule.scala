@@ -1,6 +1,6 @@
 package com.eci.anaplan.ins.nonauto.module
 
-import com.eci.anaplan.ins.nonauto.providers.{INSNonAutoSlackClient, INSNonAutoSparkSession}
+import com.eci.anaplan.ins.nonauto.providers.{SlackClientProvider, SparkSessionProvider}
 import com.eci.common.config.Environment
 import com.eci.common.slack.SlackClient
 import com.google.inject.AbstractModule
@@ -12,13 +12,13 @@ import scala.util.Properties
 /**
  * Dependency Injection module initialisation class
  */
-class INSNonAutoModule extends AbstractModule {
+class AnaplanModule extends AbstractModule {
   override def configure(): Unit = {
     val env = Environment.withName(Properties.propOrElse("environment", "local").toLowerCase)
     bind(classOf[Environment.Value]).toInstance(env)
-    bind(classOf[SparkSession]).toProvider(classOf[INSNonAutoSparkSession]).asEagerSingleton()
+    bind(classOf[SparkSession]).toProvider(classOf[SparkSessionProvider]).asEagerSingleton()
     bindConstant().annotatedWith(Names.named("TENANT_ID")).to("1")
     bind(classOf[StatusManagerClientFactory]).toInstance(DefaultStatusDbClientFactory)
-    bind(classOf[SlackClient]).toProvider(classOf[INSNonAutoSlackClient]).asEagerSingleton()
+    bind(classOf[SlackClient]).toProvider(classOf[SlackClientProvider]).asEagerSingleton()
   }
 }

@@ -1,8 +1,8 @@
 package com.eci.anaplan.ins.nonauto
 
 import com.eci.anaplan.ins.nonauto.aggregations.joiners.InsuranceNonAutoIDR
-import com.eci.anaplan.ins.nonauto.configs.INSNonAutoConfig
-import com.eci.anaplan.ins.nonauto.services.{INSNonAutoDestination, INSNonAutoStatusManager}
+import com.eci.anaplan.ins.nonauto.configs.Config
+import com.eci.anaplan.ins.nonauto.services.{S3DestinationService, StatusManagerService}
 import com.eci.common.LoggerSupport
 import com.eci.common.TimeUtils.{toTimestamp, utcDateTimeStringReport}
 import com.eci.common.slack.SlackClient
@@ -15,13 +15,13 @@ import scala.util.{Failure, Success, Try}
  * The main class to perform all the actions to query data, filter, join and upload to s3 as a single CSV file.
  * It should be configured properly from the main class.
  */
-class INSNonAutoCoordinator @Inject()(spark: SparkSession,
-                                      config: INSNonAutoConfig,
-                                      @Named("TENANT_ID") tenantId: String,
-                                      anaplanDataframeJoiner: InsuranceNonAutoIDR,
-                                      statusManagerService: INSNonAutoStatusManager,
-                                      s3DestinationService: INSNonAutoDestination,
-                                      slack: SlackClient) extends LoggerSupport {
+class Coordinator @Inject()(spark: SparkSession,
+                            config: Config,
+                            @Named("TENANT_ID") tenantId: String,
+                            anaplanDataframeJoiner: InsuranceNonAutoIDR,
+                            statusManagerService: StatusManagerService,
+                            s3DestinationService: S3DestinationService,
+                            slack: SlackClient) extends LoggerSupport {
 
   private val fromDate = utcDateTimeStringReport(config.utcZonedStartDate)
   private val toDate = utcDateTimeStringReport(config.utcZonedEndDate)

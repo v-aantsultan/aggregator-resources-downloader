@@ -9,7 +9,7 @@ import javax.inject.{Inject, Singleton}
  * S3 Destination Publisher service
  */
 @Singleton
-class INSNonAutoDestination @Inject()(sparkSession: SparkSession) {
+class S3DestinationService @Inject()(sparkSession: SparkSession) {
   /**
    * Write the dataframe to the provided destination as one CSV file, then return its full path.
    */

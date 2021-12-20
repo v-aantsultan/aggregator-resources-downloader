@@ -1,6 +1,6 @@
 package com.eci.anaplan.ins.nonauto.providers
 
-import com.eci.anaplan.ins.nonauto.configs.INSNonAutoConfig
+import com.eci.anaplan.ins.nonauto.configs.Config
 import com.eci.common.config.Environment
 import com.google.inject.Provider
 import org.apache.spark.SparkConf
@@ -10,7 +10,7 @@ import javax.inject.Inject
 /**
  * Provider to get spark session
  */
-class INSNonAutoSparkSession @Inject()(config: INSNonAutoConfig) extends Provider[SparkSession] {
+class SparkSessionProvider @Inject()(config: Config) extends Provider[SparkSession] {
   def get(): SparkSession = {
     val sparkConf = new SparkConf()
       .setAppName(config.sparkAppName)

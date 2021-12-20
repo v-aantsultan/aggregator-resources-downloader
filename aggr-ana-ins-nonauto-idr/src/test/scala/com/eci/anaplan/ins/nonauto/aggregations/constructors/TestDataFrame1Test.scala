@@ -1,6 +1,6 @@
 package com.eci.anaplan.ins.nonauto.aggregations.constructors
 
-import com.eci.anaplan.ins.nonauto.services.INSNonAutoSource
+import com.eci.anaplan.ins.nonauto.services.S3SourceService
 import com.eci.anaplan.ins.nonauto.utils.{SharedBaseTest, TestSparkSession}
 import org.mockito.Mockito.{mock, when}
 
@@ -10,7 +10,7 @@ import org.mockito.Mockito.{mock, when}
  */
 class TestDataFrame1Test extends SharedBaseTest with TestSparkSession {
 
-  private val mockS3SourceService: INSNonAutoSource = mock(classOf[INSNonAutoSource])
+  private val mockS3SourceService: S3SourceService = mock(classOf[S3SourceService])
   private val testDiscountPremiumDataFrame: INSNonAutoRateDf = new INSNonAutoRateDf(testSparkSession, mockS3SourceService)
   before {
     when(mockS3SourceService.dataFrameSource1).thenReturn(mockedDataFrameSource1)

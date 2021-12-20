@@ -1,12 +1,12 @@
 package com.eci.anaplan.ins.nonauto.aggregations.constructors
 
-import com.eci.anaplan.ins.nonauto.services.INSNonAutoSource
+import com.eci.anaplan.ins.nonauto.services.S3SourceService
 import org.apache.spark.sql.functions.to_date
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class INSNonAutoRateDf @Inject()(val sparkSession: SparkSession, s3SourceService: INSNonAutoSource) {
+class INSNonAutoRateDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3SourceService) {
 
   import sparkSession.implicits._
 

@@ -18,7 +18,7 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
     val GVRedeemIDR = GVRedeemIDRDf.get
       .groupBy($"report_date", $"product", $"business_partner", $"voucher_redemption_product", $"customer", $"payment_channel_name")
       .agg(
-        coalesce(sum($"gift_voucher_amount"),lit(0)).as("gift_voucher_amount"),
+        coalesce(sum($"gift_voucher_amount" * -1),lit(0)).as("gift_voucher_amount"),
         coalesce(countDistinct($"no_of_transactions"),lit(0)).as("no_of_transactions"),
         coalesce(countDistinct($"no_gift_voucher"),lit(0)).as("no_gift_voucher"),
         coalesce(sum($"revenue_amount"),lit(0)).as("revenue_amount"),

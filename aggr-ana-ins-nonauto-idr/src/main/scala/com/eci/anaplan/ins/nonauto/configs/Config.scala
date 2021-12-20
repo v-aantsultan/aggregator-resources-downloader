@@ -13,7 +13,7 @@ import scala.concurrent.duration.Duration
  * Define the config variable loaded when application starts up
  */
 @Singleton
-class INSNonAutoConfig @Inject()(env: Environment) extends INSNonAutoETLDateValidation {
+class Config @Inject()(env: Environment) extends ETLDateValidation {
   private val configFileName = "aggr-ana-ins-nonauto-idr"
 
   private var conf = env match {

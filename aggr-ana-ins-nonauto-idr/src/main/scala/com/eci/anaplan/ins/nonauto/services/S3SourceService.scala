@@ -1,6 +1,6 @@
 package com.eci.anaplan.ins.nonauto.services
 
-import com.eci.anaplan.ins.nonauto.configs.INSNonAutoConfig
+import com.eci.anaplan.ins.nonauto.configs.Config
 import com.eci.common.TimeUtils
 import com.eci.common.services.PathFetcher
 import org.apache.spark.sql.{DataFrame, SparkSession}
@@ -12,13 +12,15 @@ import javax.inject.{Inject, Named, Singleton}
  */
 // TODO: Update dataFrameSource1 column to be read
 @Singleton
-class INSNonAutoSource @Inject()(val sparkSession: SparkSession, config: INSNonAutoConfig,
-                                 @Named("TENANT_ID") val tenantId: String) extends PathFetcher {
+class S3SourceService @Inject()(val sparkSession: SparkSession, config: Config,
+                                @Named("TENANT_ID") val tenantId: String) extends PathFetcher {
 
   // TODO: Add all the necessary dataframe source here. Each DataFrame Source will be a folder in S3
   lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates")
   lazy val ExchangeRateDf: DataFrame = readByDefaultCustom("oracle.exchange_rates","conversion_date_date")
   lazy val INSNonAutoDf: DataFrame = readByDefaultCustom("insurance.sales_bpng","booking_issued_date_date",true)
+  lazy val PurchaseDeliveryItemDf: DataFrame =
+    readByDefaultCustomDtl("ecitrs/procurement.purchase_delivery_item","created_at_date",7)
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl

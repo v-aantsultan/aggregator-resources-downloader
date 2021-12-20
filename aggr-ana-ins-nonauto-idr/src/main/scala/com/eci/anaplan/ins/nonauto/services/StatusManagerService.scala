@@ -1,6 +1,6 @@
 package com.eci.anaplan.ins.nonauto.services
 
-import com.eci.anaplan.ins.nonauto.configs.INSNonAutoConfig
+import com.eci.anaplan.ins.nonauto.configs.Config
 import com.traveloka.eci.statusmanager.api.models.aggregator.{AggregatorStatusRecord, DestinationDetails}
 import com.traveloka.eci.statusmanager.api.models.config.StatusManagerConfig
 import com.traveloka.eci.statusmanager.api.models.{DatalakeDetails, EStatus, MandatorySyncRange}
@@ -13,7 +13,7 @@ import scala.concurrent.Await
  * Service managing StatusManager operations
  */
 @Singleton
-class INSNonAutoStatusManager @Inject()(config: INSNonAutoConfig, statusManagerClientFactory: StatusManagerClientFactory) {
+class StatusManagerService @Inject()(config: Config, statusManagerClientFactory: StatusManagerClientFactory) {
 
   /*
    * Send a ticket to status db to record the job has been done successfully on Aggregator side.

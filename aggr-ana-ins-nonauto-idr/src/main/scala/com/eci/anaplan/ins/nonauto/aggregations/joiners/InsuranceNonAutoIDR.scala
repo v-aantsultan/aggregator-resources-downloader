@@ -8,7 +8,8 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class InsuranceNonAutoIDR @Inject()(spark: SparkSession,
                                     INSNonAutoDf: INSNonAutoDf,
-                                    ExchangeRateDf: INSNonAutoRateDf) {
+                                    ExchangeRateDf: INSNonAutoRateDf,
+                                    PurchaseDeliveryItemDf: PurchaseDeliveryItemDf) {
 
   private def joinDataFrames: DataFrame = {
 
@@ -23,13 +24,17 @@ class InsuranceNonAutoIDR @Inject()(spark: SparkSession,
         $"ins_nonauto.provider_currency" === $"provider_rate.from_currency"
           && $"ins_nonauto.booking_issued_date" === $"provider_rate.conversion_date"
         ,"left")
+      .join(PurchaseDeliveryItemDf.get.as("pdi"),
+        $"ins_nonauto.policy_id" === $"pdi.policy_id"
+        ,"left")
 
       .select(
         $"ins_nonauto.*",
-        lit(0).as("num_of_adults"),
-        lit(0).as("num_of_children"),
-        lit(0).as("num_of_infants"),
-        lit(0).as("num_of_coverage"),
+        $"pdi.num_of_adults".as("num_of_adults"),
+        $"pdi.num_of_children".as("num_of_children"),
+        $"pdi.num_of_infants".as("num_of_infants"),
+        when($"num_of_coverage" === 0,$"num_of_insured")
+          .otherwise($"num_of_coverage").as("num_of_coverage"),
         when($"ins_nonauto.booking_type".isin("CROSSSELL_ADDONS","ADDONS","CROSSSELL_BUNDLE"),lit("IA"))
           .otherwise(lit("IS"))
           .as("product_category"),

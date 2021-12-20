@@ -6,7 +6,7 @@ import java.time.ZonedDateTime
 /**
  * Validate the start date and end date to ETL
  */
-trait INSNonAutoETLDateValidation {
+trait ETLDateValidation {
   def validateDateRange(zonedDateTimeStartDate: ZonedDateTime, zonedDateTimeEndDate: ZonedDateTime): Unit = {
     require(isZonedDateInWholeHour(zonedDateTimeStartDate), "Start date time should be in whole hour")
     require(isZonedDateInWholeHour(zonedDateTimeEndDate), "End date time should be in whole hour")
