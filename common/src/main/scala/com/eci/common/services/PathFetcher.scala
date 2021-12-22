@@ -67,7 +67,7 @@ trait PathFetcher {
     readByCustomRange(domain, startDateToQueryDataLake, endDateToQueryDataLake)
   }
 
-  def readByDefaultCustom(domain: String, ColumnKey: String = "", MergeSchema: Boolean = false, Duration: Int = 1): DataFrame = {
+  def readByDefaultCustom(domain: String, ColumnKey: String, MergeSchema: Boolean = false, Duration: Int = 1): DataFrame = {
     val startDate: String = TimeUtils.utcDateTimeString(utcZonedStartDate.minusDays(Duration))
     val endDate: String = TimeUtils.utcDateTimeString(utcZonedEndDate.plusDays(Duration))
     readByCustom(domain, startDate, endDate, ColumnKey, MergeSchema)
