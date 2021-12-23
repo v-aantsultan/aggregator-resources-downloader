@@ -44,16 +44,15 @@ class AnaplanGVRedeemIDR @Inject()(spark: SparkSession,
           .as("gift_voucher_amount_idr"),
         $"gv_redeem.redeemed_booking_id".as("redeemed_booking_id"),
         $"gv_redeem.redeemed_product_type".as("redeemed_product_type"),
-        $"underlying_product.underlying_product".as("underlying_product"),
         $"gv_redeem.redeemed_trip_type".as("redeemed_trip_type"),
-        $"gv_redeem.redemption_date_ori".as("redemption_date_ori"),
         $"gv_redeem.redemption_date".as("redemption_date"),
         $"gv_redeem.gift_voucher_redeemed_amount".as("gift_voucher_redeemed_amount"),
         coalesce(when($"gv_redeem.gift_voucher_currency" === "IDR",$"gv_redeem.gift_voucher_redeemed_amount")
           .otherwise($"gv_redeem.gift_voucher_redeemed_amount" * $"exchange_rate_idr.conversion_rate"),lit(0))
           .as("gift_voucher_redeemed_amount_idr"),
         $"gv_redeem.selling_price".as("selling_price"),
-        $"gv_redeem.discount_amount".as("discount_amount")
+        $"gv_redeem.discount_amount".as("discount_amount"),
+        $"underlying_product.underlying_product".as("underlying_product")
       )
   }
 

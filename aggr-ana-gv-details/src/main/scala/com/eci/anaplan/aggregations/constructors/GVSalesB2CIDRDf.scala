@@ -31,7 +31,7 @@ class GVSalesB2CIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService:
         lit("Traveloka").as("business_partner"),
         lit("None").as("voucher_redemption_product"),
         substring($"gv_sales_b2c.invoice_currency",1,2).as("customer"),
-        $"gv_sales_b2c.payment_channel_name".as("payment_channel_name"),
+        coalesce($"gv_sales_b2c.payment_channel_name",lit("None")).as("payment_channel_name"),
         when($"gv_sales_b2c.invoice_currency" === "IDR",$"gv_sales_b2c.gift_voucher_amount")
           .otherwise($"gv_sales_b2c.gift_voucher_amount" * $"exchange_rate_idr.conversion_rate")
           .as("gift_voucher_amount"),

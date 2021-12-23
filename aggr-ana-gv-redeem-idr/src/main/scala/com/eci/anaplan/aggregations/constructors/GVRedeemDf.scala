@@ -32,7 +32,6 @@ class GVRedeemDf @Inject()(val sparkSession: SparkSession, s3SourceService: GVRe
         $"`redeemed_booking_id`".as("redeemed_booking_id"),
         $"`redeemed_product_type`".as("redeemed_product_type"),
         $"`redeemed_trip_type`".as("redeemed_trip_type"),
-        $"`redemption_date`".as("redemption_date_ori"),
         to_date($"`redemption_date`" + expr("INTERVAL 7 HOURS")).as("redemption_date"),
         $"`gift_voucher_redeemed_amount`".as("gift_voucher_redeemed_amount"),
         $"`selling_price`".as("selling_price"),
