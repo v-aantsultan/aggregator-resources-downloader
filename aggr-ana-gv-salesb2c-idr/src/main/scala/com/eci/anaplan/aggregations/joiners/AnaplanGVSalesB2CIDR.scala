@@ -1,14 +1,15 @@
 package com.eci.anaplan.aggregations.joiners
 
-import com.eci.anaplan.aggregations.constructors._
+import com.eci.anaplan.aggregations.constructors.{GVSalesB2CDf,GVB2CRateDf,GVB2CMDRDf}
 import javax.inject.{Inject, Singleton}
-import org.apache.spark.sql.functions.{when, coalesce, lit}
+import org.apache.spark.sql.functions.{coalesce, lit, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
 class AnaplanGVSalesB2CIDR @Inject()(spark: SparkSession,
                                      GVSalesB2CDf: GVSalesB2CDf,
-                                     ExchangeRateDf: GVB2CRateDf) {
+                                     ExchangeRateDf: GVB2CRateDf,
+                                     GVB2CMDRDf: GVB2CMDRDf) {
 
   private def joinDataFrames: DataFrame = {
 
@@ -18,7 +19,14 @@ class AnaplanGVSalesB2CIDR @Inject()(spark: SparkSession,
       .join(ExchangeRateDf.get.as("exchange_rate_idr"),
         $"gv_sales_b2c.invoice_currency" === $"exchange_rate_idr.from_currency"
           && $"gv_sales_b2c.issued_date" === $"exchange_rate_idr.conversion_date"
-        , "left")
+        ,"left")
+        .join(GVB2CMDRDf.get.as("mdr"),
+          $"gv_sales_b2c.booking_id" === $"mdr.booking_id"
+          ,"left")
+
+        .withColumn("mdr_amount_prorate",
+          $"mdr.mdr_amount" / $"gv_sales_b2c.count_bid"
+        )
 
       .select(
         $"gv_sales_b2c.sales_delivery_id".as("sales_delivery_id"),
@@ -70,7 +78,11 @@ class AnaplanGVSalesB2CIDR @Inject()(spark: SparkSession,
         coalesce(when($"gv_sales_b2c.invoice_currency" === "IDR",$"gv_sales_b2c.coupon_wht")
           .otherwise($"gv_sales_b2c.coupon_wht" * $"exchange_rate_idr.conversion_rate"),lit(0))
           .as("coupon_wht_idr"),
-        $"gv_sales_b2c.payment_channel_name".as("payment_channel_name")
+        $"gv_sales_b2c.payment_channel_name".as("payment_channel_name"),
+        $"mdr_amount_prorate".as("mdr_amount_prorate"),
+        coalesce(when($"gv_sales_b2c.invoice_currency" === "IDR",$"mdr_amount_prorate")
+          .otherwise($"mdr_amount_prorate" * $"exchange_rate_idr.conversion_rate"),lit(0))
+          .as("mdr_amount_idr")
       )
   }
 

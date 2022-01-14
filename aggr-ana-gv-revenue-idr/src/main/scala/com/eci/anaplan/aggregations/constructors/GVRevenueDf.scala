@@ -5,14 +5,12 @@ import org.apache.spark.sql.functions.{expr, to_date}
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-// TODO: Update TestDataFrame1 and queries required
 @Singleton
 class GVRevenueDf @Inject()(val sparkSession: SparkSession, s3SourceService: GVRevenueSource) {
 
   import sparkSession.implicits._
 
   def get: DataFrame = {
-    // TODO : Update this part of the code to get Domain data from S3
     s3SourceService.GVrevenueDf
       .select(
         $"`entity`".as("entity"),

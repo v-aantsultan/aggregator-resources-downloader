@@ -5,14 +5,12 @@ import org.apache.spark.sql.functions.to_date
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-// TODO: Update TestDataFrame1 and queries required
 @Singleton
 class LPDetailsDf @Inject()(val sparkSession: SparkSession, s3SourceService: LPDetailsSource) {
 
   import sparkSession.implicits._
 
   def get: DataFrame = {
-    // TODO : Update this part of the code to get Domain data from S3
     s3SourceService.LPMutationDf
         .select(
           to_date($"`posting_date`").as("posting_date"),

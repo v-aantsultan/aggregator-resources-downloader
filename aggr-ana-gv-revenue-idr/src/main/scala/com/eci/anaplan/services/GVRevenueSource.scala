@@ -23,6 +23,7 @@ class GVRevenueSource @Inject()(val sparkSession: SparkSession,
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl
+  val flattenerLocal: String = "/Datalake"
 
   // The start date for this aggregation Process
   val utcZonedStartDate: ZonedDateTime = config.utcZonedStartDate

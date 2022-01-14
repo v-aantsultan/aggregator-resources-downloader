@@ -9,7 +9,8 @@ import javax.inject.{Inject, Singleton}
 class InsuranceNonAutoIDR @Inject()(spark: SparkSession,
                                     INSNonAutoDf: INSNonAutoDf,
                                     ExchangeRateDf: INSNonAutoRateDf,
-                                    PurchaseDeliveryItemDf: PurchaseDeliveryItemDf) {
+                                    PurchaseDeliveryItemDf: PurchaseDeliveryItemDf,
+                                    MDRChargesDf: MDRChargesDf) {
 
   private def joinDataFrames: DataFrame = {
 
@@ -27,9 +28,54 @@ class InsuranceNonAutoIDR @Inject()(spark: SparkSession,
       .join(PurchaseDeliveryItemDf.get.as("pdi"),
         $"ins_nonauto.policy_id" === $"pdi.policy_id"
         ,"left")
+      .join(MDRChargesDf.get.as("mdr"),
+        $"ins_nonauto.booking_id" === $"mdr.booking_id"
+        ,"left")
+
+      .withColumn("mdr_charges_prorate",
+        $"mdr.mdr_amount" / $"ins_nonauto.count_bid"
+      )
 
       .select(
-        $"ins_nonauto.*",
+        $"ins_nonauto.booking_issued_date",
+        $"ins_nonauto.booking_id",
+        $"ins_nonauto.product_type",
+        $"ins_nonauto.product_name",
+        $"ins_nonauto.insurance_plan",
+        $"ins_nonauto.collecting_payment_entity",
+        $"ins_nonauto.payment_scope",
+        $"ins_nonauto.invoice_currency",
+        $"ins_nonauto.total_actual_fare_paid_by_customer",
+        $"ins_nonauto.discount_or_premium",
+        $"ins_nonauto.unique_code",
+        $"ins_nonauto.coupon_value",
+        $"ins_nonauto.point_redemption",
+        $"ins_nonauto.installment_request",
+        $"ins_nonauto.inventory_owner_entity",
+        $"ins_nonauto.total_fare_from_inventory_owner",
+        $"ins_nonauto.total_fare_from_provider_in_payment_currency",
+        $"ins_nonauto.fulfillment_id",
+        $"ins_nonauto.business_model",
+        $"ins_nonauto.policy_id",
+        $"ins_nonauto.insurance_issued_date",
+        $"ins_nonauto.provider_currency",
+        $"ins_nonauto.total_fare_from_provider",
+        $"ins_nonauto.total_fare_paid_to_provider",
+        $"ins_nonauto.total_base_fare_for_commission",
+        $"ins_nonauto.insurance_commission",
+        $"ins_nonauto.total_other_income",
+        $"ins_nonauto.collecting_payment_entity_insurance_commission_70_percentage",
+        $"ins_nonauto.collecting_payment_entity_total_other_income_70_percentage",
+        $"ins_nonauto.inventory_owner_entity_insurance_commission_30_percentage",
+        $"ins_nonauto.inventory_owner_entity_total_other_income_30_percentage",
+        $"ins_nonauto.is_interco",
+        $"ins_nonauto.locale",
+        $"ins_nonauto.insurance_booking_item_id",
+        $"ins_nonauto.discount_wht_expense",
+        $"ins_nonauto.coupon_wht_expense",
+        $"ins_nonauto.total_wht_expense",
+        $"ins_nonauto.insurer_name",
+        $"ins_nonauto.booking_type",
         $"pdi.num_of_adults".as("num_of_adults"),
         $"pdi.num_of_children".as("num_of_children"),
         $"pdi.num_of_infants".as("num_of_infants"),
@@ -105,7 +151,11 @@ class InsuranceNonAutoIDR @Inject()(spark: SparkSession,
           when($"ins_nonauto.provider_currency" === "IDR",$"ins_nonauto.inventory_owner_entity_total_other_income_30_percentage")
             .otherwise($"ins_nonauto.inventory_owner_entity_total_other_income_30_percentage" * $"provider_rate.conversion_rate"),
           lit(0))
-          .as("inventory_owner_entity_total_other_income_30_percentage_idr")
+          .as("inventory_owner_entity_total_other_income_30_percentage_idr"),
+        coalesce($"mdr_charges_prorate",lit(0)).as("mdr_charges_prorate"),
+        coalesce(when($"ins_nonauto.invoice_currency" === "IDR",$"mdr_charges_prorate")
+          .otherwise($"mdr_charges_prorate" * $"invoice_rate.conversion_rate"),lit(0))
+          .as("mdr_charges_idr")
       )
   }
 

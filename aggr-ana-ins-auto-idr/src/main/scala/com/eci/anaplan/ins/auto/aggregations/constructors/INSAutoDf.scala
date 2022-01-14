@@ -1,9 +1,9 @@
 package com.eci.anaplan.ins.auto.aggregations.constructors
 
 import com.eci.anaplan.ins.auto.services.S3SourceService
-import org.apache.spark.sql.functions.{expr, to_date}
+import org.apache.spark.sql.expressions.Window
+import org.apache.spark.sql.functions.{count, expr, to_date}
 import org.apache.spark.sql.{DataFrame, SparkSession}
-
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -13,10 +13,15 @@ class INSAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3Sou
 
   def get: DataFrame = {
     s3SourceService.INSAutoDf
+      .withColumn("count_bid",
+          count($"`booking_id`").over(Window.partitionBy($"`booking_id`"))
+      )
+
       .select(
         to_date($"`recognition_date`" + expr("INTERVAL 7 HOURS")).as("recognition_date"),
         $"`booking_issued_date`".as("booking_issued_date"),
         $"`booking_id`".as("booking_id"),
+        $"count_bid".as("count_bid"),
         $"`product_type`".as("product_type"),
         $"`product_name`".as("product_name"),
         $"`insurance_plan`".as("insurance_plan"),

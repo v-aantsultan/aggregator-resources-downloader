@@ -6,7 +6,6 @@ import com.eci.anaplan.configs.GVDetailsConfig
 import com.eci.anaplan.aggregations.joiners.AnaplanGiftVoucherDetails
 import com.eci.anaplan.services.{GVDetailsDestination, GVDetailsStatusManager}
 import com.eci.common.slack.SlackClient
-
 import javax.inject.{Inject, Named}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.col

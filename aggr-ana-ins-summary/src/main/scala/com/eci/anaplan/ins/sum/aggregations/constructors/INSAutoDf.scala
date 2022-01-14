@@ -3,7 +3,6 @@ package com.eci.anaplan.ins.sum.aggregations.constructors
 import com.eci.anaplan.ins.sum.services.S3SourceService
 import org.apache.spark.sql.functions.{expr, regexp_replace, substring, to_date, split}
 import org.apache.spark.sql.{DataFrame, SparkSession}
-
 import javax.inject.{Inject, Singleton}
 
 @Singleton

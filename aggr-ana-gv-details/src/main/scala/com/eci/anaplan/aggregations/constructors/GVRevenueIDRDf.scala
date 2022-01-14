@@ -3,10 +3,8 @@ package com.eci.anaplan.aggregations.constructors
 import com.eci.anaplan.services.GVDetailsSource
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, SparkSession}
-
 import javax.inject.{Inject, Singleton}
 
-// TODO: Update TestDataFrame1 and queries required
 @Singleton
 class GVRevenueIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: GVDetailsSource,
                                ExchangeRateDf: GVDetailsRateDf) {
@@ -14,8 +12,6 @@ class GVRevenueIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: 
   import sparkSession.implicits._
 
   def get: DataFrame = {
-
-    // TODO : Update this part of the code to get Domain data from S3
     s3SourceService.GVRevenueDf.as("gv_revenue")
       .join(ExchangeRateDf.get.as("exchange_rate_idr"),
         $"gv_revenue.revenue_currency" === $"exchange_rate_idr.from_currency"
@@ -41,7 +37,8 @@ class GVRevenueIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: 
         lit(0).as("unique_code"),
         lit(0).as("coupon_value"),
         lit(0).as("discount"),
-        lit(0).as("premium")
+        lit(0).as("premium"),
+        lit(0).as("mdr_charges")
       )
   }
 }

@@ -7,7 +7,6 @@ import com.google.inject.AbstractModule
 import com.google.inject.name.Names
 import com.traveloka.eci.statusmanager.client.{DefaultStatusDbClientFactory, StatusManagerClientFactory}
 import org.apache.spark.sql.SparkSession
-
 import scala.util.Properties
 
 /**

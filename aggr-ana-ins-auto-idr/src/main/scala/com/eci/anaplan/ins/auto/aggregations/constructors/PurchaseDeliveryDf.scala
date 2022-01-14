@@ -2,7 +2,6 @@ package com.eci.anaplan.ins.auto.aggregations.constructors
 
 import com.eci.anaplan.ins.auto.services.S3SourceService
 import org.apache.spark.sql.{DataFrame, SparkSession}
-
 import javax.inject.{Inject, Singleton}
 
 @Singleton

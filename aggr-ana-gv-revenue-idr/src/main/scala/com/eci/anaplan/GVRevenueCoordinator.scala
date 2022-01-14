@@ -9,7 +9,6 @@ import com.eci.common.slack.SlackClient
 import javax.inject.{Inject, Named}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.col
-
 import scala.util.{Failure, Success, Try}
 
 /**

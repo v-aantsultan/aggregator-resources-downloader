@@ -4,7 +4,6 @@ import com.eci.anaplan.configs.GVRevenueConfig
 import com.eci.common.config.Environment.Environment
 import com.eci.common.slack.{DefaultSlackClientFactory, SlackClient, SlackConfig}
 import com.google.inject.Provider
-
 import javax.inject.Inject
 
 class GVRevenueSlackClient @Inject()(config: GVRevenueConfig, environment: Environment) extends Provider[SlackClient] {

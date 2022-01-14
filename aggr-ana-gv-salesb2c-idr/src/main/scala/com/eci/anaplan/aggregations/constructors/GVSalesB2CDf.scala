@@ -1,23 +1,27 @@
 package com.eci.anaplan.aggregations.constructors
 
 import com.eci.anaplan.services.GVB2CSource
-import org.apache.spark.sql.functions.{expr, to_date}
+import org.apache.spark.sql.expressions.Window
+import org.apache.spark.sql.functions.{count, expr, to_date}
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-// TODO: Update TestDataFrame1 and queries required
 @Singleton
 class GVSalesB2CDf @Inject()(val sparkSession: SparkSession, s3SourceService: GVB2CSource) {
 
   import sparkSession.implicits._
 
   def get: DataFrame = {
-    // TODO : Update this part of the code to get Domain data from S3
     s3SourceService.GVSalesB2CDf
+      .withColumn("count_bid",
+          count($"`booking_id`").over(Window.partitionBy($"`booking_id`"))
+      )
+
       .select(
         $"`sales_delivery_id`".as("sales_delivery_id"),
         $"`entity`".as("entity"),
         $"`booking_id`".as("booking_id"),
+        $"count_bid".as("count_bid"),
         $"`product_type`".as("product_type"),
         $"`trip_type`".as("trip_type"),
         $"`invoice_amount`".as("invoice_amount"),

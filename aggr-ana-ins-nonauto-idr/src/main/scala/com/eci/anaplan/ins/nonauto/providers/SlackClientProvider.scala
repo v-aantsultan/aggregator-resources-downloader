@@ -13,9 +13,3 @@ class SlackClientProvider @Inject()(config: Config, environment: Environment) ex
     DefaultSlackClientFactory.create(slackConfig)
   }
 }
-
-object SlackClientProvider {
-  val SlackChannelKey = "slack.channel"
-  val SlackBotToken = "slack.token"
-  val AppNameKey = "app.name"
-}

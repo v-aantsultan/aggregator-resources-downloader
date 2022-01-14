@@ -6,11 +6,9 @@ import com.eci.anaplan.configs.LPMutationConfig
 import com.eci.anaplan.aggregations.joiners.AnaplanLoyaltyPointIDR
 import com.eci.anaplan.services.{LPMutationDestination, LPMutationStatusManager}
 import com.eci.common.slack.SlackClient
-
 import javax.inject.{Inject, Named}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.col
-
 import scala.util.{Failure, Success, Try}
 
 /**

@@ -4,7 +4,6 @@ import com.eci.anaplan.configs.GVB2BConfig
 import com.eci.common.config.Environment.Environment
 import com.eci.common.slack.{DefaultSlackClientFactory, SlackClient, SlackConfig}
 import com.google.inject.Provider
-
 import javax.inject.Inject
 
 class GVB2BSlackClient @Inject()(config: GVB2BConfig, environment: Environment) extends Provider[SlackClient] {

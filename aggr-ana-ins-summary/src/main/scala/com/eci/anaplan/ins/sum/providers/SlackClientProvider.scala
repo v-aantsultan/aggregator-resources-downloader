@@ -4,7 +4,6 @@ import com.eci.anaplan.ins.sum.configs.Config
 import com.eci.common.config.Environment.Environment
 import com.eci.common.slack.{DefaultSlackClientFactory, SlackClient, SlackConfig}
 import com.google.inject.Provider
-
 import javax.inject.Inject
 
 class SlackClientProvider @Inject()(config: Config, environment: Environment) extends Provider[SlackClient] {

@@ -15,6 +15,7 @@ trait PathFetcher {
 
   val flattenerSrc: String
   val flattenerSrcDtl: String
+  val flattenerLocal: String
 
   val tenantId: String
 
@@ -63,6 +64,21 @@ trait PathFetcher {
     }
   }
 
+  def readByCustomLocal(domain: String, startDate: String, endDate: String, ColumnKey: String): DataFrame = {
+    if (domain.contains("eci_sheets/") || domain.contains("business_platform_master/")) {
+      sparkSession.read
+        .parquet(s"$flattenerLocal/$domain")
+    } else if (domain.contains("business_platform/")) {
+      sparkSession.read
+        .parquet(s"$flattenerLocal/$domain")
+        .filter(col(ColumnKey) >= startDate && col(ColumnKey) <= endDate && $"tenant_id" === tenantId)
+    } else {
+      sparkSession.read
+        .parquet(s"$flattenerLocal/$domain")
+        .filter(col(ColumnKey) >= startDate && col(ColumnKey) <= endDate)
+    }
+  }
+
   def readByDefaultRange(domain: String): DataFrame = {
     readByCustomRange(domain, startDateToQueryDataLake, endDateToQueryDataLake)
   }
@@ -77,6 +93,12 @@ trait PathFetcher {
     val startDate: String = TimeUtils.utcDateTimeString(utcZonedStartDate.minusDays(Duration))
     val endDate: String = TimeUtils.utcDateTimeString(utcZonedEndDate.plusDays(Duration))
     readByCustomDtl(domain, startDate, endDate, ColumnKey)
+  }
+
+  def readByDefaultLocal(domain: String, ColumnKey: String = "", Duration: Int = 1): DataFrame = {
+    val startDate: String = TimeUtils.utcDateTimeString(utcZonedStartDate.minusDays(Duration))
+    val endDate: String = TimeUtils.utcDateTimeString(utcZonedEndDate.plusDays(Duration))
+    readByCustomLocal(domain, startDate, endDate, ColumnKey)
   }
 
   def readByJoinedDomainRange(domain: String): DataFrame = {

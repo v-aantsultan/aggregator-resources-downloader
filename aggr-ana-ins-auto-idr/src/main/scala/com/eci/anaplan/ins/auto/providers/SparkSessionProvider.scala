@@ -5,7 +5,6 @@ import com.eci.common.config.Environment
 import com.google.inject.Provider
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
-
 import javax.inject.Inject
 
 /**

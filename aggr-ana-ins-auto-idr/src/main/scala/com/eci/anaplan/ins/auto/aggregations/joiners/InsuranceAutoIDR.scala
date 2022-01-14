@@ -1,16 +1,16 @@
 package com.eci.anaplan.ins.auto.aggregations.joiners
 
-import com.eci.anaplan.ins.auto.aggregations.constructors.{INSAutoDf, ExchangeRateDf, PurchaseDeliveryDf}
+import com.eci.anaplan.ins.auto.aggregations.constructors._
 import org.apache.spark.sql.functions.{coalesce, lit, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
-
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class InsuranceAutoIDR @Inject()(spark: SparkSession,
                                  INSNonAutoDf: INSAutoDf,
                                  ExchangeRateDf: ExchangeRateDf,
-                                 PurchaseDeliveryDf: PurchaseDeliveryDf) {
+                                 PurchaseDeliveryDf: PurchaseDeliveryDf,
+                                 MDRChargesDf: MDRChargesDf) {
 
   private def joinDataFrames: DataFrame = {
 
@@ -28,9 +28,54 @@ class InsuranceAutoIDR @Inject()(spark: SparkSession,
       .join(PurchaseDeliveryDf.get.as("pd"),
         $"ins_auto.policy_id" === $"pd.policy_id"
         ,"left")
+      .join(MDRChargesDf.get.as("mdr"),
+        $"ins_auto.booking_id" === $"mdr.booking_id"
+        ,"left")
+
+      .withColumn("mdr_charges_prorate",
+        $"mdr.mdr_amount" / $"ins_auto.count_bid"
+      )
 
       .select(
-        $"ins_auto.*",
+        $"ins_auto.recognition_date",
+        $"ins_auto.booking_issued_date",
+        $"ins_auto.booking_id",
+        $"ins_auto.product_type",
+        $"ins_auto.product_name",
+        $"ins_auto.insurance_plan",
+        $"ins_auto.collecting_payment_entity",
+        $"ins_auto.payment_scope",
+        $"ins_auto.invoice_currency",
+        $"ins_auto.total_actual_fare_paid_by_customer",
+        $"ins_auto.discount_or_premium",
+        $"ins_auto.discount_wht_expense",
+        $"ins_auto.unique_code",
+        $"ins_auto.coupon_value",
+        $"ins_auto.coupon_wht_expense",
+        $"ins_auto.point_redemption",
+        $"ins_auto.installment_request",
+        $"ins_auto.total_wht_expense",
+        $"ins_auto.recognized_expense",
+        $"ins_auto.provider_currency",
+        $"ins_auto.inventory_owner_entity",
+        $"ins_auto.total_fare_from_inventory_owner",
+        $"ins_auto.total_fare_from_provider_in_payment_currency",
+        $"ins_auto.fulfillment_id",
+        $"ins_auto.insurer_name",
+        $"ins_auto.business_model",
+        $"ins_auto.policy_id",
+        $"ins_auto.insurance_expected_recognition_date",
+        $"ins_auto.total_fare_from_provider",
+        $"ins_auto.total_fare_paid_to_provider",
+        $"ins_auto.total_base_fare_from_commission",
+        $"ins_auto.insurance_commission",
+        $"ins_auto.total_other_income",
+        $"ins_auto.collecting_payment_entity_insurance_commission_70%",
+        $"ins_auto.collecting_payment_entity_total_other_income_70%",
+        $"ins_auto.inventory_owner_entity_insurance_commission_30%",
+        $"ins_auto.inventory_owner_entity_total_other_income_30%",
+        $"ins_auto.is_interco",
+        $"ins_auto.locale",
         $"pd.num_of_coverage".as("num_of_coverage"),
         $"ins_auto.product_type".as("product_category"),
         coalesce(when($"ins_auto.invoice_currency" === "IDR",$"ins_auto.total_actual_fare_paid_by_customer")
@@ -103,7 +148,11 @@ class InsuranceAutoIDR @Inject()(spark: SparkSession,
           when($"ins_auto.provider_currency" === "IDR",$"ins_auto.inventory_owner_entity_total_other_income_30%")
             .otherwise($"ins_auto.inventory_owner_entity_total_other_income_30%" * $"provider_rate.conversion_rate"),
           lit(0))
-          .as("inventory_owner_entity_total_other_income_30%_idr")
+          .as("inventory_owner_entity_total_other_income_30%_idr"),
+        coalesce($"mdr_charges_prorate",lit(0)).as("mdr_charges_prorate"),
+        coalesce(when($"ins_auto.invoice_currency" === "IDR",$"mdr_charges_prorate")
+          .otherwise($"mdr_charges_prorate" * $"invoice_rate.conversion_rate"),lit(0))
+          .as("mdr_charges_idr")
       )
   }
 

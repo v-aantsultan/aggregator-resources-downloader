@@ -5,7 +5,6 @@ import org.apache.spark.sql.functions.to_date
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import javax.inject.{Inject, Singleton}
 
-// TODO: Update TestDataFrame1 and queries required
 @Singleton
 class LPDetailsRateDf @Inject()(val sparkSession: SparkSession,
                                 s3SourceService: LPDetailsSource) {
@@ -13,7 +12,6 @@ class LPDetailsRateDf @Inject()(val sparkSession: SparkSession,
   import sparkSession.implicits._
 
   def get: DataFrame = {
-    // TODO : Update this part of the code to get Domain data from S3
     s3SourceService.ExchangeRateDf
       .filter($"`to_currency`" === "IDR")
       .select(

@@ -5,7 +5,6 @@ import com.traveloka.eci.statusmanager.api.models.aggregator.{AggregatorStatusRe
 import com.traveloka.eci.statusmanager.api.models.config.StatusManagerConfig
 import com.traveloka.eci.statusmanager.api.models.{DatalakeDetails, EStatus, MandatorySyncRange}
 import com.traveloka.eci.statusmanager.client.StatusManagerClientFactory
-
 import java.time.ZonedDateTime
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Await

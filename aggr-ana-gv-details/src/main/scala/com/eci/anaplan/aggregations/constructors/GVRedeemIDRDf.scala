@@ -5,7 +5,6 @@ import org.apache.spark.sql.functions.{expr, lit, substring, to_date, when}
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-// TODO: Update TestDataFrame1 and queries required
 @Singleton
 class GVRedeemIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: GVDetailsSource,
                               UnderlyingProductDf: GVDetailsUnderlyingProductDf,
@@ -14,7 +13,6 @@ class GVRedeemIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: G
   import sparkSession.implicits._
 
   def get: DataFrame = {
-    // TODO : Update this part of the code to get Domain data from S3
     s3SourceService.GVRedeemDf.as("gv_redeem")
       .join(ExchangeRateDf.get.as("exchange_rate_idr"),
           $"gv_redeem.gift_voucher_currency" === $"exchange_rate_idr.from_currency"
@@ -40,7 +38,8 @@ class GVRedeemIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: G
         lit(0).as("unique_code"),
         lit(0).as("coupon_value"),
         lit(0).as("discount"),
-        lit(0).as("premium")
+        lit(0).as("premium"),
+        lit(0).as("mdr_charges")
       )
   }
 }

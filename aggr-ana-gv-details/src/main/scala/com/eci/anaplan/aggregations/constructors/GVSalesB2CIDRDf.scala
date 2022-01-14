@@ -1,21 +1,19 @@
 package com.eci.anaplan.aggregations.constructors
 
 import com.eci.anaplan.services.GVDetailsSource
+import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, SparkSession}
-
 import javax.inject.{Inject, Singleton}
 
-// TODO: Update TestDataFrame1 and queries required
 @Singleton
 class GVSalesB2CIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: GVDetailsSource,
-                                ExchangeRateDf: GVDetailsRateDf, GVIssuedlisteDf: GVIssuedIDRDf) {
+                                ExchangeRateDf: GVDetailsRateDf, GVIssuedlisteDf: GVIssuedIDRDf,
+                                GVDetailsMDRDf: GVDetailsMDRDf) {
 
   import sparkSession.implicits._
 
   def get: DataFrame = {
-
-    // TODO : Update this part of the code to get Domain data from S3
     s3SourceService.GVSalesB2CDf.as("gv_sales_b2c")
       .join(ExchangeRateDf.get.as("exchange_rate_idr"),
         $"gv_sales_b2c.invoice_currency" === $"exchange_rate_idr.from_currency"
@@ -24,6 +22,16 @@ class GVSalesB2CIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService:
       .join(GVIssuedlisteDf.get.as("gv_issuedlist"),
         $"gv_sales_b2c.booking_id" === $"gv_issuedlist.transaction_id"
         , "left")
+      .join(GVDetailsMDRDf.get.as("mdr"),
+        $"gv_sales_b2c.booking_id" === $"mdr.booking_id"
+        , "left")
+
+      .withColumn("count_bid",
+        count($"gv_sales_b2c.booking_id").over(Window.partitionBy($"gv_sales_b2c.booking_id"))
+      )
+      .withColumn("mdr_charges_prorate",
+        $"mdr.mdr_amount" / $"count_bid"
+      )
 
       .select(
         to_date($"gv_sales_b2c.issued_date" + expr("INTERVAL 7 HOURS")).as("report_date"),
@@ -49,7 +57,10 @@ class GVSalesB2CIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService:
           .as("discount_or_premium_in_idr"),
         when($"gv_sales_b2c.invoice_currency" === "IDR",$"gv_sales_b2c.discount_wht")
           .otherwise($"gv_sales_b2c.discount_wht" * $"exchange_rate_idr.conversion_rate")
-          .as("discount_wht_in_idr")
+          .as("discount_wht_in_idr"),
+        when($"gv_sales_b2c.invoice_currency" === "IDR",$"mdr_charges_prorate")
+          .otherwise($"mdr_charges_prorate" * $"exchange_rate_idr.conversion_rate")
+          .as("mdr_amount_idr")
       )
   }
 }

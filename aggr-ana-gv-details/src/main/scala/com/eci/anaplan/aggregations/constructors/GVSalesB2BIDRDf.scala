@@ -3,10 +3,8 @@ package com.eci.anaplan.aggregations.constructors
 import com.eci.anaplan.services.GVDetailsSource
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, SparkSession}
-
 import javax.inject.{Inject, Singleton}
 
-// TODO: Update TestDataFrame1 and queries required
 @Singleton
 class GVSalesB2BIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: GVDetailsSource,
                                 ExchangeRateDf: GVDetailsRateDf) {
@@ -14,8 +12,6 @@ class GVSalesB2BIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService:
   import sparkSession.implicits._
 
   def get: DataFrame = {
-
-    // TODO : Update this part of the code to get Domain data from S3
     s3SourceService.GVSalesB2BDf.as("gv_sales_b2b")
       .join(ExchangeRateDf.get.as("exchange_rate_idr"),
         $"gv_sales_b2b.gift_voucher_currency" === $"exchange_rate_idr.from_currency"
@@ -46,8 +42,8 @@ class GVSalesB2BIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService:
         when($"gv_sales_b2b.gift_voucher_currency" === "IDR",$"gv_sales_b2b.discount_wht")
           .otherwise($"gv_sales_b2b.discount_wht" * $"exchange_rate_idr.conversion_rate")
           .as("discount_wht_in_idr"),
-        lit(0).as("premium")
-
+        lit(0).as("premium"),
+        lit(0).as("mdr_charges")
       )
   }
 }

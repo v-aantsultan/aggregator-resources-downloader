@@ -1,7 +1,6 @@
 package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
-
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.functions.{coalesce, countDistinct, lit, sum, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
@@ -25,7 +24,8 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
         coalesce(sum($"unique_code"),lit(0)).as("unique_code"),
         coalesce(sum($"coupon_value"),lit(0)).as("coupon_value"),
         coalesce(sum($"discount"),lit(0)).as("discount"),
-        coalesce(sum($"premium"),lit(0)).as("premium")
+        coalesce(sum($"premium"),lit(0)).as("premium"),
+        coalesce(sum($"mdr_charges"),lit(0)).as("mdr_charges")
       )
       .select(
         $"*"
@@ -41,7 +41,8 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
         coalesce(sum($"unique_code"),lit(0)).as("unique_code"),
         coalesce(sum($"coupon_value"),lit(0)).as("coupon_value"),
         coalesce(sum($"discount"),lit(0)).as("discount"),
-        coalesce(sum($"premium"),lit(0)).as("premium")
+        coalesce(sum($"premium"),lit(0)).as("premium"),
+        coalesce(sum($"mdr_charges"),lit(0)).as("mdr_charges")
       )
       .select(
         $"*"
@@ -63,7 +64,8 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
         coalesce(sum(
           when($"discount_or_premium_in_idr" >= 0 ,$"discount_or_premium_in_idr")
             .otherwise(0)
-        ),lit(0)).as("premium")
+        ),lit(0)).as("premium"),
+        coalesce(sum($"mdr_amount_idr"),lit(0)).as("mdr_charges")
       )
       .select(
         $"*"
@@ -92,7 +94,8 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
             .when($"movement_type" === "CODE_CANCELLATION",($"discount_amount_in_idr" + $"discount_wht_in_idr") * -1)
             .otherwise(0)
         ),lit(0)).as("discount"),
-        coalesce(sum($"premium"),lit(0)).as("premium")
+        coalesce(sum($"premium"),lit(0)).as("premium"),
+        coalesce(sum($"mdr_charges"),lit(0)).as("mdr_charges")
       )
       .select(
         $"report_date",
@@ -107,8 +110,9 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
         $"revenue_amount",
         $"unique_code",
         $"coupon_value",
-        ($"discount" * -1).as("discount") ,
-        $"premium"
+        ($"discount" * -1).as("discount"),
+        $"premium",
+        $"mdr_charges"
       )
 
     GVRedeemIDR.union(GVRevenueIDR).union(GVSalesB2CIDR).union(GVSalesB2BIDR)

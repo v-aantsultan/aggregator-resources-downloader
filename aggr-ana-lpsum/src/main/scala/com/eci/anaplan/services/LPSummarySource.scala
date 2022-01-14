@@ -4,7 +4,6 @@ import java.time.ZonedDateTime
 import com.eci.common.TimeUtils
 import com.eci.anaplan.configs.LPSummaryConfig
 import com.eci.common.services.PathFetcher
-
 import javax.inject.{Inject, Named, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -29,6 +28,7 @@ class LPSummarySource @Inject()(val sparkSession: SparkSession, config: LPSummar
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl
+  val flattenerLocal: String = "/Datalake"
 
   // The start date for this aggregation Process
   val utcZonedStartDate: ZonedDateTime = config.utcZonedStartDate

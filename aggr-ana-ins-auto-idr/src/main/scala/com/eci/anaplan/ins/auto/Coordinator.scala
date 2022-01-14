@@ -8,7 +8,6 @@ import com.eci.common.TimeUtils.{toTimestamp, utcDateTimeStringReport}
 import com.eci.common.slack.SlackClient
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.col
-
 import javax.inject.{Inject, Named}
 import scala.util.{Failure, Success, Try}
 

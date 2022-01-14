@@ -10,7 +10,6 @@ class GVRedeemUnderlyingProductDf @Inject()(val sparkSession: SparkSession, s3So
   import sparkSession.implicits._
 
   def get: DataFrame = {
-    // TODO : Update this part of the code to get Domain data from S3
     s3SourceService.UnderlyingProductDf
       .select(
         $"`fs_product_type`".as("fs_product_type"),
