@@ -136,22 +136,22 @@ class InsuranceNonAutoIDR @Inject()(spark: SparkSession,
           when($"ins_nonauto.provider_currency" === "IDR",$"ins_nonauto.collecting_payment_entity_insurance_commission_70_percentage")
             .otherwise($"ins_nonauto.collecting_payment_entity_insurance_commission_70_percentage" * $"provider_rate.conversion_rate"),
           lit(0))
-          .as("collecting_payment_entity_insurance_commission_70_percentage_idr"),
+          .as("collecting_payment_entity_insurance_commission_70_idr"),
         coalesce(
           when($"ins_nonauto.provider_currency" === "IDR",$"ins_nonauto.collecting_payment_entity_total_other_income_70_percentage")
             .otherwise($"ins_nonauto.collecting_payment_entity_total_other_income_70_percentage" * $"provider_rate.conversion_rate"),
           lit(0))
-          .as("collecting_payment_entity_total_other_income_70_percentage_idr"),
+          .as("collecting_payment_entity_total_other_income_70_idr"),
         coalesce(
           when($"ins_nonauto.provider_currency" === "IDR",$"ins_nonauto.inventory_owner_entity_insurance_commission_30_percentage")
             .otherwise($"ins_nonauto.inventory_owner_entity_insurance_commission_30_percentage" * $"provider_rate.conversion_rate"),
           lit(0))
-          .as("inventory_owner_entity_insurance_commission_30_percentage_idr"),
+          .as("inventory_owner_entity_insurance_commission_30_idr"),
         coalesce(
           when($"ins_nonauto.provider_currency" === "IDR",$"ins_nonauto.inventory_owner_entity_total_other_income_30_percentage")
             .otherwise($"ins_nonauto.inventory_owner_entity_total_other_income_30_percentage" * $"provider_rate.conversion_rate"),
           lit(0))
-          .as("inventory_owner_entity_total_other_income_30_percentage_idr"),
+          .as("inventory_owner_entity_total_other_income_30_idr"),
         coalesce($"mdr_charges_prorate",lit(0)).as("mdr_charges_prorate"),
         coalesce(when($"ins_nonauto.invoice_currency" === "IDR",$"mdr_charges_prorate")
           .otherwise($"mdr_charges_prorate" * $"invoice_rate.conversion_rate"),lit(0))
