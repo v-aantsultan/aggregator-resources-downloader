@@ -70,10 +70,10 @@ class InsuranceAutoIDR @Inject()(spark: SparkSession,
         $"ins_auto.total_base_fare_from_commission",
         $"ins_auto.insurance_commission",
         $"ins_auto.total_other_income",
-        $"ins_auto.collecting_payment_entity_insurance_commission_70%",
-        $"ins_auto.collecting_payment_entity_total_other_income_70%",
-        $"ins_auto.inventory_owner_entity_insurance_commission_30%",
-        $"ins_auto.inventory_owner_entity_total_other_income_30%",
+        $"ins_auto.collecting_payment_entity_insurance_commission_70_percentage",
+        $"ins_auto.collecting_payment_entity_total_other_income_70_percentage",
+        $"ins_auto.inventory_owner_entity_insurance_commission_30_percentage",
+        $"ins_auto.inventory_owner_entity_total_other_income_30_percentage",
         $"ins_auto.is_interco",
         $"ins_auto.locale",
         $"pd.num_of_coverage".as("num_of_coverage"),
@@ -130,25 +130,25 @@ class InsuranceAutoIDR @Inject()(spark: SparkSession,
           .otherwise($"ins_auto.total_other_income" * $"provider_rate.conversion_rate"),lit(0))
           .as("total_other_income_idr"),
         coalesce(
-          when($"ins_auto.provider_currency" === "IDR",$"ins_auto.collecting_payment_entity_insurance_commission_70%")
-            .otherwise($"ins_auto.collecting_payment_entity_insurance_commission_70%" * $"provider_rate.conversion_rate"),
+          when($"ins_auto.provider_currency" === "IDR",$"ins_auto.collecting_payment_entity_insurance_commission_70_percentage")
+            .otherwise($"ins_auto.collecting_payment_entity_insurance_commission_70_percentage" * $"provider_rate.conversion_rate"),
           lit(0))
-          .as("collecting_payment_entity_insurance_commission_70%_idr"),
+          .as("collecting_payment_entity_insurance_commission_70_percentage_idr"),
         coalesce(
-          when($"ins_auto.provider_currency" === "IDR",$"ins_auto.collecting_payment_entity_total_other_income_70%")
-            .otherwise($"ins_auto.collecting_payment_entity_total_other_income_70%" * $"provider_rate.conversion_rate"),
+          when($"ins_auto.provider_currency" === "IDR",$"ins_auto.collecting_payment_entity_total_other_income_70_percentage")
+            .otherwise($"ins_auto.collecting_payment_entity_total_other_income_70_percentage" * $"provider_rate.conversion_rate"),
           lit(0))
-          .as("collecting_payment_entity_total_other_income_70%_idr"),
+          .as("collecting_payment_entity_total_other_income_70_percentage_idr"),
         coalesce(
-          when($"ins_auto.provider_currency" === "IDR",$"ins_auto.inventory_owner_entity_insurance_commission_30%")
-            .otherwise($"ins_auto.inventory_owner_entity_insurance_commission_30%" * $"provider_rate.conversion_rate"),
+          when($"ins_auto.provider_currency" === "IDR",$"ins_auto.inventory_owner_entity_insurance_commission_30_percentage")
+            .otherwise($"ins_auto.inventory_owner_entity_insurance_commission_30_percentage" * $"provider_rate.conversion_rate"),
           lit(0))
-          .as("inventory_owner_entity_insurance_commission_30%_idr"),
+          .as("inventory_owner_entity_insurance_commission_30_percentage_idr"),
         coalesce(
-          when($"ins_auto.provider_currency" === "IDR",$"ins_auto.inventory_owner_entity_total_other_income_30%")
-            .otherwise($"ins_auto.inventory_owner_entity_total_other_income_30%" * $"provider_rate.conversion_rate"),
+          when($"ins_auto.provider_currency" === "IDR",$"ins_auto.inventory_owner_entity_total_other_income_30_percentage")
+            .otherwise($"ins_auto.inventory_owner_entity_total_other_income_30_percentage" * $"provider_rate.conversion_rate"),
           lit(0))
-          .as("inventory_owner_entity_total_other_income_30%_idr"),
+          .as("inventory_owner_entity_total_other_income_30_percentage_idr"),
         coalesce($"mdr_charges_prorate",lit(0)).as("mdr_charges_prorate"),
         coalesce(when($"ins_auto.invoice_currency" === "IDR",$"mdr_charges_prorate")
           .otherwise($"mdr_charges_prorate" * $"invoice_rate.conversion_rate"),lit(0))

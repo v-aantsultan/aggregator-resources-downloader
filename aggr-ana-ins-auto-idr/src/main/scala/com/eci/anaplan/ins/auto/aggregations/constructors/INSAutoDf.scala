@@ -52,10 +52,10 @@ class INSAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3Sou
         $"`total_base_fare_from_commission`".as("total_base_fare_from_commission"),
         $"`insurance_commission`".as("insurance_commission"),
         $"`total_other_income`".as("total_other_income"),
-        $"`collecting_payment_entity_insurance_commission_70%`".as("collecting_payment_entity_insurance_commission_70%"),
-        $"`collecting_payment_entity_total_other_income_70%`".as("collecting_payment_entity_total_other_income_70%"),
-        $"`inventory_owner_entity_insurance_commission_30%`".as("inventory_owner_entity_insurance_commission_30%"),
-        $"`inventory_owner_entity_total_other_income_30%`".as("inventory_owner_entity_total_other_income_30%"),
+        $"`collecting_payment_entity_insurance_commission_70%`".as("collecting_payment_entity_insurance_commission_70_percentage"),
+        $"`collecting_payment_entity_total_other_income_70%`".as("collecting_payment_entity_total_other_income_70_percentage"),
+        $"`inventory_owner_entity_insurance_commission_30%`".as("inventory_owner_entity_insurance_commission_30_percentage"),
+        $"`inventory_owner_entity_total_other_income_30%`".as("inventory_owner_entity_total_other_income_30_percentage"),
         $"`is_interco`".as("is_interco"),
         $"`locale`".as("locale")
       )
