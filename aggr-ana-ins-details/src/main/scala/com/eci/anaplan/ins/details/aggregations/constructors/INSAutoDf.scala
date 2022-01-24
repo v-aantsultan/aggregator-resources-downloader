@@ -2,7 +2,7 @@ package com.eci.anaplan.ins.details.aggregations.constructors
 
 import com.eci.anaplan.ins.details.services.S3SourceService
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.functions.{coalesce, count, expr, lit, regexp_replace, split, substring, to_date, when}
+import org.apache.spark.sql.functions.{coalesce, count, expr, lit, regexp_replace, split, substring, sum, to_date, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import javax.inject.{Inject, Singleton}
 
@@ -36,8 +36,11 @@ class INSAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3Sou
       .withColumn("count_bid",
         count($"ins_auto.booking_id").over(Window.partitionBy($"ins_auto.booking_id"))
       )
+      .withColumn("sum_actual_fare_bid",
+        sum($"ins_auto.total_actual_fare_paid_by_customer").over(Window.partitionBy($"ins_auto.booking_id"))
+      )
       .withColumn("mdr_amount_prorate",
-        $"mdr.mdr_amount" / $"count_bid"
+        (($"sum_actual_fare_bid" / $"mdr.expected_amount") * $"mdr.mdr_amount") / $"count_bid"
       )
 
       .select(

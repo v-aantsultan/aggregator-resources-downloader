@@ -25,7 +25,7 @@ class AnaplanGVSalesB2CIDR @Inject()(spark: SparkSession,
           ,"left")
 
         .withColumn("mdr_amount_prorate",
-          $"mdr.mdr_amount" / $"gv_sales_b2c.count_bid"
+          (($"gv_sales_b2c.sum_invoice_bid" / $"mdr.expected_amount") * $"mdr.mdr_amount") / $"gv_sales_b2c.count_bid"
         )
 
       .select(

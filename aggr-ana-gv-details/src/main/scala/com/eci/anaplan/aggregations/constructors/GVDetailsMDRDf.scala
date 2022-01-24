@@ -14,7 +14,8 @@ class GVDetailsMDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: 
     val InvoiceDf = s3SourceService.InvoiceDf
       .select(
         $"`id`".as("id"),
-        $"`booking_id`".as("booking_id")
+        $"`booking_id`".as("booking_id"),
+        $"`expected_amount`".as("expected_amount")
       )
 
     val PaymentDf = s3SourceService.PaymentDf
@@ -39,11 +40,13 @@ class GVDetailsMDRDf @Inject()(val sparkSession: SparkSession, s3SourceService: 
 
       .groupBy($"inv.booking_id")
       .agg(
-        sum($"paymdr.mdr_amount").as("mdr_amount")
+        sum($"paymdr.mdr_amount").as("mdr_amount"),
+        sum($"inv.expected_amount").as("expected_amount")
       )
       .select(
         $"inv.booking_id".as("booking_id"),
-        $"mdr_amount"
+        $"mdr_amount",
+        $"expected_amount"
       )
   }
 }

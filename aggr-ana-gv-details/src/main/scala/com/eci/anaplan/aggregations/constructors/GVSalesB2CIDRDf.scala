@@ -29,8 +29,11 @@ class GVSalesB2CIDRDf @Inject()(val sparkSession: SparkSession, s3SourceService:
       .withColumn("count_bid",
         count($"gv_sales_b2c.booking_id").over(Window.partitionBy($"gv_sales_b2c.booking_id"))
       )
+      .withColumn("sum_invoice_bid",
+        sum($"gv_sales_b2c.invoice_amount").over(Window.partitionBy($"gv_sales_b2c.booking_id"))
+      )
       .withColumn("mdr_charges_prorate",
-        $"mdr.mdr_amount" / $"count_bid"
+        (($"sum_invoice_bid" / $"mdr.expected_amount") * $"mdr.mdr_amount") / $"count_bid"
       )
 
       .select(

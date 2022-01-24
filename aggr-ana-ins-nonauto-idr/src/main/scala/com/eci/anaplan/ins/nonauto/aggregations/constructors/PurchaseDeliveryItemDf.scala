@@ -17,6 +17,9 @@ class PurchaseDeliveryItemDf @Inject()(val sparkSession: SparkSession, s3SourceS
       .withColumn("policy_id",
         JsonExtractor.extractString("insuranceBookingItem.policyId")($"`additional_data`")
       )
+      .withColumn("insurance_booking_item_id",
+        JsonExtractor.extractString("insuranceBookingItem.insuranceBookingItemId")($"`additional_data`")
+      )
       .withColumn("num_of_adults",
         JsonExtractor.extractString("insuranceAdditionalData.numOfAdults")($"`additional_data`")
       )
@@ -33,6 +36,7 @@ class PurchaseDeliveryItemDf @Inject()(val sparkSession: SparkSession, s3SourceS
         $"`purchase_delivery_id`".as("purchase_delivery_id"),
         $"`purchase_delivery_version`".as("version"),
         $"policy_id",
+        $"insurance_booking_item_id",
         $"num_of_adults",
         $"num_of_infants",
         $"num_of_insured",
@@ -56,11 +60,13 @@ class PurchaseDeliveryItemDf @Inject()(val sparkSession: SparkSession, s3SourceS
     )
       .select(
         $"pdi.policy_id",
+        $"pdi.insurance_booking_item_id",
         $"pdi.num_of_adults",
         $"pdi.num_of_infants",
         $"pdi.num_of_insured",
         $"pdi.num_of_children",
         $"pdi.num_of_coverage"
       )
+      .distinct()
   }
 }

@@ -33,7 +33,7 @@ class InsuranceAutoIDR @Inject()(spark: SparkSession,
         ,"left")
 
       .withColumn("mdr_charges_prorate",
-        $"mdr.mdr_amount" / $"ins_auto.count_bid"
+        (($"ins_auto.sum_actual_fare_bid" / $"mdr.expected_amount") * $"mdr.mdr_amount") / $"ins_auto.count_bid"
       )
 
       .select(

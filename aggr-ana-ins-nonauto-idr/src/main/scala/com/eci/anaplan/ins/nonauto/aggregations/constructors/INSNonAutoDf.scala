@@ -2,7 +2,7 @@ package com.eci.anaplan.ins.nonauto.aggregations.constructors
 
 import com.eci.anaplan.ins.nonauto.services.S3SourceService
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.functions.{count, expr, to_date}
+import org.apache.spark.sql.functions.{count, expr, sum, to_date}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import javax.inject.{Inject, Singleton}
 
@@ -14,13 +14,16 @@ class INSNonAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3
   def get: DataFrame = {
     s3SourceService.INSNonAutoDf
       .withColumn("count_bid",
-          count($"`booking_id`").over(Window.partitionBy($"`booking_id`"))
+        count($"`booking_id`").over(Window.partitionBy($"`booking_id`"))
+      )
+      .withColumn("sum_actual_fare_bid",
+        sum($"`total_actual_fare_paid_by_customer`").over(Window.partitionBy($"`booking_id`"))
       )
 
       .select(
         to_date($"`booking_issued_date`" + expr("INTERVAL 7 HOURS")).as("booking_issued_date"),
         $"`booking_id`".as("booking_id"),
-        $"count_bid".as("count_bid"),
+        $"count_bid",
         $"`product_type`".as("product_type"),
         $"`product_name`".as("product_name"),
         $"`insurance_plan`".as("insurance_plan"),
@@ -28,6 +31,7 @@ class INSNonAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3
         $"`payment_scope`".as("payment_scope"),
         $"`invoice_currency`".as("invoice_currency"),
         $"`total_actual_fare_paid_by_customer`".as("total_actual_fare_paid_by_customer"),
+        $"sum_actual_fare_bid",
         $"`discount_or_premium`".as("discount_or_premium"),
         $"`unique_code`".as("unique_code"),
         $"`coupon_value`".as("coupon_value"),

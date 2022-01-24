@@ -36,8 +36,11 @@ class INSNonAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3
       .withColumn("count_bid",
         count($"ins_nonauto.booking_id").over(Window.partitionBy($"ins_nonauto.booking_id"))
       )
+      .withColumn("sum_actual_fare_bid",
+        sum($"ins_nonauto.total_actual_fare_paid_by_customer").over(Window.partitionBy($"ins_nonauto.booking_id"))
+      )
       .withColumn("mdr_amount_prorate",
-        $"mdr.mdr_amount" / $"count_bid"
+        (($"sum_actual_fare_bid" / $"mdr.expected_amount") * $"mdr.mdr_amount") / $"count_bid"
       )
 
       .select(

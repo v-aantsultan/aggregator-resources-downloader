@@ -2,7 +2,7 @@ package com.eci.anaplan.aggregations.constructors
 
 import com.eci.anaplan.services.GVB2CSource
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.functions.{count, expr, to_date}
+import org.apache.spark.sql.functions.{count, expr, to_date, sum}
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -14,7 +14,10 @@ class GVSalesB2CDf @Inject()(val sparkSession: SparkSession, s3SourceService: GV
   def get: DataFrame = {
     s3SourceService.GVSalesB2CDf
       .withColumn("count_bid",
-          count($"`booking_id`").over(Window.partitionBy($"`booking_id`"))
+        count($"`booking_id`").over(Window.partitionBy($"`booking_id`"))
+      )
+      .withColumn("sum_invoice_bid",
+        sum($"`invoice_amount`").over(Window.partitionBy($"`booking_id`"))
       )
 
       .select(
@@ -25,6 +28,7 @@ class GVSalesB2CDf @Inject()(val sparkSession: SparkSession, s3SourceService: GV
         $"`product_type`".as("product_type"),
         $"`trip_type`".as("trip_type"),
         $"`invoice_amount`".as("invoice_amount"),
+        $"sum_invoice_bid",
         $"`invoice_currency`".as("invoice_currency"),
         $"`gift_voucher_amount`".as("gift_voucher_amount"),
         $"`gift_voucher_currency`".as("gift_voucher_currency"),

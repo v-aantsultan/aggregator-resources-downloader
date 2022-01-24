@@ -27,13 +27,14 @@ class InsuranceNonAutoIDR @Inject()(spark: SparkSession,
         ,"left")
       .join(PurchaseDeliveryItemDf.get.as("pdi"),
         $"ins_nonauto.policy_id" === $"pdi.policy_id"
+          && $"ins_nonauto.insurance_booking_item_id" === $"pdi.insurance_booking_item_id"
         ,"left")
       .join(MDRChargesDf.get.as("mdr"),
         $"ins_nonauto.booking_id" === $"mdr.booking_id"
         ,"left")
 
       .withColumn("mdr_charges_prorate",
-        $"mdr.mdr_amount" / $"ins_nonauto.count_bid"
+        (($"ins_nonauto.sum_actual_fare_bid" / $"mdr.expected_amount") * $"mdr.mdr_amount") / $"ins_nonauto.count_bid"
       )
 
       .select(
