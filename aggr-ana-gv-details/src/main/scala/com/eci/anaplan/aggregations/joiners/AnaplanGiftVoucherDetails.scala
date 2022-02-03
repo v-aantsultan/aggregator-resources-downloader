@@ -112,7 +112,7 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
         $"coupon_value",
         ($"discount" * -1).as("discount"),
         $"premium",
-        $"mdr_charges"
+        ($"mdr_charges" * -1).as("mdr_charges")
       )
 
     GVRedeemIDR.union(GVRevenueIDR).union(GVSalesB2CIDR).union(GVSalesB2BIDR)
