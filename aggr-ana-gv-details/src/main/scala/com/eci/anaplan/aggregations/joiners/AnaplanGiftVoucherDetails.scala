@@ -65,7 +65,7 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
           when($"discount_or_premium_in_idr" >= 0 ,$"discount_or_premium_in_idr")
             .otherwise(0)
         ),lit(0)).as("premium"),
-        coalesce(sum($"mdr_amount_idr"),lit(0)).as("mdr_charges")
+        coalesce(sum($"mdr_amount_idr") * -1,lit(0)).as("mdr_charges")
       )
       .select(
         $"*"
@@ -112,7 +112,7 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
         $"coupon_value",
         ($"discount" * -1).as("discount"),
         $"premium",
-        ($"mdr_charges" * -1).as("mdr_charges")
+        $"mdr_charges"
       )
 
     GVRedeemIDR.union(GVRevenueIDR).union(GVSalesB2CIDR).union(GVSalesB2BIDR)
