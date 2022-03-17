@@ -147,6 +147,46 @@ lazy val `aggr-ana-ins-details` = (project in file("aggr-ana-ins-details"))
     libraryDependencies ++= sparkDeps
   ).dependsOn(common).aggregate(common)
 
+lazy val `aggr-ana-bp-idr` = (project in file("aggr-ana-bp-idr"))
+  .settings(
+    name := "aggr-ana-bp-idr",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
+lazy val `aggr-ana-bp-details` = (project in file("aggr-ana-bp-details"))
+  .settings(
+    name := "aggr-ana-bp-details",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
+lazy val `aggr-ana-wm-idr` = (project in file("aggr-ana-wm-idr"))
+  .settings(
+    name := "aggr-ana-wm-idr",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
+lazy val `aggr-ana-wm-details` = (project in file("aggr-ana-wm-details"))
+  .settings(
+    name := "aggr-ana-wm-details",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
+lazy val `aggr-ana-ua-details` = (project in file("aggr-ana-ua-details"))
+  .settings(
+      name := "aggr-ana-ua-details",
+      commonSettings,
+      libraryDependencies ++= commonDeps,
+      libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
 lazy val `aggregator-anaplan` = (project in file("."))
   .settings(commonSettings: _*)
   .enablePlugins(GitVersioning)
@@ -163,7 +203,12 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-ins-nonauto-idr`,
     `aggr-ana-ins-auto-idr`,
     `aggr-ana-ins-summary`,
-    `aggr-ana-ins-details`)
+    `aggr-ana-ins-details`,
+    `aggr-ana-bp-idr`,
+    `aggr-ana-bp-details`,
+    `aggr-ana-wm-idr`,
+    `aggr-ana-wm-details`,
+    `aggr-ana-ua-details`)
   .aggregate(
     `aggr-ana-lpidr`,
     `aggr-ana-lpsum`,
@@ -177,6 +222,11 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-ins-nonauto-idr`,
     `aggr-ana-ins-auto-idr`,
     `aggr-ana-ins-summary`,
-    `aggr-ana-ins-details`)
+    `aggr-ana-ins-details`,
+    `aggr-ana-bp-idr`,
+    `aggr-ana-bp-details`,
+    `aggr-ana-wm-idr`,
+    `aggr-ana-wm-details`,
+    `aggr-ana-ua-details`)
 
 
