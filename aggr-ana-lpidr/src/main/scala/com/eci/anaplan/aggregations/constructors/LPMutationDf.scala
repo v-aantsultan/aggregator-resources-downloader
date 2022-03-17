@@ -5,7 +5,6 @@ import org.apache.spark.sql.functions.to_date
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-// TODO: Update TestDataFrame1 and queries required
 @Singleton
 class LPMutationDf @Inject()(val sparkSession: SparkSession, s3SourceService: LPMutationSource) {
 
