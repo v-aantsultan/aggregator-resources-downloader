@@ -25,6 +25,7 @@ class S3SourceService @Inject()(val sparkSession: SparkSession, config: Config,
   lazy val InvoiceDf: DataFrame = readByDefaultCustomDtl("ecbpdf/payment_in_data_fetcher.invoice","created_at_date")
   lazy val PaymentDf: DataFrame = readByDefaultCustomDtl("ecbpdf/payment_in_data_fetcher.payment","created_at_date")
   lazy val PaymentMDRDf: DataFrame = readByDefaultCustomDtl("ecbpdf/payment_in_data_fetcher.payment_mdr_acquiring","created_at_date")
+  lazy val ProductNameDf: DataFrame = readByDefaultCustomDtl("eci_sheets/ecidtpl_anaplan_fpna/Mapping Product Name Insurance")
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl

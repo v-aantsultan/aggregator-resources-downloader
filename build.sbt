@@ -19,7 +19,7 @@ ThisBuild / resolvers ++= {
 // No parallel execution for spark context testing scenarios
 // Ref: https://github.com/holdenk/spark-testing-base
 ThisBuild / fork in Test := true
-ThisBuild / javaOptions ++= Seq("-Xms1024m", "-Xmx4g", "-XX:MaxPermSize=4g", "-XX:+CMSClassUnloadingEnabled", "-XX:+UseConcMarkSweepGC")
+ThisBuild / javaOptions ++= Seq("-Xms1024m", "-Xmx6g", "-XX:MaxPermSize=6g", "-XX:+CMSClassUnloadingEnabled", "-XX:+UseConcMarkSweepGC")
 ThisBuild / parallelExecution in Test := false
 
 // According to https://github.com/sbt/sbt-assembly, suggest to turn caching off. This should reduce memory usage

@@ -9,7 +9,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class INSAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3SourceService,
                           ExchangeRateDf: ExchangeRateDf,PurchaseDeliveryDf: PurchaseDeliveryDf,
-                          MDRChargesDf: MDRChargesDf) {
+                          MDRChargesDf: MDRChargesDf, MappingProductNameDf: MappingProductNameDf) {
 
   import sparkSession.implicits._
 
@@ -28,6 +28,9 @@ class INSAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3Sou
         ,"left")
       .join(MDRChargesDf.get.as("mdr"),
         $"ins_auto.booking_id" === $"mdr.booking_id"
+        ,"left")
+      .join(MappingProductNameDf.get.as("prd_nm"),
+        $"ins_auto.product_name" === $"prd_nm.product_name"
         ,"left")
 
       .withColumn("payment_scope_clear",
@@ -48,7 +51,9 @@ class INSAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3Sou
         substring($"ins_auto.locale",-2,2).as("customer"),
         $"ins_auto.fulfillment_id".as("business_partner"),
         $"ins_auto.product_type".as("product"),
-        $"ins_auto.product_name".as("product_category"),
+        when($"prd_nm.product_name_mapping".isNull,$"ins_auto.product_name")
+          .otherwise($"prd_nm.product_name_mapping")
+          .as("product_category"),
         split($"payment_scope_clear",",")(0).as("payment_channel"),
         $"ins_auto.booking_id".as("booking_id"),
         $"count_bid",

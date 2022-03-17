@@ -12,9 +12,13 @@ class PurchaseDeliveryItemDf @Inject()(val sparkSession: SparkSession, s3SourceS
   import sparkSession.implicits._
 
   def get: DataFrame = {
+
     val pdi = s3SourceService.PurchaseDeliveryItemDf
       .withColumn("policy_id",
         JsonExtractor.extractString("insuranceBookingItem.policyId")($"`additional_data`")
+      )
+      .withColumn("insurance_booking_item_id",
+        JsonExtractor.extractString("insuranceBookingItem.insuranceBookingItemId")($"`additional_data`")
       )
       .withColumn("num_of_adults",
         JsonExtractor.extractString("insuranceAdditionalData.numOfAdults")($"`additional_data`")
@@ -32,6 +36,7 @@ class PurchaseDeliveryItemDf @Inject()(val sparkSession: SparkSession, s3SourceS
         $"`purchase_delivery_id`".as("purchase_delivery_id"),
         $"`purchase_delivery_version`".as("version"),
         $"policy_id",
+        $"insurance_booking_item_id",
         $"num_of_insured",
         ($"num_of_adults" + $"num_of_children" + $"num_of_infants").as("num_of_coverage")
       )
@@ -52,8 +57,10 @@ class PurchaseDeliveryItemDf @Inject()(val sparkSession: SparkSession, s3SourceS
       )
       .select(
         $"pdi.policy_id",
+        $"pdi.insurance_booking_item_id",
         when($"pdi.num_of_coverage" === 0,$"pdi.num_of_insured")
           .otherwise($"pdi.num_of_coverage").as("num_of_coverage")
       )
+      .distinct()
   }
 }

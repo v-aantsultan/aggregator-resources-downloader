@@ -9,7 +9,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class INSNonAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3SourceService,
                              ExchangeRateDf: ExchangeRateDf, PurchaseDeliveryItemDf: PurchaseDeliveryItemDf,
-                             MDRChargesDf: MDRChargesDf) {
+                             MDRChargesDf: MDRChargesDf,MappingProductNameDf: MappingProductNameDf) {
 
   import sparkSession.implicits._
 
@@ -25,9 +25,13 @@ class INSNonAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3
         ,"left")
       .join(PurchaseDeliveryItemDf.get.as("pdi"),
         $"ins_nonauto.policy_id" === $"pdi.policy_id"
+          && $"ins_nonauto.insurance_booking_item_id" === $"pdi.insurance_booking_item_id"
         ,"left")
       .join(MDRChargesDf.get.as("mdr"),
         $"ins_nonauto.booking_id" === $"mdr.booking_id"
+        ,"left")
+      .join(MappingProductNameDf.get.as("prd_nm"),
+        $"ins_nonauto.product_name" === $"prd_nm.product_name"
         ,"left")
 
       .withColumn("payment_scope_clear",
@@ -49,7 +53,9 @@ class INSNonAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3
         $"ins_nonauto.fulfillment_id".as("business_partner"),
         when($"ins_nonauto.booking_type".isin("CROSSSELL_ADDONS","ADDONS","CROSSSELL_BUNDLE"),lit("IA"))
           .otherwise(lit("IS")).as("product"),
-        $"ins_nonauto.product_name".as("product_category"),
+        when($"prd_nm.product_name_mapping".isNull,$"ins_nonauto.product_name")
+          .otherwise($"prd_nm.product_name_mapping")
+          .as("product_category"),
         split($"payment_scope_clear",",")(0).as("payment_channel"),
         $"ins_nonauto.booking_id".as("booking_id"),
         $"count_bid",
