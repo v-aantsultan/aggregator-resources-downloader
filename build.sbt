@@ -147,9 +147,25 @@ lazy val `aggr-ana-ins-details` = (project in file("aggr-ana-ins-details"))
     libraryDependencies ++= sparkDeps
   ).dependsOn(common).aggregate(common)
 
+lazy val `aggr-ana-cd-idr` = (project in file("aggr-ana-cd-idr"))
+  .settings(
+    name := "aggr-ana-cd-idr",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
 lazy val `aggr-ana-bp-idr` = (project in file("aggr-ana-bp-idr"))
   .settings(
     name := "aggr-ana-bp-idr",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
+lazy val `aggr-ana-cd-details` = (project in file("aggr-ana-cd-details"))
+  .settings(
+    name := "aggr-ana-cd-details",
     commonSettings,
     libraryDependencies ++= commonDeps,
     libraryDependencies ++= sparkDeps
@@ -204,11 +220,15 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-ins-auto-idr`,
     `aggr-ana-ins-summary`,
     `aggr-ana-ins-details`,
+    `aggr-ana-cd-idr`,
+    `aggr-ana-cd-details`,
     `aggr-ana-bp-idr`,
     `aggr-ana-bp-details`,
     `aggr-ana-wm-idr`,
     `aggr-ana-wm-details`,
-    `aggr-ana-ua-details`)
+    `aggr-ana-ua-details`
+  )
+
   .aggregate(
     `aggr-ana-lpidr`,
     `aggr-ana-lpsum`,
@@ -223,10 +243,13 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-ins-auto-idr`,
     `aggr-ana-ins-summary`,
     `aggr-ana-ins-details`,
+    `aggr-ana-cd-idr`,
+    `aggr-ana-cd-details`,
     `aggr-ana-bp-idr`,
     `aggr-ana-bp-details`,
     `aggr-ana-wm-idr`,
     `aggr-ana-wm-details`,
-    `aggr-ana-ua-details`)
+    `aggr-ana-ua-details`
+  )
 
 
