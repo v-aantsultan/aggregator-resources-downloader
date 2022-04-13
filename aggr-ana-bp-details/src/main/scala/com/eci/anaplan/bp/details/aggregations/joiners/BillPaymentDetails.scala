@@ -1,7 +1,7 @@
 package com.eci.anaplan.bp.details.aggregations.joiners
 
 import com.eci.anaplan.bp.details.aggregations.constructors.BPDetailsDf
-import org.apache.spark.sql.functions.{coalesce, count, countDistinct, lit, substring, sum, when}
+import org.apache.spark.sql.functions.{coalesce, count, countDistinct, lit, sum, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 import javax.inject.{Inject, Singleton}
@@ -15,7 +15,14 @@ class BillPaymentDetails @Inject()(spark: SparkSession,
     import spark.implicits._
 
     val BillPaymentDetailsFinal = BPDetailsDf.get
-      .groupBy($"report_date", $"customer", $"business_model", $"business_partner", $"product_category", $"payment_channel")
+      .groupBy(
+        $"report_date",
+        $"customer",
+        $"business_model",
+        $"business_partner",
+        $"product_category",
+        coalesce($"payment_channel",lit("None")).as("payment_channel")
+      )
       .agg(
         coalesce(countDistinct($"booking_id"),lit(0)).as("no_of_transactions"),
         coalesce(sum($"coupon_code_result"),lit(0)).as("no_of_coupon"),
@@ -41,7 +48,9 @@ class BillPaymentDetails @Inject()(spark: SparkSession,
       .select(
         $"*"
       )
+
     BillPaymentDetailsFinal
+
   }
 
   def joinWithColumn(): DataFrame =
