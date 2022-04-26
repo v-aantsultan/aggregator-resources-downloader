@@ -13,12 +13,13 @@ def get: DataFrame = {
   LoyaltyPointIDR.get
     .filter(
       ($"mapping_transaction_category" === "Grant" && !$"mapping_grant_product_type".isin("Selling Points","Employee Benefits Points"))
-        || ($"mapping_transaction_category" === "Redeem" && !$"mapping_underlying_product".isin("LP")))
+        || ($"mapping_transaction_category" === "Redeem" && !$"mapping_underlying_product".isin("LP"))
+        || $"mapping_transaction_category" === "Expiration")
     .select(
       $"posting_date".as("report_date"),
       $"mapping_transaction_category".as("category"),
       $"customer",
-      when($"mapping_transaction_category" === "Grant", $"mapping_grant_product_type")
+      when($"mapping_transaction_category".isin("Grant","Expiration"), $"mapping_grant_product_type")
         .otherwise($"mapping_underlying_product").as("product_category"),
       $"original_transaction_id".as("point_transaction"),
       when($"mapping_transaction_category" === "Redeem", $"point_amount_in_transaction_currency_idr" * -1)
