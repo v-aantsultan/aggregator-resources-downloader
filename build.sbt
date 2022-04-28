@@ -203,6 +203,22 @@ lazy val `aggr-ana-ua-details` = (project in file("aggr-ana-ua-details"))
       libraryDependencies ++= sparkDeps
   ).dependsOn(common).aggregate(common)
 
+lazy val `aggr-ana-cr-idr` = (project in file("aggr-ana-cr-idr"))
+  .settings(
+    name := "aggr-ana-cr-idr",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
+lazy val `aggr-ana-cr-aggr` = (project in file("aggr-ana-cr-aggr"))
+  .settings(
+    name := "aggr-ana-cr-aggr",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
 lazy val `aggregator-anaplan` = (project in file("."))
   .settings(commonSettings: _*)
   .enablePlugins(GitVersioning)
@@ -226,7 +242,9 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-bp-details`,
     `aggr-ana-wm-idr`,
     `aggr-ana-wm-details`,
-    `aggr-ana-ua-details`
+    `aggr-ana-ua-details`,
+    `aggr-ana-cr-idr`,
+    `aggr-ana-cr-aggr`
   )
 
   .aggregate(
@@ -249,7 +267,9 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-bp-details`,
     `aggr-ana-wm-idr`,
     `aggr-ana-wm-details`,
-    `aggr-ana-ua-details`
+    `aggr-ana-ua-details`,
+    `aggr-ana-cr-idr`,
+    `aggr-ana-cr-aggr`
   )
 
 
