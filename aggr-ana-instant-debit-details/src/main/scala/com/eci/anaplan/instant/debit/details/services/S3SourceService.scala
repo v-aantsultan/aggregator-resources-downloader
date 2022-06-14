@@ -17,6 +17,12 @@ class S3SourceService @Inject()(val sparkSession: SparkSession, config: Config,
 
   lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates")
   lazy val UnderlyingProductSheetSrc: DataFrame = readByDefaultCustomDtl("eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
+  lazy val ExchangeRateSrc: DataFrame = readByDefaultCustom("oracle.exchange_rates","conversion_date_date")
+  lazy val AssignedPaymentSrc: DataFrame = readByDefaultCustom("payment_in.assigned_payment_report","issued_time_date",true)
+  lazy val InvoiceSrc: DataFrame = readByDefaultCustomDtl("ecbpdf/payment_in_data_fetcher.invoice","created_at_date")
+  lazy val PaymentSrc: DataFrame = readByDefaultCustomDtl("ecbpdf/payment_in_data_fetcher.payment","created_at_date")
+  lazy val PaymentMDRSrc: DataFrame = readByDefaultCustomDtl("ecbpdf/payment_in_data_fetcher.payment_mdr_acquiring","created_at_date")
+  lazy val PaymentScopeSheetSrc: DataFrame = readByDefaultCustomDtl("eci_sheets/ecidtpl_anaplan_fpna/Instant Debit Payment Scope")
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl

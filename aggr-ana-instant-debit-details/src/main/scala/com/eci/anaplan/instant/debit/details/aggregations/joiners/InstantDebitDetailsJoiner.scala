@@ -1,7 +1,6 @@
 package com.eci.anaplan.instant.debit.details.aggregations.joiners
 
-import com.eci.anaplan.instant.debit.aggregations.constructors.PaymentScopeSheetDf
-import com.eci.anaplan.instant.debit.details.aggregations.constructors.{InstantDebitDf, UnderlyingProductSheetDf}
+import com.eci.anaplan.instant.debit.details.aggregations.constructors.{PaymentScopeSheetDf, UnderlyingProductSheetDf}
 import org.apache.spark.sql.functions.{coalesce, countDistinct, lit, substring, sum}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -9,7 +8,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class InstantDebitDetailsJoiner @Inject()(spark: SparkSession,
-                                          InstantDebitDf: InstantDebitDf,
+                                          InstantDebitJoiner: InstantDebitJoiner,
                                           UnderlyingProductSheetDf: UnderlyingProductSheetDf,
                                           PaymentScopeSheetDf: PaymentScopeSheetDf) {
 
@@ -17,7 +16,7 @@ class InstantDebitDetailsJoiner @Inject()(spark: SparkSession,
 
     import spark.implicits._
 
-    val ID = InstantDebitDf.get
+    val ID = InstantDebitJoiner.get
     val UP = UnderlyingProductSheetDf.get
     val PS = PaymentScopeSheetDf.get
 
