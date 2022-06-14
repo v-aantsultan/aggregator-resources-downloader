@@ -219,6 +219,22 @@ lazy val `aggr-ana-cr-aggr` = (project in file("aggr-ana-cr-aggr"))
     libraryDependencies ++= sparkDeps
   ).dependsOn(common).aggregate(common)
 
+lazy val `aggr-ana-instant-debit` = (project in file("aggr-ana-instant-debit"))
+  .settings(
+    name := "aggr-ana-instant-debit",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
+lazy val `aggr-ana-instant-debit-details` = (project in file("aggr-ana-instant-debit-details"))
+  .settings(
+    name := "aggr-ana-instant-debit-details",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common, `aggr-ana-instant-debit`).aggregate(common, `aggr-ana-instant-debit`)
+
 lazy val `aggregator-anaplan` = (project in file("."))
   .settings(commonSettings: _*)
   .enablePlugins(GitVersioning)
@@ -244,7 +260,9 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-wm-details`,
     `aggr-ana-ua-details`,
     `aggr-ana-cr-idr`,
-    `aggr-ana-cr-aggr`
+    `aggr-ana-cr-aggr`,
+    `aggr-ana-instant-debit`,
+    `aggr-ana-instant-debit-details`
   )
 
   .aggregate(
@@ -269,7 +287,9 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-wm-details`,
     `aggr-ana-ua-details`,
     `aggr-ana-cr-idr`,
-    `aggr-ana-cr-aggr`
+    `aggr-ana-cr-aggr`,
+    `aggr-ana-instant-debit`,
+    `aggr-ana-instant-debit-details`
   )
 
 
