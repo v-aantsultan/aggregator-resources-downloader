@@ -37,7 +37,7 @@ class MDRChargesDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3
         $"`amount`".as("mdr_installment_amount")
       )
 
-    InvoiceDf.as("inv")
+    val joinedDf = InvoiceDf.as("inv")
       .join(PaymentDf.as("pay"),
         $"inv.id" === $"pay.invoice_id",
         "left")
@@ -61,5 +61,7 @@ class MDRChargesDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3
         $"mdr_installment_amount",
         $"expected_amount"
       )
+
+    joinedDf.filter($"code_installment".isNotNull)
   }
 }
