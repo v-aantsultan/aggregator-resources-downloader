@@ -28,15 +28,18 @@ class InsuranceAutoIDR @Inject()(spark: SparkSession,
       .join(PurchaseDeliveryDf.get.as("pd"),
         $"ins_auto.policy_id" === $"pd.policy_id"
         ,"left")
-      .join(MDRChargesDf.get.as("mdr"),
+      .join(MDRChargesDf.getMDRCharges.as("mdr"),
         $"ins_auto.booking_id" === $"mdr.booking_id"
+        ,"left")
+      .join(MDRChargesDf.getMDRInstallment.as("mdr_ins"),
+        $"ins_nonauto.booking_id" === $"mdr_ins.booking_id"
         ,"left")
 
       .withColumn("mdr_charges_prorate",
         (($"ins_auto.sum_actual_fare_bid" / $"mdr.expected_amount") * $"mdr.mdr_amount") / $"ins_auto.count_bid"
       )
       .withColumn("mdr_installment_prorate",
-        (($"ins_auto.sum_actual_fare_bid" / $"mdr.expected_amount") * $"mdr.mdr_installment_amount") / $"ins_auto.count_bid"
+        (($"ins_auto.sum_actual_fare_bid" / $"mdr_ins.expected_amount") * $"mdr_ins.mdr_installment_amount") / $"ins_auto.count_bid"
       )
 
       .select(
@@ -156,7 +159,7 @@ class InsuranceAutoIDR @Inject()(spark: SparkSession,
         coalesce(when($"ins_auto.invoice_currency" === "IDR",$"mdr_charges_prorate")
           .otherwise($"mdr_charges_prorate" * $"invoice_rate.conversion_rate"),lit(0))
           .as("mdr_charges_idr"),
-        $"mdr.code_installment".as("installment_code"),
+        $"mdr_ins.code_installment".as("installment_code"),
         coalesce($"mdr_installment_prorate",lit(0)).as("mdr_installment"),
         coalesce(when($"ins_auto.invoice_currency" === "IDR",$"mdr_installment_prorate")
           .otherwise($"mdr_installment_prorate" * $"invoice_rate.conversion_rate"),lit(0))
