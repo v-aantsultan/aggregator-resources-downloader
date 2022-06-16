@@ -32,7 +32,7 @@ class InsuranceAutoIDR @Inject()(spark: SparkSession,
         $"ins_auto.booking_id" === $"mdr.booking_id"
         ,"left")
       .join(MDRChargesDf.getMDRInstallment.as("mdr_ins"),
-        $"ins_nonauto.booking_id" === $"mdr_ins.booking_id"
+        $"ins_auto.booking_id" === $"mdr_ins.booking_id"
         ,"left")
 
       .withColumn("mdr_charges_prorate",
