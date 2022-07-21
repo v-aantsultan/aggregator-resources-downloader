@@ -59,6 +59,7 @@ trait PathFetcher {
         .filter(col(ColumnKey) >= startDate && col(ColumnKey) <= endDate && $"tenant_id" === tenantId)
     } else {
       sparkSession.read
+        .option("mergeSchema", "true")
         .parquet(s"$flattenerSrcDtl/$domain")
         .filter(col(ColumnKey) >= startDate && col(ColumnKey) <= endDate)
     }

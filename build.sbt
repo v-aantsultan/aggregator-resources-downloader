@@ -19,7 +19,7 @@ ThisBuild / resolvers ++= {
 // No parallel execution for spark context testing scenarios
 // Ref: https://github.com/holdenk/spark-testing-base
 ThisBuild / fork in Test := true
-ThisBuild / javaOptions ++= Seq("-Xms1024m", "-Xmx6g", "-XX:MaxPermSize=6g", "-XX:+CMSClassUnloadingEnabled", "-XX:+UseConcMarkSweepGC")
+ThisBuild / javaOptions ++= Seq("-Xms1024m", "-Xmx7g", "-XX:MaxPermSize=6g", "-XX:+CMSClassUnloadingEnabled", "-XX:+UseConcMarkSweepGC")
 ThisBuild / parallelExecution in Test := false
 
 // According to https://github.com/sbt/sbt-assembly, suggest to turn caching off. This should reduce memory usage
@@ -235,6 +235,30 @@ lazy val `aggr-ana-instant-debit-details` = (project in file("aggr-ana-instant-d
     libraryDependencies ++= sparkDeps
   ).dependsOn(common).aggregate(common)
 
+lazy val `aggr-ana-fa-idr` = (project in file("aggr-ana-fa-idr"))
+  .settings(
+    name := "aggr-ana-fa-idr",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
+lazy val `aggr-ana-fa-details` = (project in file("aggr-ana-fa-details"))
+  .settings(
+    name := "aggr-ana-fa-details",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common,`aggr-ana-fa-idr`).aggregate(common, `aggr-ana-fa-idr`)
+
+lazy val `aggr-ana-fa-summary` = (project in file("aggr-ana-fa-summary"))
+  .settings(
+    name := "aggr-ana-fa-summary",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common,`aggr-ana-fa-idr`).aggregate(common, `aggr-ana-fa-idr`)
+
 lazy val `aggregator-anaplan` = (project in file("."))
   .settings(commonSettings: _*)
   .enablePlugins(GitVersioning)
@@ -262,7 +286,10 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-cr-idr`,
     `aggr-ana-cr-aggr`,
     `aggr-ana-instant-debit`,
-    `aggr-ana-instant-debit-details`
+    `aggr-ana-instant-debit-details`,
+    `aggr-ana-fa-idr`,
+    `aggr-ana-fa-details`,
+    `aggr-ana-fa-summary`
   )
 
   .aggregate(
@@ -289,7 +316,10 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-cr-idr`,
     `aggr-ana-cr-aggr`,
     `aggr-ana-instant-debit`,
-    `aggr-ana-instant-debit-details`
+    `aggr-ana-instant-debit-details`,
+    `aggr-ana-fa-idr`,
+    `aggr-ana-fa-details`,
+    `aggr-ana-fa-summary`
   )
 
 
