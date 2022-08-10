@@ -105,4 +105,19 @@ trait PathFetcher {
   def readByJoinedDomainRange(domain: String): DataFrame = {
     readByCustomRange(domain, startDateToQueryDataLakeForJoinedDomain, endDateToQueryDataLake)
   }
+
+  def readByCustomallperiod(domain: String, MergeSchema: Boolean): DataFrame = {
+    if (MergeSchema) {
+      sparkSession.read
+        .option("mergeSchema", "true")
+        .parquet(s"$flattenerSrc/$domain")
+    } else {
+      sparkSession.read
+        .parquet(s"$flattenerSrc/$domain")
+    }
+  }
+
+  def readByDefaultCustomallperiod(domain: String, MergeSchema: Boolean = false): DataFrame = {
+    readByCustomallperiod(domain, MergeSchema)
+  }
 }
