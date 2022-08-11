@@ -46,7 +46,7 @@ class CRDetailsDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3S
           || $"cr.product_category" === "Blank" || $"cr.product_category".isNull || $"cr.product_category" === "", "VEHICLE")
           .otherwise($"cr.product_category"))
           .as("product_category"),
-        split($"payment_channel_clear",",")(0).as("payment_channel"),
+        coalesce(split($"payment_channel_clear",",")(0),lit("None")).as("payment_channel"),
         coalesce(when($"cr.transaction_type" === "Sales", $"cr.booking_id"))
           .as("booking_id"),
         coalesce(when($"cr.coupon_code" === "N/A" || $"cr.coupon_code".isNull
