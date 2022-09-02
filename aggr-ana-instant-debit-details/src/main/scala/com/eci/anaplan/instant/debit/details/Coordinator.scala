@@ -58,7 +58,7 @@ class Coordinator @Inject()(spark: SparkSession,
         slack.info("Successfully perform ETL ")
 
         // Perform 'action' on the Dataframe
-        Try(s3DestinationService.publishToS3(anaplanDF, destination)) match {
+        Try(s3DestinationService.write(anaplanDF, destination)) match {
           case Failure(exception) => {
             logger.error(s"Error in publishing the aggregator result to S3. $applicationInfo", exception)
             slack.error(s"Error in publishing the aggregator result to S3. $applicationInfo", exception)

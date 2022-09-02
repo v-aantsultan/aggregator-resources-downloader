@@ -283,6 +283,14 @@ lazy val `aggr-ana-at-nrd-details` = (project in file("aggr-ana-at-nrd-details")
     libraryDependencies ++= sparkDeps
   ).dependsOn(common).aggregate(common)
 
+lazy val `aggr-ana-train-nrd-details` = (project in file("aggr-ana-train-nrd-details"))
+  .settings(
+    name := "aggr-ana-train-nrd-details",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
 lazy val `aggregator-anaplan` = (project in file("."))
   .settings(commonSettings: _*)
   .enablePlugins(GitVersioning)
@@ -316,7 +324,8 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-fa-details`,
     `aggr-ana-fa-summary`,
     `aggr-ana-car-rental-details`,
-    `aggr-ana-at-nrd-details`
+    `aggr-ana-at-nrd-details`,
+    `aggr-ana-train-nrd-details`
   )
 
   .aggregate(
@@ -349,7 +358,8 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-fa-details`,
     `aggr-ana-fa-summary`,
     `aggr-ana-car-rental-details`,
-    `aggr-ana-at-nrd-details`
+    `aggr-ana-at-nrd-details`,
+    `aggr-ana-train-nrd-details`
   )
 
 

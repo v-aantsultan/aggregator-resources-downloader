@@ -15,7 +15,6 @@ trait PathFetcher {
 
   val flattenerSrc: String
   val flattenerSrcDtl: String
-  val flattenerLocal: String
 
   val tenantId: String
 
@@ -49,33 +48,26 @@ trait PathFetcher {
     }
   }
 
+  def readByCustomAllPeriod(domain: String): DataFrame = {
+      sparkSession.read
+        .option("mergeSchema", "true")
+        .parquet(s"$flattenerSrc/$domain")
+  }
+
   def readByCustomDtl(domain: String, startDate: String, endDate: String, ColumnKey: String): DataFrame = {
     if (domain.contains("eci_sheets/") || domain.contains("business_platform_master/")) {
       sparkSession.read
+        .option("mergeSchema", "true")
         .parquet(s"$flattenerSrcDtl/$domain")
     } else if (domain.contains("business_platform/")) {
       sparkSession.read
+        .option("mergeSchema", "true")
         .parquet(s"$flattenerSrcDtl/$domain")
         .filter(col(ColumnKey) >= startDate && col(ColumnKey) <= endDate && $"tenant_id" === tenantId)
     } else {
       sparkSession.read
         .option("mergeSchema", "true")
         .parquet(s"$flattenerSrcDtl/$domain")
-        .filter(col(ColumnKey) >= startDate && col(ColumnKey) <= endDate)
-    }
-  }
-
-  def readByCustomLocal(domain: String, startDate: String, endDate: String, ColumnKey: String): DataFrame = {
-    if (domain.contains("eci_sheets/") || domain.contains("business_platform_master/")) {
-      sparkSession.read
-        .parquet(s"$flattenerLocal/$domain")
-    } else if (domain.contains("business_platform/")) {
-      sparkSession.read
-        .parquet(s"$flattenerLocal/$domain")
-        .filter(col(ColumnKey) >= startDate && col(ColumnKey) <= endDate && $"tenant_id" === tenantId)
-    } else {
-      sparkSession.read
-        .parquet(s"$flattenerLocal/$domain")
         .filter(col(ColumnKey) >= startDate && col(ColumnKey) <= endDate)
     }
   }
@@ -90,16 +82,14 @@ trait PathFetcher {
     readByCustom(domain, startDate, endDate, ColumnKey, MergeSchema)
   }
 
+  def readByDefaultCustomAllPeriod(domain: String): DataFrame = {
+    readByCustomAllPeriod(domain)
+  }
+
   def readByDefaultCustomDtl(domain: String, ColumnKey: String = "", Duration: Int = 1): DataFrame = {
     val startDate: String = TimeUtils.utcDateTimeString(utcZonedStartDate.minusDays(Duration))
     val endDate: String = TimeUtils.utcDateTimeString(utcZonedEndDate.plusDays(Duration))
     readByCustomDtl(domain, startDate, endDate, ColumnKey)
-  }
-
-  def readByDefaultLocal(domain: String, ColumnKey: String = "", Duration: Int = 1): DataFrame = {
-    val startDate: String = TimeUtils.utcDateTimeString(utcZonedStartDate.minusDays(Duration))
-    val endDate: String = TimeUtils.utcDateTimeString(utcZonedEndDate.plusDays(Duration))
-    readByCustomLocal(domain, startDate, endDate, ColumnKey)
   }
 
   def readByJoinedDomainRange(domain: String): DataFrame = {
