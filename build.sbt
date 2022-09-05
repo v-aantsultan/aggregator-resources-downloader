@@ -275,6 +275,14 @@ lazy val `aggr-ana-car-rental-details` = (project in file("aggr-ana-car-rental-d
     libraryDependencies ++= sparkDeps
   ).dependsOn(common).aggregate(common)
 
+lazy val `aggr-ana-car-rental-nrd-aggr` = (project in file("aggr-ana-car-rental-nrd-aggr"))
+  .settings(
+    name := "aggr-ana-car-rental-nrd-aggr",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
 lazy val `aggr-ana-at-nrd-details` = (project in file("aggr-ana-at-nrd-details"))
   .settings(
     name := "aggr-ana-at-nrd-details",
@@ -324,6 +332,7 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-fa-details`,
     `aggr-ana-fa-summary`,
     `aggr-ana-car-rental-details`,
+    `aggr-ana-car-rental-nrd-aggr`,
     `aggr-ana-at-nrd-details`,
     `aggr-ana-train-nrd-details`
   )
@@ -358,6 +367,7 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-fa-details`,
     `aggr-ana-fa-summary`,
     `aggr-ana-car-rental-details`,
+    `aggr-ana-car-rental-nrd-aggr`,
     `aggr-ana-at-nrd-details`,
     `aggr-ana-train-nrd-details`
   )
