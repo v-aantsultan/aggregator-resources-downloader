@@ -15,7 +15,9 @@ class CRDetailsDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3S
     s3SourceService.CRDetailsDf.as("cr")
 
       .withColumn("payment_channel_clear",
-        regexp_replace($"cr.payment_channel","adjustment.*,","")
+        regexp_replace(regexp_replace($"cr.payment_channel",
+          "adjustment,",""),
+          "adjustment_refund,","")
       )
       .withColumn("coupon_code_split",
         when(size(split($"cr.coupon_code",",")) === 0,1)
@@ -46,7 +48,7 @@ class CRDetailsDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3S
           || $"cr.product_category" === "Blank" || $"cr.product_category".isNull || $"cr.product_category" === "", "VEHICLE")
           .otherwise($"cr.product_category"))
           .as("product_category"),
-        coalesce(split($"payment_channel_clear",",")(0),lit("None")).as("payment_channel"),
+        coalesce(trim(split($"payment_channel_clear",",")(0)),lit("None")).as("payment_channel"),
         coalesce(when($"cr.transaction_type" === "Sales", $"cr.booking_id"))
           .as("booking_id"),
         coalesce(when($"cr.coupon_code" === "N/A" || $"cr.coupon_code".isNull

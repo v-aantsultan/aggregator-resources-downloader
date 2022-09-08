@@ -1,12 +1,8 @@
-**Description:** Describe in a couple of sentence what this PR adds
-
 **JIRA:** Link to JIRA ticket
 
-**Author concerns:** List any concerns about this PR - quick-and-dirty implementations, breaking code coverage, etc
+**Description:** 
 
-**Dependencies:** dependencies on other outstanding PRs, issues, etc. 
-
-**Merge deadline:** List merge deadline (if any)
+Describe in a couple of sentence what this PR adds
 
 **Merge checklist:**
 
