@@ -2,8 +2,9 @@ package com.eci.anaplan.ins.details.aggregations.constructors
 
 import com.eci.anaplan.ins.details.services.S3SourceService
 import org.apache.spark.sql.expressions.Window
-import org.apache.spark.sql.functions.{coalesce, count, expr, lit, regexp_replace, split, substring, sum, to_date, when}
+import org.apache.spark.sql.functions.{coalesce, count, expr, lit, regexp_replace, split, substring, sum, to_date, trim, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
+
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -34,7 +35,9 @@ class INSAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3Sou
         ,"left")
 
       .withColumn("payment_scope_clear",
-          regexp_replace($"ins_auto.payment_scope","adjustment.*,","")
+        regexp_replace(regexp_replace($"ins_auto.payment_scope",
+          "adjustment,",""),
+          "adjustment_refund,","")
       )
       .withColumn("count_bid",
         count($"ins_auto.booking_id").over(Window.partitionBy($"ins_auto.booking_id"))
@@ -54,7 +57,7 @@ class INSAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3Sou
         when($"prd_nm.product_name_mapping".isNull,$"ins_auto.product_name")
           .otherwise($"prd_nm.product_name_mapping")
           .as("product_category"),
-        split($"payment_scope_clear",",")(0).as("payment_channel"),
+        trim(split($"payment_scope_clear",",")(0)).as("payment_channel"),
         $"ins_auto.booking_id".as("booking_id"),
         $"count_bid",
         $"ins_auto.policy_id".as("policy_id"),

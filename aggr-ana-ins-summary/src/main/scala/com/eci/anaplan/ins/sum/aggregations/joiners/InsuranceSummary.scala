@@ -1,14 +1,16 @@
 package com.eci.anaplan.ins.sum.aggregations.joiners
 
-import com.eci.anaplan.ins.sum.aggregations.constructors.{INSAutoDf, INSNonAutoDf}
+import com.eci.anaplan.ins.sum.aggregations.constructors.{CreditLifeInsuranceDf, INSAutoDf, INSNonAutoDf}
 import org.apache.spark.sql.functions.{coalesce, countDistinct, lit, sum}
 import org.apache.spark.sql.{DataFrame, SparkSession}
+
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class InsuranceSummary @Inject()(spark: SparkSession,
                                  INSAutoDf: INSAutoDf,
-                                 INSNonAutoDf: INSNonAutoDf) {
+                                 INSNonAutoDf: INSNonAutoDf,
+                                 CreditLifeInsuranceDf: CreditLifeInsuranceDf) {
 
   private def joinDataFrames: DataFrame = {
 
@@ -32,7 +34,16 @@ class InsuranceSummary @Inject()(spark: SparkSession,
         $"*"
       )
 
-    INSAuto.union(INSNonAuto)
+    val CreditLifeInsurance = CreditLifeInsuranceDf.get
+      .groupBy($"report_date", $"customer", $"product", $"payment_channel")
+      .agg(
+        coalesce(countDistinct($"loan_id"),lit(0)).as("no_of_transactions")
+      )
+      .select(
+        $"*"
+      )
+
+    INSAuto.union(INSNonAuto).union(CreditLifeInsurance)
       .groupBy($"report_date", $"customer", $"product", $"payment_channel")
       .agg(
         coalesce(sum($"no_of_transactions"),lit(0)).as("no_of_transactions")

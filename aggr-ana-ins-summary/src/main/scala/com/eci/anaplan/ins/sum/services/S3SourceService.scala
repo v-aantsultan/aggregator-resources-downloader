@@ -17,6 +17,7 @@ class S3SourceService @Inject()(val sparkSession: SparkSession, config: Config,
   lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates")
   lazy val INSNonAutoDf: DataFrame = readByDefaultCustom("insurance.sales_bpng","booking_issued_date_date",true)
   lazy val INSAutoDf: DataFrame = readByDefaultCustom("insurance.auto_commission_recognition","recognition_date_date",true)
+  lazy val CreditLifeInsuranceDf: DataFrame = readByDefaultCustom("insurance.credit_life","report_date_date", true)
 
   val flattenerSrc: String = config.flattenerSrc
   val flattenerSrcDtl: String = config.flattenerSrcDtl

@@ -1,14 +1,16 @@
 package com.eci.anaplan.ins.details.aggregations.joiners
 
-import com.eci.anaplan.ins.details.aggregations.constructors.{INSAutoDf, INSNonAutoDf}
+import com.eci.anaplan.ins.details.aggregations.constructors.{CreditLifeInsuranceDf, INSAutoDf, INSNonAutoDf}
 import org.apache.spark.sql.functions.{coalesce, countDistinct, lit, sum, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
+
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class InsuranceDetails @Inject()(spark: SparkSession,
                                  INSAutoDf: INSAutoDf,
-                                 INSNonAutoDf: INSNonAutoDf) {
+                                 INSNonAutoDf: INSNonAutoDf,
+                                 CreditLifeInsuranceDf: CreditLifeInsuranceDf) {
 
   private def joinDataFrames: DataFrame = {
 
@@ -62,7 +64,25 @@ class InsuranceDetails @Inject()(spark: SparkSession,
         $"*"
       )
 
-    INSAuto.union(INSNonAuto)
+    val CreditLifeInsurance = CreditLifeInsuranceDf.get
+      .groupBy($"report_date", $"customer", $"business_partner", $"product", $"product_category", $"payment_channel")
+      .agg(
+        coalesce(countDistinct($"loan_id"),lit(0)).as("no_of_transactions"),
+        coalesce(countDistinct($"loan_id"),lit(0)).as("no_of_policy"),
+        coalesce(countDistinct($"loan_id"),lit(0)).as("no_of_insurance_coverage"),
+        coalesce(sum($"insurance_premium"),lit(0)).as("gross_written_premium"),
+        coalesce(sum($"referral_fee_amount"),lit(0)).as("commission"),
+        coalesce(sum($"discount"),lit(0)).as("discount"),
+        coalesce(sum($"premium"),lit(0)).as("premium"),
+        coalesce(sum($"unique_code"),lit(0)).as("unique_code"),
+        coalesce(sum($"coupon"),lit(0)).as("coupon"),
+        coalesce(sum($"mdr_charges"),lit(0)).as("mdr_charges")
+      )
+      .select(
+        $"*"
+      )
+
+    INSAuto.union(INSNonAuto).union(CreditLifeInsurance)
   }
 
   def joinWithColumn(): DataFrame =

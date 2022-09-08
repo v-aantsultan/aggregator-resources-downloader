@@ -35,7 +35,9 @@ class INSNonAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3
         ,"left")
 
       .withColumn("payment_scope_clear",
-          regexp_replace($"ins_nonauto.payment_scope","adjustment.*,","")
+        regexp_replace(regexp_replace($"ins_nonauto.payment_scope",
+          "adjustment,",""),
+          "adjustment_refund,","")
       )
       .withColumn("count_bid",
         count($"ins_nonauto.booking_id").over(Window.partitionBy($"ins_nonauto.booking_id"))
@@ -56,7 +58,7 @@ class INSNonAutoDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3
         when($"prd_nm.product_name_mapping".isNull,$"ins_nonauto.product_name")
           .otherwise($"prd_nm.product_name_mapping")
           .as("product_category"),
-        split($"payment_scope_clear",",")(0).as("payment_channel"),
+        trim(split($"payment_scope_clear",",")(0)).as("payment_channel"),
         $"ins_nonauto.booking_id".as("booking_id"),
         $"count_bid",
         $"ins_nonauto.policy_id".as("policy_id"),
