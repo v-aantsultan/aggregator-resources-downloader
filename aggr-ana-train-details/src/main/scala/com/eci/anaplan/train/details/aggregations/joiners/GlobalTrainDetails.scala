@@ -27,7 +27,8 @@ class GlobalTrainDetails @Inject()(spark: SparkSession,
           when($"discount_or_premium_idr" < 0,$"discount_or_premium_idr" + $"wht_discount_idr")
         ),lit(0)).as("discount"),
         coalesce(sum(
-          when($"discount_or_premium_idr" >= 0,$"discount_or_premium_idr")
+          when($"discount_or_premium_idr" >= 0,$"discount_or_premium_idr" + $"delivery_fee_idr")
+            .otherwise($"delivery_fee_idr")
         ),lit(0)).as("premium"),
         coalesce(sum($"unique_code_idr"),lit(0)).as("unique_code"),
         coalesce(sum($"coupon_amount_idr"),lit(0)).as("coupon"),

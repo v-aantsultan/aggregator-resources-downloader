@@ -33,7 +33,8 @@ class TrainSalesDfTest extends SharedBaseTest with TestSparkSession {
       "transaction_fee_idr",
       "vat_out_idr",
       "point_redemption_idr",
-      "final_refund_status"
+      "final_refund_status",
+      "delivery_fee_idr"
     )
 
     val resColumns = resDf.columns

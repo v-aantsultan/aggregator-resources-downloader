@@ -30,7 +30,8 @@ class TrainSalesDf @Inject()(val sparkSession: SparkSession, s3SourceService: S3
         $"`transaction_fee_idr`",
         $"`vat_out_idr`",
         $"`point_redemption_idr`",
-        $"`final_refund_status`"
+        $"`final_refund_status`",
+        $"`delivery_fee_idr`"
       )
   }
 }

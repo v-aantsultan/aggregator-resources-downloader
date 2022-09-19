@@ -42,14 +42,14 @@ class TrainSalesbyNRD @Inject()(val sparkSession: SparkSession, TrainSalesDf: Tr
         when(BusinessModelIsCommission, Constant.LitZero)
           .otherwise($"published_rate_contracting_idr")
           .as("gross_revenue"),
-        when(BusinessModelIsCommission, Constant.LitZero)
-          .otherwise($"provider_commission_idr")
+        when(BusinessModelIsCommission, $"provider_commission_idr")
+          .otherwise(Constant.LitZero)
           .as("commission"),
         when($"discount_or_premium_idr" < 0, $"discount_or_premium_idr" + $"wht_discount_idr")
           .otherwise(Constant.LitZero)
           .as("discount"),
-        when($"discount_or_premium_idr" >= 0, $"discount_or_premium_idr")
-          .otherwise(Constant.LitZero)
+        when($"discount_or_premium_idr" >= 0, $"discount_or_premium_idr" + $"delivery_fee_idr")
+          .otherwise($"delivery_fee_idr")
           .as("premium"),
         $"unique_code_idr".as("unique_code"),
         $"coupon_amount_idr".as("coupon"),

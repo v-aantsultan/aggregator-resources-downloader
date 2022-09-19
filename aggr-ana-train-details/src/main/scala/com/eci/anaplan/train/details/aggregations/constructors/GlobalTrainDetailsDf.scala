@@ -56,7 +56,8 @@ class GlobalTrainDetailsDf @Inject()(val sparkSession: SparkSession, s3SourceSer
         $"transaction_fee_idr".as("transaction_fee_idr"),
         $"vat_out_idr".as("vat_out_idr"),
         $"point_redemption_idr".as("point_redemption_idr"),
-        $"mdr_charges_idr".as("mdr_charges_idr")
+        $"mdr_charges_idr".as("mdr_charges_idr"),
+        $"delivery_fee_idr"
     )
   }
 }
