@@ -27,7 +27,7 @@ class TrainSalesbyNRD @Inject()(val sparkSession: SparkSession, TrainSalesDf: Tr
         to_date($"non_refundable_date" + expr("INTERVAL 7 HOURS")).as("report_date"),
         split($"`locale`","_")(1).as("customer"),
         when(BusinessModelIsCommission, lit("Consignment"))
-          .otherwise("business_model")
+          .otherwise($"business_model")
           .as("business_model"),
         $"fulfillment_id".as("business_partner"),
         when($"fulfillment_id" === "KAI_trinusa", lit("KAI Ticket"))

@@ -5,7 +5,7 @@ import com.eci.anaplan.instant.debit.configs.Config
 import com.eci.anaplan.instant.debit.services.StatusManagerService
 import com.eci.common.LoggerSupport
 import com.eci.common.TimeUtils.{toTimestamp, utcDateTimeStringReport}
-import com.eci.common.services.S3DestinationService
+import com.eci.anaplan.instant.debit.services.S3DestinationService
 import com.eci.common.slack.SlackClient
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.col
@@ -58,7 +58,7 @@ class Coordinator @Inject()(spark: SparkSession,
         slack.info("Successfully perform ETL ")
 
         // Perform 'action' on the Dataframe
-        Try(s3DestinationService.write(anaplanDF, destination)) match {
+        Try(s3DestinationService.publishToS3(anaplanDF, destination)) match {
           case Failure(exception) => {
             logger.error(s"Error in publishing the aggregator result to S3. $applicationInfo", exception)
             slack.error(s"Error in publishing the aggregator result to S3. $applicationInfo", exception)
