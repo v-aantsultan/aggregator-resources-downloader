@@ -18,7 +18,7 @@ class CreditLifeInsuranceDf @Inject()(val sparkSession: SparkSession, s3SourceSe
         to_date($"insurance_issued_date").as("report_date"),
         lit("ID").as("customer"),
         $"fulfillment_id".as("business_partner"),
-        $"product_type".as("product"),
+        lit("IA").as("product"),
         $"product_name".as("product_category"),
         lit("None").as("payment_channel"),
         $"loan_id".as("loan_id"),
