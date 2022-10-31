@@ -31,6 +31,9 @@ class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: Source
   lazy val TrainSalesAllPeriodSrc: DataFrame =
     readParquet(s"${sourceConfig.dataWarehousePath}/${S3DataframeReader.TRAIN}.sales")
 
+  lazy val IcPaylaterCsf01Src: DataFrame =
+    readParquet(s"${sourceConfig.path}/${S3DataframeReader.SLP_CSF}/csf_01")
+
   def readParquet(path: String): DataFrame = {
     sparkSession
       .read
@@ -73,5 +76,5 @@ object S3DataframeReader {
   val ECBPDF = "ecbpdf"
   val ECI_SHEETS_ANAPLAN = "eci_sheets/ecidtpl_anaplan_fpna"
   val TRAIN = "train"
-
+  val SLP_CSF = "slp_csf"
 }

@@ -323,6 +323,14 @@ lazy val `aggr-ana-bs-details` = (project in file("aggr-ana-bs-details"))
     libraryDependencies ++= sparkDeps
   ).dependsOn(common).aggregate(common)
 
+lazy val `aggr-ana-ic-paylater-r001` = (project in file("aggr-ana-ic-paylater-r001"))
+  .settings(
+    name := "aggr-ana-ic-paylater-r001",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
 lazy val `aggr-ana-bs-summary` = (project in file("aggr-ana-bs-summary"))
   .settings(
     name := "aggr-ana-bs-summary",
@@ -370,7 +378,8 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-at-nrd-details`,
     `aggr-ana-train-nrd-details`,
     `aggr-ana-bs-details`,
-    `aggr-ana-bs-summary`
+    `aggr-ana-bs-summary`,
+    `aggr-ana-ic-paylater-r001`
   )
 
   .aggregate(
@@ -409,7 +418,8 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-at-nrd-details`,
     `aggr-ana-train-nrd-details`,
     `aggr-ana-bs-details`,
-    `aggr-ana-bs-summary`
+    `aggr-ana-bs-summary`,
+    `aggr-ana-ic-paylater-r001`
   )
 
 
