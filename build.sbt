@@ -339,6 +339,38 @@ lazy val `aggr-ana-bs-summary` = (project in file("aggr-ana-bs-summary"))
     libraryDependencies ++= sparkDeps
   ).dependsOn(common).aggregate(common)
 
+lazy val `aggr-ana-flight-idr` = (project in file("aggr-ana-flight-idr"))
+  .settings(
+    name := "aggr-ana-flight-idr",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
+lazy val `aggr-ana-fl-rf-idr` = (project in file("aggr-ana-fl-rf-idr"))
+  .settings(
+    name := "aggr-ana-fl-rf-idr",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
+lazy val `aggr-ana-flight-details` = (project in file("aggr-ana-flight-details"))
+  .settings(
+    name := "aggr-ana-flight-details",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common,`aggr-ana-flight-idr`,`aggr-ana-fl-rf-idr`).aggregate(common,`aggr-ana-flight-idr`,`aggr-ana-fl-rf-idr`)
+
+lazy val `aggr-ana-flight-summary` = (project in file("aggr-ana-flight-summary"))
+  .settings(
+    name := "aggr-ana-flight-summary",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common,`aggr-ana-flight-idr`).aggregate(common,`aggr-ana-flight-idr`)
+
 lazy val `aggr-ana-ic-paylater-r003` = (project in file("aggr-ana-ic-paylater-r003"))
   .settings(
     name := "aggr-ana-ic-paylater-r003",
@@ -387,6 +419,11 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-train-nrd-details`,
     `aggr-ana-bs-details`,
     `aggr-ana-bs-summary`,
+    `aggr-ana-flight-idr`,
+    `aggr-ana-fl-rf-idr`,
+    `aggr-ana-flight-details`,
+    `aggr-ana-flight-summary`,
+    `aggr-ana-bs-summary`,
     `aggr-ana-ic-paylater-r001`,
     `aggr-ana-ic-paylater-r003`
   )
@@ -427,6 +464,11 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-at-nrd-details`,
     `aggr-ana-train-nrd-details`,
     `aggr-ana-bs-details`,
+    `aggr-ana-bs-summary`,
+    `aggr-ana-flight-idr`,
+    `aggr-ana-fl-rf-idr`,
+    `aggr-ana-flight-details`,
+    `aggr-ana-flight-summary`,
     `aggr-ana-bs-summary`,
     `aggr-ana-ic-paylater-r001`,
     `aggr-ana-ic-paylater-r003`
