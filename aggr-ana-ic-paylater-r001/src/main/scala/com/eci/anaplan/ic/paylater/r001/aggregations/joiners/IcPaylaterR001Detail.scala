@@ -2,7 +2,6 @@ package com.eci.anaplan.ic.paylater.r001.aggregations.joiners
 
 import com.eci.anaplan.ic.paylater.r001.aggregations.constructors.SlpCsf01DF
 import com.eci.common.constant.Constant
-import org.apache.spark.sql.catalyst.dsl.expressions
 import org.apache.spark.sql.functions.{coalesce, countDistinct, sum}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -18,7 +17,7 @@ class IcPaylaterR001Detail @Inject() (
   private def joinDataFrame(): DataFrame = {
 
     slpCsf01DF.getJoinTable
-      .groupBy($"report_date", $"source_of_fund", $"funding", $"installment_plan")
+      .groupBy($"report_date", $"source_of_fund", $"funding", $"installment_plan", $"product")
       .agg(
         coalesce(countDistinct($"no_of_transactions"), Constant.LitZero).as("no_of_transactions"),
         coalesce(sum($"gmv"), Constant.LitZero).as("gmv"),

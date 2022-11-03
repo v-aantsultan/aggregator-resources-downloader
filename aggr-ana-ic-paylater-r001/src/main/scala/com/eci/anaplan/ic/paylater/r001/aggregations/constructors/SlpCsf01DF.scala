@@ -42,7 +42,7 @@ class SlpCsf01DF @Inject()(
 
   def getJoinTable: DataFrame = {
     val mappingUnderlyingProductDF : MappingUnderlyingProductDF = new MappingUnderlyingProductDF(sparkSession, s3SourceService)
-    val jointDF1 = this.getSpecific
+    val joinDF1 = this.getSpecific
       .as("slp")
       .join(mappingUnderlyingProductDF.getData
         .as("map"),
@@ -50,7 +50,7 @@ class SlpCsf01DF @Inject()(
         "left")
 
     // final join
-    jointDF1
+    joinDF1
       .select(
         $"report_date".as("report_date"),
         $"source_of_fund".as("source_of_fund"),
@@ -65,7 +65,7 @@ class SlpCsf01DF @Inject()(
         $"user_acquisition_fee".as("user_acquisition_fee"),
         when($"product_type" === $"fs_product_type", lit($"underlying_product"))
           .otherwise($"product_type")
-          .as("product_type")
+          .as("product")
     )
   }
 }
