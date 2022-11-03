@@ -16,7 +16,13 @@ class MappingUnderlyingProductDF @Inject()(
       s3SourceService.MappingUnderLyingProductSrc
         .select(
           // fs_product_type only for dummy
-//          when($"fs_product_type" === "HT", lit("VCC"))
+//          when($"fs_product_type" === "FL", lit("FLIGHT"))
+//            .when($"fs_product_type" === "HT", lit("HOTEL"))
+//            .when($"fs_product_type" === "BS", lit("BUS"))
+//            .when($"fs_product_type" === "TR", lit("TRAIN"))
+//            .when($"fs_product_type" === "CU", lit("CULINARY"))
+//            .when($"fs_product_type" === "FBHB", lit("BUNDLE"))
+//            .when($"fs_product_type" === "EBILL", lit("BP"))
 //            .otherwise($"fs_product_type")
 //            .as("fs_product_type"),
 

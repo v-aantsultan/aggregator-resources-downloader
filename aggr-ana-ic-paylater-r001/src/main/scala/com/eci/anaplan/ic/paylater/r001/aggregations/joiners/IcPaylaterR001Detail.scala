@@ -24,7 +24,8 @@ class IcPaylaterR001Detail @Inject() (
         coalesce(sum($"admin_fee_commission"), Constant.LitZero).as("admin_fee_commission"),
         coalesce(sum($"interest_amount"), Constant.LitZero).as("interest_amount"),
         coalesce(sum($"mdr_fee"), Constant.LitZero).as("mdr_fee"),
-        coalesce(sum($"service_income"), Constant.LitZero).as("service_income")
+        coalesce(sum($"service_income"), Constant.LitZero).as("service_income"),
+        coalesce(sum($"user_acquisition_fee"), Constant.LitZero).as("user_acquisition_fee")
       )
       .select(
         $"*"

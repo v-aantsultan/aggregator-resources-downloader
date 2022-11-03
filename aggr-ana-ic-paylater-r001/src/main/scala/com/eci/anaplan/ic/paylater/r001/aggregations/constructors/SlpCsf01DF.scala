@@ -1,8 +1,8 @@
 package com.eci.anaplan.ic.paylater.r001.aggregations.constructors
 
 import com.eci.common.services.S3SourceService
+import org.apache.spark.sql.functions.{expr, lit, to_date, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.functions.{exp, expr, lit, size, split, to_date, when}
 
 import javax.inject.{Inject, Singleton}
 
@@ -62,7 +62,7 @@ class SlpCsf01DF @Inject()(
         $"interest_amount".as("interest_amount"),
         $"mdr_fee".as("mdr_fee"),
         $"service_income".as("service_income"),
-        $"user_acquisition_fee".as("user_acquisition_fee"),
+        ($"user_acquisition_fee" * lit(-1)).as("user_acquisition_fee"),
         when($"product_type" === $"fs_product_type", lit($"underlying_product"))
           .otherwise($"product_type")
           .as("product")

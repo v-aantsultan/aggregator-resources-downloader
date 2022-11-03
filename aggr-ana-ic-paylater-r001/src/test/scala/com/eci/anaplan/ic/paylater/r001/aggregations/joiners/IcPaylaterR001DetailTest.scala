@@ -30,13 +30,13 @@ class IcPaylaterR001DetailTest extends SharedBaseTest with SharedDataFrameStubbe
       "source_of_fund",
       "funding",
       "installment_plan",
-      "loan_disbursed_value",
+      // "loan_disbursed_value", TBD
       "product",
       "no_of_transactions",
       "gmv",
       "admin_fee_commission",
       "interest_amount",
-      "additional_interest",
+      // "additional_interest", TBD
       "mdr_fee",
       "service_income",
       "user_acquisition_fee"
