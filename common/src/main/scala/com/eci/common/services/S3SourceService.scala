@@ -31,8 +31,12 @@ class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: Source
   lazy val TrainSalesAllPeriodSrc: DataFrame =
     readParquet(s"${sourceConfig.dataWarehousePath}/${S3DataframeReader.TRAIN}.sales")
 
-  lazy val IcPaylaterCsf01Src: DataFrame =
-    readParquet(s"${sourceConfig.path}/${S3DataframeReader.SLP_CSF}/csf_01")
+  lazy val SlpCsf01Src: DataFrame =
+    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_01",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date")
+
+  lazy val MappingUnderLyingProductSrc: DataFrame =
+    readParquet(s"${sourceConfig.path}/${S3DataframeReader.ECI_SHEETS_ANAPLAN}/Mapping Underlying Product")
 
   def readParquet(path: String): DataFrame = {
     sparkSession

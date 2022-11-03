@@ -1,5 +1,8 @@
 package com.eci.anaplan
 
+import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.types.StringType
 /**
  * Reads Stub value from Parquet files in src/test/resources
  */
@@ -19,8 +22,11 @@ trait SharedDataFrameStubber extends TestSparkSession {
   // val testResourcePath = getClass.getResource("/").getPath
 
   // TODO: Add all TestDataFrame here. All the mocked data frame will mock the Dataframes from dataFrameSource1
-  protected val mockIcPaylaterR001Csf01 =
+  protected val mockSlpCsf01Src : DataFrame =
     testSparkSession.read.parquet(s"$MockResourcePath/slp_csf/csf_01/report_date=**")
+
+  protected val mockMappingUnderlyingProductSrc : DataFrame =
+    testSparkSession.read.parquet(s"$MockResourcePath/eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
 
   // protected val adjustmentDf = testSparkSession.read.parquet(s"$MockResourcePath/$tbiContext/adjustment/date=**")
 

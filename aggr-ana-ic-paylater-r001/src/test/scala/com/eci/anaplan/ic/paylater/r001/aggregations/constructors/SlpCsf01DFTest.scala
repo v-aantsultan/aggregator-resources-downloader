@@ -1,24 +1,24 @@
-package com.eci.anaplan.ic.paylater.r001.aggregator.constructors
+package com.eci.anaplan.ic.paylater.r001.aggregations.constructors
 
-import com.eci.anaplan.ic.paylater.r001.aggregations.constructors.IcPaylaterR001DF
 import com.eci.anaplan.{SharedBaseTest, SharedDataFrameStubber, TestSparkSession}
 import com.eci.common.services.S3SourceService
-import org.scalatest.mockito.MockitoSugar.mock
 import org.mockito.Mockito.when
+import org.scalatest.mockito.MockitoSugar.mock
 
-class IcPaylaterR001DFTest extends SharedBaseTest with SharedDataFrameStubber with TestSparkSession {
+class SlpCsf01DFTest extends SharedBaseTest with SharedDataFrameStubber with TestSparkSession {
 
   private val mockS3SourceService : S3SourceService  = mock[S3SourceService]
 
   before {
-    when(mockS3SourceService.IcPaylaterCsf01Src).thenReturn(mockIcPaylaterR001Csf01)
+    when(mockS3SourceService.SlpCsf01Src).thenReturn(mockSlpCsf01Src)
+    when(mockS3SourceService.MappingUnderLyingProductSrc).thenReturn(mockMappingUnderlyingProductSrc)
   }
 
-  private val icPaylaterR001DfMock : IcPaylaterR001DF = new IcPaylaterR001DF(testSparkSession, mockS3SourceService)
+  private val slpCsf01DF : SlpCsf01DF = new SlpCsf01DF(testSparkSession, mockS3SourceService)
 
 
   "IC Paylater data" should "only contain valid columns" in {
-    val resDf = icPaylaterR001DfMock.getAllPeriod
+    val resDf = slpCsf01DF.getSpecific
     val validationColumn = Array(
       "report_date",
       "source_of_fund",
@@ -37,13 +37,15 @@ class IcPaylaterR001DFTest extends SharedBaseTest with SharedDataFrameStubber wi
   }
 
   "data" should "show" in {
-    icPaylaterR001DfMock.getAllPeriod.show()
+    slpCsf01DF.getSpecific.show()
+  }
+
+  "data left join" should "show" in {
+    slpCsf01DF.getJoinTable.show()
   }
 
   "count data" should "show" in {
-    val countData = icPaylaterR001DfMock.getAllPeriod.count()
+    val countData = slpCsf01DF.getSpecific.count()
     println(s"countData : $countData")
   }
-
-
 }
