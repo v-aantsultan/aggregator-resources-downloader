@@ -14,7 +14,6 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 class GVDetailsSource @Inject()(val sparkSession: SparkSession, config: GVDetailsConfig,
                                 @Named("TENANT_ID") val tenantId: String) extends PathFetcher {
 
-  lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates")
   lazy val GVIssuedlistDf: DataFrame = readByDefaultCustom("gift_voucher.gv_issuedlist","issued_date_date")
   lazy val GVRedeemDf: DataFrame = readByDefaultCustom("gift_voucher.gv_redeemed","redemption_date_date")
   lazy val GVRevenueDf: DataFrame = readByDefaultCustom("gift_voucher.gv_revenue","revenue_date_date")

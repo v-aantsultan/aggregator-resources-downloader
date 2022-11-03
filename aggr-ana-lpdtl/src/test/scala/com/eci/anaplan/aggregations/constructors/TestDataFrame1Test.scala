@@ -1,7 +1,8 @@
 package com.eci.anaplan.aggregations.constructors
 
+import com.eci.anaplan.aggregations.joiners.{AnaplanLoyaltyPointDtl, LPDetailsIDR, LoyaltyPointDtlPrep}
 import com.eci.anaplan.services.LPDetailsSource
-import com.eci.anaplan.utils.{TestSparkSession, SharedBaseTest}
+import com.eci.anaplan.utils.{SharedBaseTest, TestSparkSession}
 import org.mockito.Mockito.{mock, when}
 
 /**
@@ -12,34 +13,43 @@ class TestDataFrame1Test extends SharedBaseTest with TestSparkSession {
   import testSparkSession.implicits._
 
   private val mockS3SourceService: LPDetailsSource = mock(classOf[LPDetailsSource])
-  private val testDiscountPremiumDataFrame: LPDetailsDf = new LPDetailsDf(testSparkSession, mockS3SourceService)
+  private val testLPDetailsGrandProductTypeDf: LPDetailsGrandProductTypeDf =
+    new LPDetailsGrandProductTypeDf(testSparkSession, mockS3SourceService)
+  private val testLPDetailsTransactionCategoryDf: LPDetailsTransactionCategoryDf =
+    new LPDetailsTransactionCategoryDf(testSparkSession, mockS3SourceService)
+  private val testLPDetailsUnderlyingProductDf: LPDetailsUnderlyingProductDf =
+    new LPDetailsUnderlyingProductDf(testSparkSession, mockS3SourceService)
+  private val testLPDetailsRateDf: LPDetailsRateDf = new LPDetailsRateDf(testSparkSession, mockS3SourceService)
+  private val testLPDetailsDf: LPDetailsDf = new LPDetailsDf(testSparkSession, mockS3SourceService)
+
   before {
-    when(mockS3SourceService.dataFrameSource1).thenReturn(mockedDataFrameSource1)
+    when(mockS3SourceService.GrandProductTypeDf).thenReturn(mockedGrantProductSrc)
+    when(mockS3SourceService.TransactionCategoryDf).thenReturn(mockedTransactionCategorySrc)
+    when(mockS3SourceService.underlyingProductDf).thenReturn(mockedUnderlyingProductSrc)
+    when(mockS3SourceService.ExchangeRateDf).thenReturn(mockedExchangeRateSrc)
+    when(mockS3SourceService.LPMutationDf).thenReturn(mockedLPMutationSrc)
   }
 
-  /*
-  TODO :  Write Some test Like this
+  private val testLPDetailsIDR: LPDetailsIDR =
+    new LPDetailsIDR(testSparkSession, testLPDetailsDf, testLPDetailsRateDf,
+      testLPDetailsGrandProductTypeDf, testLPDetailsTransactionCategoryDf, testLPDetailsUnderlyingProductDf)
+  private val testLoyaltyPointDtlPrep: LoyaltyPointDtlPrep =
+    new LoyaltyPointDtlPrep(testSparkSession, testLPDetailsIDR)
+  private val testAnaplanLoyaltyPointDtl: AnaplanLoyaltyPointDtl =
+    new AnaplanLoyaltyPointDtl(testSparkSession, testLoyaltyPointDtlPrep)
 
-
-
-  "Discount PremiumData Frame get" should "only contain valid columns" in {
+  "Loyalty Point Details DataFrame get" should "only contain valid columns" in {
+    val resDf = testAnaplanLoyaltyPointDtl.joinWithColumn()
     val validExpectedColumns = Array(
-      "sales_delivery_id",
-      "amount",
-      "booking_id",
-      "created_at"
+      "report_date",
+      "category",
+      "customer",
+      "product_category",
+      "point_transaction",
+      "point_amount"
     )
-    val resColumns = testDiscountPremiumDataFrame.get.columns
 
-    validExpectedColumns shouldBe resColumns
+    val resColumns = resDf.columns
+    resColumns shouldBe validExpectedColumns
   }
-
-  it should "only contain discount_or_premium as charge type" in {
-    val testDiscountPremiumDf = testDiscountPremiumDataFrame.get
-    val filteredSalesDeliveryDfCount = filterSalesDeliveryDataFrame(salesDeliveryDf)
-      .where($"`sales.sales_delivery_item_charge.charge_type_name`" === "discount_or_premium").count()
-    val expectedSalesDeliveryDfCount = testDiscountPremiumDf.count()
-
-    filteredSalesDeliveryDfCount shouldBe expectedSalesDeliveryDfCount
-  } */
 }

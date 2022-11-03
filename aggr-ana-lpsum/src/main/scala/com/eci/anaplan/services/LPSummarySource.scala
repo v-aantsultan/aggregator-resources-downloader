@@ -16,7 +16,6 @@ class LPSummarySource @Inject()(val sparkSession: SparkSession, config: LPSummar
                                 @Named("TENANT_ID") val tenantId: String) extends PathFetcher {
 
   // TODO: Add all the necessary dataframe source here. Each DataFrame Source will be a folder in S3
-  lazy val dataFrameSource1: DataFrame = readByDefaultRange("oracle.exchange_rates")
   lazy val LPMutationDf: DataFrame = readByDefaultCustom("loyalty_point.point_mutation","movement_time_date")
   lazy val ExchangeRateDf: DataFrame = readByDefaultCustom("oracle.exchange_rates","conversion_date_date")
   lazy val GrandProductTypeDf: DataFrame =

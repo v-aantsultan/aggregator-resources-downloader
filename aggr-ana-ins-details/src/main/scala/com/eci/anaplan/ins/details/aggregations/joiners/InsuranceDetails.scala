@@ -2,6 +2,7 @@ package com.eci.anaplan.ins.details.aggregations.joiners
 
 import com.eci.anaplan.ins.details.aggregations.constructors.{CreditLifeInsuranceDf, INSAutoDf, INSNonAutoDf}
 import org.apache.spark.sql.functions.{coalesce, countDistinct, lit, sum, when}
+import org.apache.spark.sql.types.{DecimalType, IntegerType}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 import javax.inject.{Inject, Singleton}
@@ -83,6 +84,24 @@ class InsuranceDetails @Inject()(spark: SparkSession,
       )
 
     INSAuto.union(INSNonAuto).union(CreditLifeInsurance)
+      .select(
+        $"report_date",
+        $"customer",
+        $"business_partner",
+        $"product",
+        $"product_category",
+        $"payment_channel",
+        $"no_of_transactions".cast(IntegerType),
+        $"no_of_policy".cast(IntegerType),
+        $"no_of_insurance_coverage".cast(IntegerType),
+        $"gross_written_premium".cast(DecimalType(18,4)),
+        $"commission".cast(DecimalType(18,4)),
+        $"discount".cast(DecimalType(18,4)),
+        $"premium".cast(DecimalType(18,4)),
+        $"unique_code".cast(DecimalType(18,4)),
+        $"coupon".cast(DecimalType(18,4)),
+        $"mdr_charges".cast(DecimalType(18,4))
+      )
   }
 
   def joinWithColumn(): DataFrame =

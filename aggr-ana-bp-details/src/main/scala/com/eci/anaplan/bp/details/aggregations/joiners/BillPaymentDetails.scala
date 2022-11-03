@@ -2,6 +2,7 @@ package com.eci.anaplan.bp.details.aggregations.joiners
 
 import com.eci.anaplan.bp.details.aggregations.constructors.BPDetailsDf
 import org.apache.spark.sql.functions.{coalesce, count, countDistinct, lit, sum, when}
+import org.apache.spark.sql.types.{DecimalType, DoubleType, FloatType, IntegerType, LongType}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 import javax.inject.{Inject, Singleton}
@@ -24,26 +25,26 @@ class BillPaymentDetails @Inject()(spark: SparkSession,
         coalesce($"payment_channel",lit("None")).as("payment_channel")
       )
       .agg(
-        coalesce(countDistinct($"booking_id"),lit(0)).as("no_of_transactions"),
-        coalesce(sum($"coupon_code_result"),lit(0)).as("no_of_coupon"),
-        coalesce(count($"booking_id"),lit(0)).as("transaction_volume"),
-        coalesce(sum($"published_rate_in_selling_currency"),lit(0)).as("gmv"),
-        coalesce(sum($"commission_revenue"),lit(0)).as("commission"),
-        coalesce(sum($"transaction_fee"),lit(0)).as("transaction_fee"),
+        coalesce(countDistinct($"booking_id"),lit(0)).cast(IntegerType).as("no_of_transactions"),
+        coalesce(sum($"coupon_code_result"),lit(0)).cast(IntegerType).as("no_of_coupon"),
+        coalesce(count($"booking_id"),lit(0)).cast(IntegerType).as("transaction_volume"),
+        coalesce(sum($"published_rate_in_selling_currency"),lit(0)).cast(DecimalType(18,4)).as("gmv"),
+        coalesce(sum($"commission_revenue"),lit(0)).cast(DecimalType(18,4)).as("commission"),
+        coalesce(sum($"transaction_fee"),lit(0)).cast(DecimalType(18,4)).as("transaction_fee"),
         coalesce(sum(
           when($"discount_or_premium" < 0,$"discount_or_premium" + $"discount_wht")
-        ),lit(0)).as("discount"),
+        ),lit(0)).cast(DecimalType(18,4)).as("discount"),
         coalesce(sum(
           when($"discount_or_premium" >= 0,$"discount_or_premium")
-        ),lit(0)).as("premium"),
-        coalesce(sum($"unique_code"),lit(0)).as("unique_code"),
-        coalesce(sum($"total_coupon_value"),lit(0)).as("coupon"),
+        ),lit(0)).cast(DecimalType(18,4)).as("premium"),
+        coalesce(sum($"unique_code"),lit(0)).cast(DecimalType(18,4)).as("unique_code"),
+        coalesce(sum($"total_coupon_value"),lit(0)).cast(DecimalType(18,4)).as("coupon"),
         coalesce(sum(
           when($"report_date".lt(lit("2022-04-01")), $"commission_revenue" * (-0.1))
             .otherwise($"commission_revenue" * (-.11))),lit(0))
-          .as("vat_out"),
-        coalesce(sum($"point_redemption"),lit(0)).as("point_redemption"),
-        coalesce(sum($"mdr_amount_prorate_idr" * -1),lit(0)).as("mdr_charges")
+          .cast(DecimalType(18,4)).as("vat_out"),
+        coalesce(sum($"point_redemption"),lit(0)).cast(DecimalType(18,4)).as("point_redemption"),
+        coalesce(sum($"mdr_amount_prorate_idr" * -1),lit(0)).cast(DecimalType(18,4)).as("mdr_charges")
       )
       .select(
         $"*"

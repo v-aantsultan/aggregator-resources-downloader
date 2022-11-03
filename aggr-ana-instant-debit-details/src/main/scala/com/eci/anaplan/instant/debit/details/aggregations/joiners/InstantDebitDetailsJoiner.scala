@@ -2,6 +2,7 @@ package com.eci.anaplan.instant.debit.details.aggregations.joiners
 
 import com.eci.anaplan.instant.debit.details.aggregations.constructors.{PaymentScopeSheetDf, UnderlyingProductSheetDf}
 import org.apache.spark.sql.functions.{coalesce, countDistinct, lit, substring, sum}
+import org.apache.spark.sql.types.{DecimalType, IntegerType}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 import javax.inject.{Inject, Singleton}
@@ -47,10 +48,10 @@ class InstantDebitDetailsJoiner @Inject()(spark: SparkSession,
 
     JoinedMapping.groupBy($"report_date",$"product",$"product_type",$"customer",$"business_partner",$"payment_channel")
       .agg(
-        coalesce(countDistinct($"payment_id"),lit(0)).as("no_of_transactions"),
-        coalesce(sum($"payment_amount_idr"),lit(0)).as("gmv"),
-        coalesce(sum($"point_grant_idr"),lit(0)).as("point_grant"),
-        coalesce(sum($"mdr_charges_idr"),lit(0)).as("mdr_charges")
+        coalesce(countDistinct($"payment_id"),lit(0)).cast(IntegerType).as("no_of_transactions"),
+        coalesce(sum($"payment_amount_idr"),lit(0)).cast(DecimalType(18,4)).as("gmv"),
+        coalesce(sum($"point_grant_idr"),lit(0)).cast(DecimalType(18,4)).as("point_grant"),
+        coalesce(sum($"mdr_charges_idr"),lit(0)).cast(DecimalType(18,4)).as("mdr_charges")
       )
       .select(
         $"*"

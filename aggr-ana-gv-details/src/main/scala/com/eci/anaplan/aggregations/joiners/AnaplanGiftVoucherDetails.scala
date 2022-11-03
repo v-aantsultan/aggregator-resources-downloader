@@ -1,8 +1,10 @@
 package com.eci.anaplan.aggregations.joiners
 
 import com.eci.anaplan.aggregations.constructors._
+
 import javax.inject.{Inject, Singleton}
 import org.apache.spark.sql.functions.{coalesce, countDistinct, lit, sum, when}
+import org.apache.spark.sql.types.{DecimalType, IntegerType}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 @Singleton
@@ -116,6 +118,23 @@ class AnaplanGiftVoucherDetails @Inject()(spark: SparkSession,
       )
 
     GVRedeemIDR.union(GVRevenueIDR).union(GVSalesB2CIDR).union(GVSalesB2BIDR)
+      .select(
+        $"report_date",
+        $"product",
+        $"business_partner",
+        $"voucher_redemption_product",
+        $"customer",
+        $"payment_channel_name",
+        $"gift_voucher_amount".cast(DecimalType(18,4)),
+        $"no_of_transactions".cast(IntegerType),
+        $"no_gift_voucher".cast(IntegerType),
+        $"revenue_amount".cast(DecimalType(18,4)),
+        $"unique_code".cast(DecimalType(18,4)),
+        $"coupon_value".cast(DecimalType(18,4)),
+        $"discount".cast(DecimalType(18,4)),
+        $"premium".cast(DecimalType(18,4)),
+        $"mdr_charges".cast(DecimalType(18,4))
+      )
 
   }
 
