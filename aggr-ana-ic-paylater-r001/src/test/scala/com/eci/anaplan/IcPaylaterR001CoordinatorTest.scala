@@ -22,8 +22,8 @@ class IcPaylaterR001CoordinatorTest extends SharedBaseTest with SharedDataFrameS
   before {
 
     Mockito.when(mockAppConfig.appName).thenReturn("aggr-ana-ic-paylater-r001")
-    Mockito.when(mockSourceConfig.zonedDateTimeFromDate).thenReturn(utcZonedDateTime("1900-01-01T00:00:00Z"))
-    Mockito.when(mockSourceConfig.zonedDateTimeToDate).thenReturn(utcZonedDateTime("2100-01-01T00:00:00Z"))
+    Mockito.when(mockSourceConfig.zonedDateTimeFromDate).thenReturn(utcZonedDateTime("2022-01-01T00:00:00Z"))
+    Mockito.when(mockSourceConfig.zonedDateTimeToDate).thenReturn(utcZonedDateTime("2022-12-01T00:00:00Z"))
     Mockito.when(mockDestinationConfig.partitionKey).thenReturn("report_date")
     Mockito.when(mockDestinationConfig.path)
       .thenReturn("/home/v-aant.sultan/Documents/project/source-code-project-domo/tvlk-eci-aggregator-anaplan/output")

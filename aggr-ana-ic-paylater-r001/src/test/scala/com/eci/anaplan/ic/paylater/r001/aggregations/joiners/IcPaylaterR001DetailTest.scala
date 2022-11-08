@@ -43,4 +43,9 @@ class IcPaylaterR001DetailTest extends SharedBaseTest with SharedDataFrameStubbe
     )
     dataColumn shouldBe expectedColumn
   }
+
+  "data" should "not 0" in {
+    val countData = icPaylaterR001Detail.joinWithColumn().count()
+    assert(countData != 0)
+  }
 }

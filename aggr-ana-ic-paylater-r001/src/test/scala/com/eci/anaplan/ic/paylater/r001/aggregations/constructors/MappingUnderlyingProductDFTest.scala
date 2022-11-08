@@ -16,6 +16,23 @@ class MappingUnderlyingProductDFTest extends SharedBaseTest with SharedDataFrame
   private val mappingUnderlyingProductDF : MappingUnderlyingProductDF =
     new MappingUnderlyingProductDF(testSparkSession, mockS3SourceService)
 
+  it should "only contain valid columns" in {
+    val resDf = mappingUnderlyingProductDF.getData
+    val validationColumn = Array(
+      "fs_product_type",
+      "underlying_product"
+    )
+
+    val columns = resDf.columns
+
+    columns shouldBe validationColumn
+  }
+
+  it should "not 0" in {
+    val countData = mappingUnderlyingProductDF.getData.count()
+    assert(countData != 0)
+  }
+
   it should "show" in {
     mappingUnderlyingProductDF.getData.show()
   }
