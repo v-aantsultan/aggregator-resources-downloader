@@ -355,6 +355,14 @@ lazy val `aggr-ana-hs-details` = (project in file("aggr-ana-hs-details"))
     libraryDependencies ++= sparkDeps
   ).dependsOn(common, `aggr-ana-hs-idr`).aggregate(common, `aggr-ana-hs-idr`)
 
+lazy val `aggr-ana-hs-nrd-details` = (project in file("aggr-ana-hs-nrd-details"))
+  .settings(
+    name := "aggr-ana-hs-nrd-details",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
 lazy val `aggr-ana-flight-idr` = (project in file("aggr-ana-flight-idr"))
   .settings(
     name := "aggr-ana-flight-idr",
@@ -437,6 +445,7 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-bs-summary`,
     `aggr-ana-hs-idr`,
     `aggr-ana-hs-details`,
+    `aggr-ana-hs-nrd-details`,
     `aggr-ana-flight-idr`,
     `aggr-ana-fl-rf-idr`,
     `aggr-ana-flight-details`,
@@ -485,6 +494,7 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-bs-summary`,
     `aggr-ana-hs-idr`,
     `aggr-ana-hs-details`,
+    `aggr-ana-hs-nrd-details`,
     `aggr-ana-flight-idr`,
     `aggr-ana-fl-rf-idr`,
     `aggr-ana-flight-details`,
