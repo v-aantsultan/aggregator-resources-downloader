@@ -12,8 +12,8 @@ class IcPaylaterR001DetailTest extends SharedBaseTest with SharedDataFrameStubbe
   private val mockS3SourceService: S3SourceService = MockitoSugar.mock[S3SourceService]
 
   before {
-    Mockito.when(mockS3SourceService.SlpCsf01Src).thenReturn(mockSlpCsf01Src)
-    Mockito.when(mockS3SourceService.MappingUnderLyingProductSrc).thenReturn(mockMappingUnderlyingProductSrc)
+    Mockito.when(mockS3SourceService.SlpCsf01Src).thenReturn(getMockSlpCsf01Src())
+    Mockito.when(mockS3SourceService.MappingUnderLyingProductSrc).thenReturn(getMockMappingUnderlyingProductSrc())
   }
 
   private val slpCsf01DF: SlpCsf01DF = new SlpCsf01DF(testSparkSession, mockS3SourceService)

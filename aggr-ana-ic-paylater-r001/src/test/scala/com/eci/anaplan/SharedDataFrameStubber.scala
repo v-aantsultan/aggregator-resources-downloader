@@ -20,10 +20,19 @@ trait SharedDataFrameStubber extends TestSparkSession {
   // val testResourcePath = getClass.getResource("/").getPath
 
   // TODO: Add all TestDataFrame here. All the mocked data frame will mock the Dataframes from dataFrameSource1
-  protected val mockSlpCsf01Src : DataFrame =
-    testSparkSession.read.parquet(s"$MockResourcePath/slp_csf/csf_01/report_date=20220627")
+  protected def getMockSlpCsf01Src(): DataFrame = {
 
-  protected val mockMappingUnderlyingProductSrc : DataFrame =
-    testSparkSession.read.parquet(s"$MockResourcePath/eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
+
+    testSparkSession
+      .read
+      .parquet(s"$MockResourcePath/slp_csf/csf_01/report_date=**")
+  }
+
+  protected def getMockMappingUnderlyingProductSrc(): DataFrame = {
+    testSparkSession
+      .read
+      .parquet(s"$MockResourcePath/eci_sheets/ecidtpl_anaplan_fpna/Mapping Underlying Product")
+  }
+
 
 }

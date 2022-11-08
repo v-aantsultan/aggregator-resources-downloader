@@ -10,7 +10,7 @@ class MappingUnderlyingProductDFTest extends SharedBaseTest with SharedDataFrame
   private val mockS3SourceService : S3SourceService  = mock[S3SourceService]
 
   before {
-    when(mockS3SourceService.MappingUnderLyingProductSrc).thenReturn(mockMappingUnderlyingProductSrc)
+    when(mockS3SourceService.MappingUnderLyingProductSrc).thenReturn(getMockMappingUnderlyingProductSrc())
   }
 
   private val mappingUnderlyingProductDF : MappingUnderlyingProductDF =
@@ -34,11 +34,7 @@ class MappingUnderlyingProductDFTest extends SharedBaseTest with SharedDataFrame
   }
 
   it should "show" in {
-    mappingUnderlyingProductDF.getData.show()
-  }
-
-  it should "iterate" in {
-
+    mappingUnderlyingProductDF.getData.show(50)
   }
 
 }
