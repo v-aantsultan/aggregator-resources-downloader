@@ -44,18 +44,4 @@ class SlpCsf01DFTest extends SharedBaseTest with SharedDataFrameStubber with Tes
     assert(countData != 0)
   }
 
-  "data" should "show" in {
-//    slpCsf01DF.getSpecific.orderBy(functions.col("report_date").asc).show(5)
-    slpCsf01DF.getSpecific.show()
-  }
-
-  "data left join" should "show" in {
-    slpCsf01DF.getJoinTable.show(5)
-  }
-
-  it should "show report_date schema" in {
-    val dataType = slpCsf01DF.getSpecific.schema("report_date").dataType
-    println(s"data type : $dataType")
-  }
-
 }

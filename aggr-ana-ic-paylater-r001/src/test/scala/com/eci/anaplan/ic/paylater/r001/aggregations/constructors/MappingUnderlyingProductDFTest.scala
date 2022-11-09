@@ -33,8 +33,4 @@ class MappingUnderlyingProductDFTest extends SharedBaseTest with SharedDataFrame
     assert(countData != 0)
   }
 
-  it should "show" in {
-    mappingUnderlyingProductDF.getData.show(50)
-  }
-
 }

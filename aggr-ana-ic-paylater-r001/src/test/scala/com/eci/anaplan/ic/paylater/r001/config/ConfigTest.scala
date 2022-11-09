@@ -12,8 +12,11 @@ import org.scalatest.mockito.MockitoSugar
 class ConfigTest extends SharedBaseTest {
 
   private val mockConfig: Config = MockitoSugar.mock[Config]
-  protected var s3SourceService: S3SourceService = _
-  protected var sparkSession: SparkSession = _
+  var s3SourceService: S3SourceService = _
+  var sparkSession: SparkSession = _
+  var appConfig: AppConfig = _
+  var sparkSessionProvider: SparkSessionProvider = _
+  var sourceConfig: SourceConfig = _
 
   before {
     Mockito.when(mockConfig.getString("app.name")).thenReturn("aggr-ana-ic-paylater-r001")
@@ -22,24 +25,24 @@ class ConfigTest extends SharedBaseTest {
     Mockito.when(mockConfig.getString("flattener-src"))
       .thenReturn("s3a://ecidtpl-data-warehouse-674080593013-d94c46ee172a319c/data_warehouse")
     Mockito.when(mockConfig.getString("start-date")).thenReturn("2022-06-25T00:00:00Z")
-    Mockito.when(mockConfig.getString("end-date")).thenReturn("2022-07-28T00:00:00Z")
+    Mockito.when(mockConfig.getString("end-date")).thenReturn("2022-06-28T00:00:00Z")
     Mockito.when(mockConfig.getString("aws-access-key-id"))
-      .thenReturn("ASIAZZ4SVSR24QAWNX7Y")
+      .thenReturn("ASIAZZ4SVSR255J6V3KT")
     Mockito.when(mockConfig.getString("aws-secret-access-key"))
-      .thenReturn("ynDPTlQ8MGy7zFFkXQAArE+36LN8XudMuDVsTkj/")
+      .thenReturn("Bhn4NE8VV8+0KbWFKTz4r9Jo8VHkoTsJR5O7swiR")
     Mockito.when(mockConfig.getString("aws-session-token"))
-      .thenReturn("IQoJb3JpZ2luX2VjEEMaCXVzLWVhc3QtMSJGMEQCIGloSh/PcvtaAbbdFttFWFUvBbegsXLEVTjTpQQ/IRS/AiASxBy6TN" +
-        "xD5Pjce/Mw8906zh6qLP0NldM3QRFKXF6nRSqoAgg8EAMaDDY3NDA4MDU5MzAxMyIMdPvtYJrAbvm/K0xHKoUCHBpn6v1x2HuB9b4xoUcUqfjC7" +
-        "yWRFZbE/oYKus9f4weUyTCo7IFau5B+MQmxyxWEmFwK3AeXNkeYtDgdDgN9GXsgvLrkyT52v5myXh+TrPQvyOjsL+aJiKevAI/frtvLwMF9jeUG" +
-        "KqIBpSUhKevai0KSemLcZcDk/1S3g7Fz+xm6hS1GJeW+3svjY8wqFWJ3N34Bmgz3X0swQR1PHuUkSWk0PkpcAIDsIVepr+BUmAincj4HRArZfE+" +
-        "tKJUhVrIPeSybPn0wCByAGCHPEB6bZXRbxxyBfzJ+wtMz0B8ERaadbwOebjeDStZf82va0rAVM1jgCNv+qIBbSfsMEW/ARLpHEthAMM37ppsGOp" +
-        "4BCpsCztjidD+4JM1YuoU8ti2t+sgnuxPvmlyAReIQmcyjYb59+NDsbHX6aGwxtD+L0BthDrmofvEemSgKm3vRKvQJnaHlf33jNnVkS4iF18kSU" +
-        "2kOf+BV/VfOqTD7XNxxb3csRp5L27HgVLq7HgtZhhtbtwQhM654FkO9b3WHFdgh7PKXQZPMv9wOI7nKvDSrBwgKkibJswAw+1AdNUY="
+      .thenReturn("IQoJb3JpZ2luX2VjEEkaCXVzLWVhc3QtMSJIMEYCIQCQcemjeKyghQSMkLqnur3B0RSPzHTBgZdMpC/4B56JPgIhAKiem" +
+        "msyerUFWL6kSOzRveidj6SQZJWR7ZgB8FAH0k92KqgCCEIQAxoMNjc0MDgwNTkzMDEzIgznv3pGCuA4qpb6e5MqhQKYnUivlU/5JNXz60DrGnzA" +
+        "ecqy93fL46SBmv1eQa259vEVilBk47lXmkodDChVY3zVXaM/N/Xj196MTrQDYqqfuLHn33IOiGK1zC1HwKocqFWt61BK73Nnd7xT+BGSbbKrUlE" +
+        "TL6Jb6S4ey6/Vgg0b3RmggHu9OU9ithu8tIT8J4hJXmGsQ1e1YYt2rBkvGsLBPm/6ratxxU7PX0N5vzMqd6mBWxgDmgRkS8o+0TuZy3uP8sFW2O" +
+        "8eLOys0nQHVGKMYKTratFgnN8ljeJmik/kbovjd5Eo3zzY9umg9Mo6KQYg/1KYo+Nqm36Z/4CIFdhgxq0CPrx+nbO+8Iwo87hUhz3An9Yw5quomw" +
+        "Y6nAEgJjCNoZa0WXcOPtoyEyWeDVAEJkbGNDkGa/wqYkrAaGtByr7R6PuDhGkMBHrHB4cy6pAP68m8fjB9A3eZmEZzLpwyxPHwGk2FJ1PfGK4sjz" +
+        "L4UdoPGqg+i9FQSXbh8D6y9w/MYyyAVRD9x91hld70v5nSS1A1lzoKbQI521qeag22fepystkwieyU2UItAcvrC0CTH8HP6N4/i/8="
       )
 
-    val appConfig: AppConfig = new AppConfig(mockConfig) // application name
-    val sparkSessionProvider: SparkSessionProvider = new SparkSessionProvider(Environment.LOCAL, appConfig, mockConfig)
-    val sourceConfig: SourceConfig = new SourceConfig(mockConfig)
+    appConfig = new AppConfig(mockConfig) // application name
+    sparkSessionProvider = new SparkSessionProvider(Environment.LOCAL, appConfig, mockConfig)
+    sourceConfig = new SourceConfig(mockConfig)
     sparkSession = sparkSessionProvider.get()
     s3SourceService = new S3SourceService(sparkSession, sourceConfig)
   }

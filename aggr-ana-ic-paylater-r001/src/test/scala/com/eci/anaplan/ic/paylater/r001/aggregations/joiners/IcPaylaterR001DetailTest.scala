@@ -19,10 +19,6 @@ class IcPaylaterR001DetailTest extends SharedBaseTest with SharedDataFrameStubbe
   private val slpCsf01DF: SlpCsf01DF = new SlpCsf01DF(testSparkSession, mockS3SourceService)
   private val icPaylaterR001Detail: IcPaylaterR001Detail = new IcPaylaterR001Detail(testSparkSession, slpCsf01DF)
 
-  "Data" should "show" in {
-    icPaylaterR001Detail.joinWithColumn().show()
-  }
-
   "Data's column" should "only contain valid columns" in {
     val dataColumn = icPaylaterR001Detail.joinWithColumn().columns
     val expectedColumn = Array (

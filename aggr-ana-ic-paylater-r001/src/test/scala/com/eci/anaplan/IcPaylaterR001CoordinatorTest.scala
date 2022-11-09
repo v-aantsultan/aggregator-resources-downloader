@@ -22,7 +22,7 @@ class IcPaylaterR001CoordinatorTest extends SharedBaseTest with SharedDataFrameS
   before {
 
     Mockito.when(mockAppConfig.appName).thenReturn("aggr-ana-ic-paylater-r001")
-    Mockito.when(mockSourceConfig.zonedDateTimeFromDate).thenReturn(utcZonedDateTime("2022-01-01T00:00:00Z"))
+    Mockito.when(mockSourceConfig.zonedDateTimeFromDate).thenReturn(utcZonedDateTime("2022-02-01T00:00:00Z"))
     Mockito.when(mockSourceConfig.zonedDateTimeToDate).thenReturn(utcZonedDateTime("2022-12-01T00:00:00Z"))
     Mockito.when(mockDestinationConfig.partitionKey).thenReturn("report_date")
     Mockito.when(mockDestinationConfig.path)
@@ -30,15 +30,15 @@ class IcPaylaterR001CoordinatorTest extends SharedBaseTest with SharedDataFrameS
     Mockito.when(mockDestinationConfig.schema).thenReturn("ic-payment-r001")
     Mockito.when(mockDestinationConfig.table).thenReturn("csf")
 
-    Mockito.when(mockS3SourceService.SlpCsf01Src).thenReturn(mockSlpCsf01Src)
-    Mockito.when(mockS3SourceService.MappingUnderLyingProductSrc).thenReturn(mockMappingUnderlyingProductSrc)
+    Mockito.when(mockS3SourceService.SlpCsf01Src).thenReturn(getMockSlpCsf01Src())
+    Mockito.when(mockS3SourceService.MappingUnderLyingProductSrc).thenReturn(getMockMappingUnderlyingProductSrc())
   }
 
   private val slpCsf01DF: SlpCsf01DF = new SlpCsf01DF(testSparkSession, mockS3SourceService)
   private val icPaylaterR001Detail: IcPaylaterR001Detail = new IcPaylaterR001Detail(testSparkSession, slpCsf01DF)
 
 
-  "Mock Data" should "run" in {
+  it should "run" in {
 
     val fileService: FileService = new FileService(testSparkSession)
     val s3SourceService1 : S3SourceService = new S3SourceService(testSparkSession, mockSourceConfig)
