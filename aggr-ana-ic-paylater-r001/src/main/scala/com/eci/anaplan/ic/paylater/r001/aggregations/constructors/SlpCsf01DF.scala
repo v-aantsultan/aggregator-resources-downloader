@@ -1,5 +1,6 @@
 package com.eci.anaplan.ic.paylater.r001.aggregations.constructors
 
+import com.eci.common.constant.Constant
 import com.eci.common.services.S3SourceService
 import org.apache.spark.sql.functions.{expr, lit, to_date, when}
 import org.apache.spark.sql.{DataFrame, SparkSession}
@@ -16,12 +17,13 @@ class SlpCsf01DF @Inject()(
   def getSpecific: DataFrame = {
 
     val CHANNELING_AGENT_PAYLATER = "CHANNELING_AGENT-PAYLATER"
+    val CHANNELING_AGENT_BNI_VCC = "CHANNELING_AGENT-BNI_VCC"
 
     s3SourceService.SlpCsf01Src
       .select(
         to_date($"transaction_date" + expr("INTERVAL 7 HOURS")).as("report_date"),
         when($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER, lit("CSF"))
-          .when($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER, lit("ON"))
+          .when($"channeling_agent_id" === CHANNELING_AGENT_BNI_VCC, lit("ON"))
           .otherwise("OF").as("source_of_fund"),
         when(($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER) && ($"funded_by" === "CSF"), lit("INTERNAL"))
         .when(($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER) && ($"funded_by" !=  "CSF"), lit ($"funded_by"))
@@ -29,7 +31,7 @@ class SlpCsf01DF @Inject()(
         $"installment_plan".as("installment_plan"),
         $"loan_id".as("no_of_transactions"),
         $"transaction_amount".as("gmv"),
-        when($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER, lit(0))
+        when($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER, Constant.LitZero)
           .otherwise($"commission_amount")
           .as("admin_fee_commission"),
         $"interest_amount_after_subsidy".as("interest_amount"),
