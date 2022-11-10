@@ -1,4 +1,4 @@
-package anaplan.ic.paylater.r001.module
+package anaplan.ic.paylater.waterfall.module
 
 import anaplan.SharedBaseTest
 import com.eci.anaplan.ic.paylater.waterfall.module.IcPaylaterWaterFallModule

@@ -1,4 +1,4 @@
-package anaplan.ic.paylater.r001.aggregations.constructors
+package anaplan.ic.paylater.waterfall.aggregations.constructors
 
 import anaplan.{SharedBaseTest, SharedDataFrameStubber, TestSparkSession}
 import com.eci.anaplan.ic.paylater.waterfall.aggregations.constructors.SlpCsf01DF
