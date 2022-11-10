@@ -339,6 +339,14 @@ lazy val `aggr-ana-bs-summary` = (project in file("aggr-ana-bs-summary"))
     libraryDependencies ++= sparkDeps
   ).dependsOn(common).aggregate(common)
 
+lazy val `aggr-ana-ic-paylater-waterfall` = (project in file("aggr-ana-ic-paylater-waterfall"))
+  .settings(
+    name := "aggr-ana-ic-paylater-waterfall",
+    commonSettings,
+    libraryDependencies ++= commonDeps,
+    libraryDependencies ++= sparkDeps
+  ).dependsOn(common).aggregate(common)
+
 lazy val `aggregator-anaplan` = (project in file("."))
   .settings(commonSettings: _*)
   .enablePlugins(GitVersioning)
@@ -379,7 +387,8 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-train-nrd-details`,
     `aggr-ana-bs-details`,
     `aggr-ana-bs-summary`,
-    `aggr-ana-ic-paylater-r001`
+    `aggr-ana-ic-paylater-r001`,
+    `aggr-ana-ic-paylater-waterfall`
   )
 
   .aggregate(
@@ -419,7 +428,8 @@ lazy val `aggregator-anaplan` = (project in file("."))
     `aggr-ana-train-nrd-details`,
     `aggr-ana-bs-details`,
     `aggr-ana-bs-summary`,
-    `aggr-ana-ic-paylater-r001`
+    `aggr-ana-ic-paylater-r001`,
+    `aggr-ana-ic-paylater-waterfall`
   )
 
 
