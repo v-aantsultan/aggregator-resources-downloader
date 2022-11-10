@@ -8,7 +8,7 @@ object Dependencies {
   lazy val postgresqlVersion = "42.2.5"
   // https://docs.aws.amazon.com/emr/latest/ReleaseGuide/emr-hadoop.html
   lazy val hadoopAwsVersion = "2.8.5"
-  lazy val statusManagerVersion = "2.4.0"
+  lazy val statusManagerVersion = "1.0.1"
   lazy val guiceVersion = "4.2.2"
   lazy val scalatestVersion = "3.0.5"
   lazy val mockitoCoreVersion = "2.24.0"
