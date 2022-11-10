@@ -2,8 +2,8 @@ package com.eci.anaplan.ic.paylater.waterfall.aggregations.joiners
 
 import com.eci.anaplan.ic.paylater.waterfall.aggregations.constructors.SlpCsf01DF
 import com.eci.common.constant.Constant
+import org.apache.spark.sql.functions.{bround, coalesce, sum}
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.functions.{coalesce, countDistinct, sum}
 
 import javax.inject.{Inject, Singleton}
 
@@ -24,6 +24,7 @@ class IcPaylaterWaterFallDetail @Inject()(
       .select(
         $"*"
       )
+      .withColumn("loan_disbursed", bround($"loan_disbursed", 4))
   }
 
   def joinWithColumn(): DataFrame = {
