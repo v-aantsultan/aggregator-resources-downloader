@@ -1,7 +1,6 @@
 package com.eci.anaplan.ic.paylater.r001.aggregations.joiners
 
 import com.eci.anaplan.ic.paylater.r001.aggregations.constructors.SlpCsf01DF
-import com.eci.anaplan.ic.paylater.r001.aggregations.joiners.IcPaylaterR001Detail
 import com.eci.anaplan.{SharedBaseTest, SharedDataFrameStubber, TestSparkSession}
 import com.eci.common.services.S3SourceService
 import org.mockito.Mockito
