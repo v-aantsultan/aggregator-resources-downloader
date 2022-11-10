@@ -22,8 +22,8 @@ class IcPaylaterR001DetailTest extends SharedBaseTest with SharedDataFrameStubbe
     val dataColumn = icPaylaterR001Detail.joinWithColumn().columns
     val expectedColumn = Array (
       "report_date",
+      "product_category",
       "source_of_fund",
-      "funding",
       "installment_plan",
       // "loan_disbursed_value", TBD
       "product",

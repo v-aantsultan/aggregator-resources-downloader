@@ -24,10 +24,10 @@ class SlpCsf01DF @Inject()(
         to_date($"transaction_date" + expr("INTERVAL 7 HOURS")).as("report_date"),
         when($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER, lit("CSF"))
           .when($"channeling_agent_id" === CHANNELING_AGENT_BNI_VCC, lit("ON"))
-          .otherwise("OF").as("source_of_fund"),
+          .otherwise("OF").as("product_category"),
         when(($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER) && ($"funded_by" === "CSF"), lit("INTERNAL"))
         .when(($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER) && ($"funded_by" !=  "CSF"), lit ($"funded_by"))
-        .otherwise("N/A").as("funding"),
+        .otherwise("N/A").as("source_of_fund"),
         $"installment_plan".as("installment_plan"),
         $"loan_id".as("no_of_transactions"),
         $"transaction_amount".as("gmv"),
@@ -55,8 +55,8 @@ class SlpCsf01DF @Inject()(
     joinDF1
       .select(
         $"report_date".as("report_date"),
+        $"product_category".as("product_category"),
         $"source_of_fund".as("source_of_fund"),
-        $"funding".as("funding"),
         $"installment_plan".as("installment_plan"),
         $"no_of_transactions".as("no_of_transactions"),
         $"gmv".as("gmv"),

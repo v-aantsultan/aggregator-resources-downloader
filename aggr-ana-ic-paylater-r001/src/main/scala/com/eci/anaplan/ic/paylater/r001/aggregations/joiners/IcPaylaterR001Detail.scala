@@ -17,7 +17,7 @@ class IcPaylaterR001Detail @Inject() (
   private def joinDataFrame(): DataFrame = {
 
     slpCsf01DF.getJoinTable
-      .groupBy($"report_date", $"source_of_fund", $"funding", $"installment_plan", $"product")
+      .groupBy($"report_date", $"product_category", $"source_of_fund", $"installment_plan", $"product")
       .agg(
         coalesce(countDistinct($"no_of_transactions"), Constant.LitZero).as("no_of_transactions"),
         coalesce(sum($"gmv"), Constant.LitZero).as("gmv"),

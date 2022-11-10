@@ -21,8 +21,8 @@ class SlpCsf01DFTest extends SharedBaseTest with SharedDataFrameStubber with Tes
     val resDf = slpCsf01DF.getJoinTable
     val validationColumn = Array(
       "report_date",
+      "product_category",
       "source_of_fund",
-      "funding",
       "installment_plan",
       "no_of_transactions",
       "gmv",
