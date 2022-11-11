@@ -68,6 +68,7 @@ trait AnaplanCoordinator extends LoggerSupport {
         slack.logAndNotify("Error in updating status db of the successful record for " + appName, logger, statusMgrException)
 
       case anyException: Exception =>
+        logger.error(s"error : ${anyException.printStackTrace()}")
         slack.logAndNotify("Error in aggregation step, either reading or writing dataframe for " + appName, logger, anyException)
     }
   }

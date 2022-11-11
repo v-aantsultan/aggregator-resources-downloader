@@ -1,4 +1,4 @@
-package anaplan
+package com.eci.anaplan.ic.paylater.waterfall
 
 import org.apache.spark.sql.DataFrame
 /**
@@ -26,5 +26,16 @@ trait SharedDataFrameStubber extends TestSparkSession {
       .parquet(s"$MockResourcePath/slp_csf/csf_01/report_date=**")
   }
 
+  protected def getMockSlpCsf03Src(): DataFrame = {
+    testSparkSession
+      .read
+      .parquet(s"$MockResourcePath/slp_csf/csf_03/report_date=**")
+  }
+
+  protected def getMockSlpCsf07Src(): DataFrame = {
+    testSparkSession
+      .read
+      .parquet(s"$MockResourcePath/slp_csf/csf_07/report_date=**")
+  }
 
 }

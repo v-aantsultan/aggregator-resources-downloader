@@ -1,7 +1,6 @@
-package anaplan.ic.paylater.waterfall.aggregations.constructors
+package com.eci.anaplan.ic.paylater.waterfall.aggregations.constructors
 
-import anaplan.{SharedBaseTest, SharedDataFrameStubber, TestSparkSession}
-import com.eci.anaplan.ic.paylater.waterfall.aggregations.constructors.SlpCsf01DF
+import com.eci.anaplan.ic.paylater.waterfall.{SharedBaseTest, SharedDataFrameStubber, TestSparkSession}
 import com.eci.common.services.S3SourceService
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar.mock
@@ -20,8 +19,9 @@ class SlpCsf01DFTest extends SharedBaseTest with SharedDataFrameStubber with Tes
     val resDf = slpCsf01DF.getSpecific
     val validationColumn = Array(
       "report_date",
+      "product_category",
       "source_of_fund",
-      // "transaction_type",
+      "transaction_type",
       "loan_disbursed"
     )
 
@@ -33,6 +33,10 @@ class SlpCsf01DFTest extends SharedBaseTest with SharedDataFrameStubber with Tes
     val countData = slpCsf01DF.getSpecific.count()
     println(s"count data : $countData")
     assert(countData != 0)
+  }
+
+  it should "show" in {
+    slpCsf01DF.getSpecific.show()
   }
 
 }

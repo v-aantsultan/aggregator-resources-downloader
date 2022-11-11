@@ -1,4 +1,4 @@
-package anaplan
+package com.eci.anaplan.ic.paylater.waterfall
 
 import org.apache.spark.sql.SparkSession
 

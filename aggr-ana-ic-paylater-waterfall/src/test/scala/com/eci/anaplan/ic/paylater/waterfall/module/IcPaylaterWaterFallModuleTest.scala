@@ -1,7 +1,6 @@
-package anaplan.ic.paylater.waterfall.module
+package com.eci.anaplan.ic.paylater.waterfall.module
 
-import anaplan.SharedBaseTest
-import com.eci.anaplan.ic.paylater.waterfall.module.IcPaylaterWaterFallModule
+import com.eci.anaplan.ic.paylater.waterfall.SharedBaseTest
 import com.eci.common.config.Environment.Environment
 import com.eci.common.providers.{SlackClientProvider, SparkSessionProvider, StatusManagerClientProvider}
 import com.google.inject.Guice
