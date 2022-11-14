@@ -24,6 +24,8 @@ class SlpCsf07DF @Inject ()(
   private val ON = "ON"
   private val OF = "OF"
   private val VOID_LOAN = "VOID_LOAN"
+  private val INTERNAL = "INTERNAL"
+  private val NA = "N/A"
 
   def getSpecific: DataFrame = {
     s3SourceService.SlpCsf07Src
@@ -34,8 +36,9 @@ class SlpCsf07DF @Inject ()(
           .when($"channeling_agent_id" === CHANNELING_AGENT_BNI_VCC, lit(ON))
           .otherwise(lit(OF))
           .as("product_category"),
-        when($"source_of_fund" === CHANNELING, lit(CHANNELING_BNI))
-          .otherwise(lit(SELF_FUNDING))
+        when($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER && $"funded_by" === CSF, lit(INTERNAL))
+          .when($"channeling_agent_id" === CHANNELING_AGENT_BNI_VCC && $"funded_by" =!= CSF, lit($"funded_by"))
+          .otherwise(lit(NA))
           .as("source_of_fund"),
         coalesce($"write_off_type", lit(VOID_LOAN)).as("transaction_type"),
         coalesce($"write_off_principal_amount", lit(0).cast(DecimalType(30,4))).as("loan_disbursed")
