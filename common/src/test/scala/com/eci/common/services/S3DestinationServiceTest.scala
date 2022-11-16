@@ -47,6 +47,40 @@ class S3DestinationServiceTest extends SharedBaseTest with TestSparkSession {
 
     verify(mockFileService, times(1)).findCsvFileInFolder(fileSystem, s"$destination/csv")
   }
+
+  // if mergeschema is true
+  "write" should "be able to read and call fileService method correctly if isSchema is true" in {
+    when(mockFileService.findCsvFileInFolder(any(), any())).thenReturn(Some(ResourcePath))
+
+    dataframeWriter.write(testDf, destination, true) shouldBe ResourcePath
+
+    verify(mockFileService, times(1)).deleteAllFilesInDirectory(fileSystem, s"$destination/parquet")
+    verify(mockFileService, times(1)).findCsvFileInFolder(fileSystem, s"$destination/csv")
+  }
+  it should "throw Runtime exception if step 4 cannot find the csv file output if isSchema is true" in {
+    when(mockFileService.findCsvFileInFolder(any(), any())).thenReturn(None)
+
+    a[RuntimeException] shouldBe thrownBy(dataframeWriter.write(testDf, destination, true))
+
+    verify(mockFileService, times(1)).findCsvFileInFolder(fileSystem, s"$destination/csv")
+  }
+
+  // if mergeschema is false
+  "write" should "be able to read and call fileService method correctly if isSchema is false" in {
+    when(mockFileService.findCsvFileInFolder(any(), any())).thenReturn(Some(ResourcePath))
+
+    dataframeWriter.write(testDf, destination, false) shouldBe ResourcePath
+
+    verify(mockFileService, times(1)).deleteAllFilesInDirectory(fileSystem, s"$destination/parquet")
+    verify(mockFileService, times(1)).findCsvFileInFolder(fileSystem, s"$destination/csv")
+  }
+  it should "throw Runtime exception if step 4 cannot find the csv file output if isSchema is false" in {
+    when(mockFileService.findCsvFileInFolder(any(), any())).thenReturn(None)
+
+    a[RuntimeException] shouldBe thrownBy(dataframeWriter.write(testDf, destination, false))
+
+    verify(mockFileService, times(1)).findCsvFileInFolder(fileSystem, s"$destination/csv")
+  }
 }
 
 object S3DataframeWriterTest {

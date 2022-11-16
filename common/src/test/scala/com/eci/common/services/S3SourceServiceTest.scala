@@ -49,6 +49,34 @@ class S3SourceServiceTest extends SharedBaseTest with TestSparkSession {
     dataframeReader.TrainSalesAllPeriodSrc.count() shouldBe 1
   }
 
+  "MappingUnderlyingProduct" should "read all mapping underlying product" in {
+    dataframeReader.getMappingUnderLyingProductSrc(true).count() shouldBe 999
+  }
+
+  "SlpCsf01" should "read all csf 01" in {
+    dataframeReader.getSlpCsf01Src(true).count() shouldBe 0
+  }
+
+  "SlpCsf03" should "read all csf 03" in {
+    dataframeReader.getSlpCsf03Src(false).count() shouldBe 0
+  }
+
+  "SlpCsf07" should "read all csf 07" in {
+    dataframeReader.getSlpCsf07Src(false).count() shouldBe 0
+  }
+
+  "SlpPlutusPlt01" should "read all plt 01" in {
+    dataframeReader.getSlpPlutusPlt01Src(false).count() shouldBe 0
+  }
+
+  "SlpPlutusPlt03" should "read all plt 01" in {
+    dataframeReader.getSlpPlutusPlt03Src(false).count() shouldBe 0
+  }
+
+  "SlpPlutusPlt07" should "read all plt 01" in {
+    dataframeReader.getSlpPlutusPlt07Src(false).count() shouldBe 0
+  }
+
   private def overrideDate(zonedDateTimeFrom: ZonedDateTime, zonedDateTimeTo: ZonedDateTime) = {
     when(mockSourceConfig.zonedDateTimeFromDate).thenReturn(zonedDateTimeFrom)
     when(mockSourceConfig.zonedDateTimeToDate).thenReturn(zonedDateTimeTo)
@@ -61,6 +89,22 @@ class S3SourceServiceTest extends SharedBaseTest with TestSparkSession {
     ).count() shouldBe 172
   }
 
+  "readParquet" should "read parquet if mergeSchema is true" in {
+    overrideDate(fromDateProduct, toDateProduct)
+    dataframeReader.readParquet(
+      s"${mockSourceConfig.dataWarehousePath}/${S3DataframeReader.ECI_SHEETS_ANAPLAN}/Mapping fulfillment ID to wholesaler",
+      true
+    ).count() shouldBe 172
+  }
+
+  "readParquet" should "read parquet if mergeSchema is false" in {
+    overrideDate(fromDateProduct, toDateProduct)
+    dataframeReader.readParquet(
+      s"${mockSourceConfig.dataWarehousePath}/${S3DataframeReader.ECI_SHEETS_ANAPLAN}/Mapping fulfillment ID to wholesaler",
+      false
+    ).count() shouldBe 172
+  }
+
   "readByCustomColumnDatalake" should "read by custom column datalake" in {
     overrideDate(fromDateProduct, toDateProduct)
     dataframeReader.readByCustomColumnDatalake(
@@ -68,6 +112,28 @@ class S3SourceServiceTest extends SharedBaseTest with TestSparkSession {
       mockSourceConfig.zonedDateTimeFromDate.minusDays(7L),
       mockSourceConfig.zonedDateTimeToDate.plusDays(7L),
       "created_at_date"
+    ).count() shouldBe 0
+  }
+
+  "readByCustomColumnDatalake" should "read by custom column datalake if mergeSchema is true" in {
+    overrideDate(fromDateProduct, toDateProduct)
+    dataframeReader.readByCustomColumnDatalake(
+      s"${S3DataframeReader.ECBPDF}/payment_in_data_fetcher.invoice",
+      mockSourceConfig.zonedDateTimeFromDate.minusDays(7L),
+      mockSourceConfig.zonedDateTimeToDate.plusDays(7L),
+      "created_at_date",
+      true
+    ).count() shouldBe 0
+  }
+
+  "readByCustomColumnDatalake" should "read by custom column datalake if mergeSchema is false" in {
+    overrideDate(fromDateProduct, toDateProduct)
+    dataframeReader.readByCustomColumnDatalake(
+      s"${S3DataframeReader.ECBPDF}/payment_in_data_fetcher.invoice",
+      mockSourceConfig.zonedDateTimeFromDate.minusDays(7L),
+      mockSourceConfig.zonedDateTimeToDate.plusDays(7L),
+      "created_at_date",
+      false
     ).count() shouldBe 0
   }
 
