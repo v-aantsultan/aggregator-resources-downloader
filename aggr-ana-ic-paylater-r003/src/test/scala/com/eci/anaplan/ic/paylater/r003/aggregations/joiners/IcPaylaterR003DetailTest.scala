@@ -1,6 +1,6 @@
 package com.eci.anaplan.ic.paylater.r003.aggregations.joiners
 
-import com.eci.anaplan.ic.paylater.r003.aggregations.constructors.{SlpCsf01DF, SlpCsf03DF, SlpCsf07DF}
+import com.eci.anaplan.ic.paylater.r003.aggregations.constructors.{SlpCsf01DF, SlpCsf03DF, SlpCsf07DF, SlpPlutusPlt01DF, SlpPlutusPlt03DF, SlpPlutusPlt07DF}
 import com.eci.anaplan.ic.paylater.r003.{SharedBaseTest, SharedDataFrameStubber}
 import com.eci.common.services.S3SourceService
 import org.apache.spark.sql.functions
@@ -14,12 +14,23 @@ class IcPaylaterR003DetailTest extends SharedBaseTest with SharedDataFrameStubbe
 
   before {
     Mockito.when(mockS3SourceService.SlpCsf01Src).thenReturn(getMockSlpCsf01Src())
-    Mockito.when(mockS3SourceService.SlpCsf03Src).thenReturn(getMockSlpCsf03Src())
-    Mockito.when(mockS3SourceService.SlpCsf07Src).thenReturn(getMockSlpCsf07Src())
-    val slpCsf01DF: SlpCsf01DF = new SlpCsf01DF(testSparkSession, mockS3SourceService)
-    val slpCsf03DF: SlpCsf03DF = new SlpCsf03DF(testSparkSession, mockS3SourceService)
-    val slpCsf07DF: SlpCsf07DF = new SlpCsf07DF(testSparkSession, mockS3SourceService)
-    icPaylaterR003Detail = new IcPaylaterR003Detail(testSparkSession, slpCsf01DF, slpCsf03DF, slpCsf07DF)
+    Mockito.when(mockS3SourceService.getSlpCsf03Src(false)).thenReturn(getMockSlpCsf03Src())
+    Mockito.when(mockS3SourceService.getSlpCsf07Src(false)).thenReturn(getMockSlpCsf07Src())
+    Mockito.when(mockS3SourceService.getSlpPlutusPlt01Src(false)).thenReturn(getMockSlpPlutusPlt01Src())
+    Mockito.when(mockS3SourceService.getSlpPlutusPlt03Src(false)).thenReturn(getMockSlpPlutusPlt03Src())
+    Mockito.when(mockS3SourceService.getSlpPlutusPlt07Src(false)).thenReturn(getMockSlpPlutusPlt07Src())
+    val slpCsf01Df = new SlpCsf01DF(testSparkSession, mockS3SourceService)
+    val slpCsf03Df = new SlpCsf03DF(testSparkSession, mockS3SourceService)
+    val slpCsf07Df = new SlpCsf07DF(testSparkSession, mockS3SourceService)
+    val slpPlutusPlt01 = new SlpPlutusPlt01DF(testSparkSession, mockS3SourceService)
+    val slpPlutusPlt03 = new SlpPlutusPlt03DF(testSparkSession, mockS3SourceService)
+    val slpPlutusPlt07 = new SlpPlutusPlt07DF(testSparkSession, mockS3SourceService)
+
+    testSparkSession.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
+
+    icPaylaterR003Detail = new IcPaylaterR003Detail(
+      testSparkSession, slpCsf01Df, slpCsf03Df, slpCsf07Df, slpPlutusPlt01, slpPlutusPlt03, slpPlutusPlt07
+    )
   }
 
   it should "only contain valid columns" in {

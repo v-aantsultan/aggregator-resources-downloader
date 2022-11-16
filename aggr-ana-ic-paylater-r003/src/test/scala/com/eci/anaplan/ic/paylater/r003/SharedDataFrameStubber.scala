@@ -1,6 +1,6 @@
 package com.eci.anaplan.ic.paylater.r003
 
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{DataFrame, DataFrameReader, SparkSession}
 /**
  * Reads Stub value from Parquet files in src/test/resources
  */
@@ -21,21 +21,32 @@ trait SharedDataFrameStubber extends TestSparkSession {
 
   // TODO: Add all TestDataFrame here. All the mocked data frame will mock the Dataframes from dataFrameSource1
   protected def getMockSlpCsf01Src(): DataFrame = {
-    testSparkSession
-      .read
-      .parquet(s"$MockResourcePath/slp_csf/csf_01/report_date=**")
+    this.getSparkSession(true).parquet(s"$MockResourcePath/slp_csf/csf_01/report_date=**")
   }
 
   protected def getMockSlpCsf03Src(): DataFrame = {
-    testSparkSession
-      .read
-      .parquet(s"$MockResourcePath/slp_csf/csf_03/report_date=**")
+    this.getSparkSession(false).parquet(s"$MockResourcePath/slp_csf/csf_03/report_date=**")
   }
 
   protected def getMockSlpCsf07Src(): DataFrame = {
-    testSparkSession
-      .read
-      .parquet(s"$MockResourcePath/slp_csf/csf_07/report_date=**")
+    this.getSparkSession(false).parquet(s"$MockResourcePath/slp_csf/csf_07/report_date=**")
   }
 
+  protected def getMockSlpPlutusPlt01Src(): DataFrame = {
+    this.getSparkSession(false).parquet(s"$MockResourcePath/slp_plutus/plt_01/report_date=**")
+  }
+
+  protected def getMockSlpPlutusPlt03Src(): DataFrame = {
+    this.getSparkSession(false).parquet(s"$MockResourcePath/slp_plutus/plt_03/report_date=**")
+  }
+
+  protected def getMockSlpPlutusPlt07Src(): DataFrame = {
+    this.getSparkSession(false).parquet(s"$MockResourcePath/slp_plutus/plt_07/report_date=**")
+  }
+
+  private def getSparkSession(isMergeSchema: Boolean): DataFrameReader = {
+    testSparkSession
+      .read
+      .option("mergeSchema", isMergeSchema)
+  }
 }

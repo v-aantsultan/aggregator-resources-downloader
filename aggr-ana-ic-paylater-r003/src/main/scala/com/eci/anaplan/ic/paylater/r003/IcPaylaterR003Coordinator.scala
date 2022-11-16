@@ -21,8 +21,11 @@ class IcPaylaterR003Coordinator @Inject()(
                                                ) extends AnaplanCoordinator{
 
   def callCoordinate() = {
+    // handling session for error Expected: int, Found: BINARY for slp-07
+    sparkSession.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
+
     coordinate(sparkSession, icPaylaterR003Detail.joinWithColumn(), slackClient,
-      statusManagerService, s3DestinationService, appConfig, sourceConfig, destinationConfig)
+      statusManagerService, s3DestinationService, appConfig, sourceConfig, destinationConfig, false)
   }
 
 }

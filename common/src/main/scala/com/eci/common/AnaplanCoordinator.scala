@@ -72,4 +72,59 @@ trait AnaplanCoordinator extends LoggerSupport {
         slack.logAndNotify("Error in aggregation step, either reading or writing dataframe for " + appName, logger, anyException)
     }
   }
+
+  def coordinate(sparkSession: SparkSession,
+                 dataFrame: DataFrame,
+                 slack: SlackClient,
+                 statusDbService: StatusManagerService,
+                 s3DataframeWriter: S3DestinationService,
+                 appConfig: AppConfig,
+                 sourceConfig: SourceConfig,
+                 destinationConfig: DestinationConfig,
+                 isMergeSchema: Boolean): Unit = {
+    val applicationId = sparkSession.sparkContext.applicationId
+    val fromDate = sourceConfig.zonedDateTimeFromDate
+    val toDate = sourceConfig.zonedDateTimeToDate
+    val appName = appConfig.appName
+
+    slack.info(s"Starting $appName from: $fromDate to: $toDate")
+    logger.info(s"Starting $appName")
+
+    try {
+      // Step 1: Get the dataframe, spark does nothing intensive here as there's no
+      // terminal operation such as write or coalesce
+      val df = dataFrame
+        .filter(col(destinationConfig.partitionKey).between(toTimestamp(fromDate), toTimestamp(toDate)))
+      logger.info(s"Successful in getting dataframe from $appName")
+
+      // Step 2: Write to dataframe
+      val destination = s"${destinationConfig.path}/${destinationConfig.schema}/${destinationConfig.table}/${fromDate.toInstant}_${toDate.toInstant}_$applicationId"
+      logger.info(s"About to write to parquet at path: $destination")
+      val csvPath = s3DataframeWriter.write(df, destination, isMergeSchema)
+
+      logger.info(s"Finished writing at $csvPath, about to call status manager for $appName")
+
+      // Step 3: Inform statusDb of the record for it to process
+      statusDbService.markUnprocessed(
+        applicationId,
+        sourceConfig.path,
+        fromDate,
+        toDate,
+        destinationConfig.schema,
+        destinationConfig.table,
+        destinationConfig.partitionKey,
+        csvPath)
+
+      logger.info("Success in calling statusDb")
+      slack.info(s"Finished writing csv to $csvPath")
+
+    } catch {
+      case statusMgrException: StatusManagerException =>
+        slack.logAndNotify("Error in updating status db of the successful record for " + appName, logger, statusMgrException)
+
+      case anyException: Exception =>
+        logger.error(s"error : ${anyException.printStackTrace()}")
+        slack.logAndNotify("Error in aggregation step, either reading or writing dataframe for " + appName, logger, anyException)
+    }
+  }
 }

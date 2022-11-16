@@ -58,4 +58,38 @@ class S3DestinationService @Inject()(sparkSession: SparkSession,
       .option("nullValue", null)
       .csv(outputPath)
   }
+
+
+  def write(df: DataFrame, destination: String, isMergeSchema: Boolean): String = {
+    val tmpParquetFolder = destination + "/parquet"
+    val finalCsvFolder = destination + "/csv"
+
+    // Step 1: Write in default partition count in parquet
+    writeParquet(df, tmpParquetFolder)
+
+    // Step 2: Read the output parquet folder, merge and output as 1 csv
+    coalesceAndWriteCsv(tmpParquetFolder, finalCsvFolder, isMergeSchema)
+
+    val fileSystem = FileSystem.get(URI.create(destination), sparkSession.sparkContext.hadoopConfiguration)
+
+    // Step 3: Clean up the parquet files
+    fileService.deleteAllFilesInDirectory(fileSystem, tmpParquetFolder)
+
+    // Ste 4: Find the exact generated output in step 2
+    fileService.findCsvFileInFolder(fileSystem, finalCsvFolder)
+      .getOrElse(throw new RuntimeException("Could not find .csv file generated in Step 2"))
+  }
+
+  private def coalesceAndWriteCsv(source: String, outputPath: String, isMergeSchema: Boolean): Unit = {
+    sparkSession
+      .read
+      .option("mergeSchema", isMergeSchema)
+      .parquet(source)
+      .coalesce(1)
+      .write
+      .mode(SaveMode.Overwrite)
+      .option("header", "true")
+      .option("nullValue", null)
+      .csv(outputPath)
+  }
 }

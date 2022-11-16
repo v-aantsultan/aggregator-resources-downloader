@@ -10,7 +10,7 @@ class SlpCsf03DFTest extends SharedBaseTest with SharedDataFrameStubber with Tes
   private val mockS3SourceService: S3SourceService = mock[S3SourceService]
 
   before {
-    when(mockS3SourceService.SlpCsf03Src).thenReturn(getMockSlpCsf03Src())
+    when(mockS3SourceService.getSlpCsf03Src(false)).thenReturn(getMockSlpCsf03Src())
   }
 
   private val slpCsf03DF: SlpCsf03DF = new SlpCsf03DF(testSparkSession, mockS3SourceService)

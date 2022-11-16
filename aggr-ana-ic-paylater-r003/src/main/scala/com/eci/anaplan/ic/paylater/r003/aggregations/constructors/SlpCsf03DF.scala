@@ -15,9 +15,6 @@ class SlpCsf03DF @Inject ()(
 
   import sparkSession.implicits._
 
-  private val CHANNELING = "CHANNELING"
-  private val CHANNELING_BNI = "CHANNELING-BNI"
-  private val SELF_FUNDING = "SELF-FUNDING"
   private val CHANNELING_AGENT_PAYLATER = "CHANNELING_AGENT-PAYLATER"
   private val CHANNELING_AGENT_BNI_VCC = "CHANNELING_AGENT-BNI_VCC"
   private val CSF = "CSF"
@@ -26,8 +23,10 @@ class SlpCsf03DF @Inject ()(
   private val INTERNAL = "INTERNAL"
   private val NA = "N/A"
 
+  lazy val SlpCsf03Src = s3SourceService.getSlpCsf03Src(false)
+
   def getSpecific: DataFrame = {
-    s3SourceService.SlpCsf03Src
+    SlpCsf03Src
       .select(
         to_date($"transaction_date").as("report_date"),
         when($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER, lit(CSF))

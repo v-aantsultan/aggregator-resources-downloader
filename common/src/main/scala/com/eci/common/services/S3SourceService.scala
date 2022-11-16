@@ -38,14 +38,6 @@ class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: Source
   lazy val MappingUnderLyingProductSrc: DataFrame =
     readParquet(s"${sourceConfig.path}/${S3DataframeReader.ECI_SHEETS_ANAPLAN}/Mapping Underlying Product")
 
-  lazy val SlpCsf03Src: DataFrame =
-    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_03",
-      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date")
-
-  lazy val SlpCsf07Src: DataFrame =
-    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_07",
-      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date")
-
   def readParquet(path: String): DataFrame = {
     sparkSession
       .read
@@ -80,6 +72,42 @@ class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: Source
       sourceConfig.zonedDateTimeToDate.plusDays(Duration),
       ColumnKey)
   }
+
+  def getSlpCsf03Src(isMergeSchema: Boolean): DataFrame = {
+    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_03",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema)
+  }
+  def getSlpCsf07Src(isMergeSchema: Boolean): DataFrame = {
+    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_07",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema)
+  }
+  def getSlpPlutusPlt01Src(isMergeSchema: Boolean): DataFrame = {
+    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_01",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema)
+  }
+  def getSlpPlutusPlt03Src(isMergeSchema: Boolean): DataFrame = {
+    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_03",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema)
+  }
+  def getSlpPlutusPlt07Src(isMergeSchema: Boolean):DataFrame = {
+    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_07",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema)
+  }
+
+  def readParquet(path: String, isMergeSchema: Boolean): DataFrame = {
+    sparkSession
+      .read
+      .option("mergeSchema", isMergeSchema)
+      .parquet(path)
+  }
+
+  def readByCustomColumnDatalake(domain: String, zonedFromDate: ZonedDateTime, zonedToDate: ZonedDateTime,
+                                 ColumnKey: String, isMergeSchema: Boolean): DataFrame = {
+    val fromDate = TimeUtils.utcDateTimeString(zonedFromDate)
+    val toDate = TimeUtils.utcDateTimeString(zonedToDate)
+    readParquet(s"${sourceConfig.path}/$domain", isMergeSchema)
+      .filter(col(ColumnKey) >= fromDate && col(ColumnKey) <= toDate)
+  }
 }
 
 object S3DataframeReader {
@@ -89,4 +117,5 @@ object S3DataframeReader {
   val ECI_SHEETS_ANAPLAN = "eci_sheets/ecidtpl_anaplan_fpna"
   val TRAIN = "train"
   val SLP_CSF = "slp_csf"
+  val SLP_PLUTUS = "slp_plutus"
 }

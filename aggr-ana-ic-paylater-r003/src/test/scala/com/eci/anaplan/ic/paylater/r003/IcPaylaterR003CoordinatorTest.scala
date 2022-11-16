@@ -1,6 +1,6 @@
 package com.eci.anaplan.ic.paylater.r003
 
-import com.eci.anaplan.ic.paylater.r003.aggregations.constructors.{SlpCsf01DF, SlpCsf03DF, SlpCsf07DF}
+import com.eci.anaplan.ic.paylater.r003.aggregations.constructors.{SlpCsf01DF, SlpCsf03DF, SlpCsf07DF, SlpPlutusPlt01DF, SlpPlutusPlt03DF, SlpPlutusPlt07DF}
 import com.eci.anaplan.ic.paylater.r003.aggregations.joiners.IcPaylaterR003Detail
 import com.eci.common.TimeUtils
 import com.eci.common.config.{AppConfig, DestinationConfig, SourceConfig}
@@ -21,14 +21,20 @@ class IcPaylaterR003CoordinatorTest extends SharedBaseTest with SharedDataFrameS
 
   before {
     Mockito.when(mockS3SourceService.SlpCsf01Src).thenReturn(getMockSlpCsf01Src())
-    Mockito.when(mockS3SourceService.SlpCsf03Src).thenReturn(getMockSlpCsf03Src())
-    Mockito.when(mockS3SourceService.SlpCsf07Src).thenReturn(getMockSlpCsf07Src())
+    Mockito.when(mockS3SourceService.getSlpCsf03Src(false)).thenReturn(getMockSlpCsf03Src())
+    Mockito.when(mockS3SourceService.getSlpCsf07Src(false)).thenReturn(getMockSlpCsf07Src())
+    Mockito.when(mockS3SourceService.getSlpPlutusPlt01Src(false)).thenReturn(getMockSlpPlutusPlt01Src())
+    Mockito.when(mockS3SourceService.getSlpPlutusPlt03Src(false)).thenReturn(getMockSlpPlutusPlt03Src())
+    Mockito.when(mockS3SourceService.getSlpPlutusPlt07Src(false)).thenReturn(getMockSlpPlutusPlt07Src())
     val slpCsf01DF: SlpCsf01DF = new SlpCsf01DF(testSparkSession, mockS3SourceService)
     val slpCsf03DF: SlpCsf03DF = new SlpCsf03DF(testSparkSession, mockS3SourceService)
     val slpCsf07DF: SlpCsf07DF = new SlpCsf07DF(testSparkSession, mockS3SourceService)
+    val slpPlutusPlt01DF: SlpPlutusPlt01DF = new SlpPlutusPlt01DF(testSparkSession, mockS3SourceService)
+    val slpPlutusPlt03DF: SlpPlutusPlt03DF = new SlpPlutusPlt03DF(testSparkSession, mockS3SourceService)
+    val slpPlutusPlt07DF: SlpPlutusPlt07DF = new SlpPlutusPlt07DF(testSparkSession, mockS3SourceService)
 
     val icPaylaterR003Detail : IcPaylaterR003Detail = new IcPaylaterR003Detail(
-      testSparkSession, slpCsf01DF, slpCsf03DF, slpCsf07DF
+      testSparkSession, slpCsf01DF, slpCsf03DF, slpCsf07DF, slpPlutusPlt01DF,slpPlutusPlt03DF, slpPlutusPlt07DF
     )
 
     Mockito.when(mockSourceConfig.zonedDateTimeFromDate).thenReturn(TimeUtils.utcZonedDateTime("2018-01-01T00:00:00Z"))

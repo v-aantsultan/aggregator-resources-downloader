@@ -14,9 +14,6 @@ class SlpCsf01DF @Inject()(
 
   import sparkSession.implicits._
 
-  private val CHANNELING = "CHANNELING"
-  private val CHANNELING_BNI = "CHANNELING-BNI"
-  private val SELF_FUNDING = "SELF-FUNDING"
   private val CHANNELING_AGENT_PAYLATER = "CHANNELING_AGENT-PAYLATER"
   private val CHANNELING_AGENT_BNI_VCC = "CHANNELING_AGENT-BNI_VCC"
   private val CSF = "CSF"

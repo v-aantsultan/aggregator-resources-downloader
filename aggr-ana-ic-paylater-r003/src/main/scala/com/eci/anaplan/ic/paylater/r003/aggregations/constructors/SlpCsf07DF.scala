@@ -1,5 +1,6 @@
 package com.eci.anaplan.ic.paylater.r003.aggregations.constructors
 
+import com.eci.common.constant.Constant
 import com.eci.common.services.S3SourceService
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.DecimalType
@@ -15,9 +16,6 @@ class SlpCsf07DF @Inject ()(
 
   import sparkSession.implicits._
 
-  private val CHANNELING = "CHANNELING"
-  private val CHANNELING_BNI = "CHANNELING-BNI"
-  private val SELF_FUNDING = "SELF-FUNDING"
   private val CHANNELING_AGENT_PAYLATER = "CHANNELING_AGENT-PAYLATER"
   private val CHANNELING_AGENT_BNI_VCC = "CHANNELING_AGENT-BNI_VCC"
   private val CSF = "CSF"
@@ -27,8 +25,10 @@ class SlpCsf07DF @Inject ()(
   private val INTERNAL = "INTERNAL"
   private val NA = "N/A"
 
+  lazy val SlpCsf07Src = s3SourceService.getSlpCsf07Src(false)
+
   def getSpecific: DataFrame = {
-    s3SourceService.SlpCsf07Src
+    SlpCsf07Src
       .filter($"is_written_off" === "" || $"is_written_off" =!= "Y" || $"is_written_off".isNull)
       .select(
         to_date($"transaction_date").as("report_date"),
@@ -41,7 +41,7 @@ class SlpCsf07DF @Inject ()(
           .otherwise(lit(NA))
           .as("source_of_fund"),
         coalesce($"write_off_type", lit(VOID_LOAN)).as("transaction_type"),
-        coalesce($"write_off_principal_amount", lit(0).cast(DecimalType(30,4))).as("loan_disbursed")
+        coalesce($"write_off_principal_amount", lit(Constant.LitZero)).as("loan_disbursed")
       )
       .withColumn("report_date", date_format(to_date(col("report_date"), "yyyy-MM-dd"), "yyyy-MM"))
   }
