@@ -31,13 +31,6 @@ class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: Source
   lazy val TrainSalesAllPeriodSrc: DataFrame =
     readParquet(s"${sourceConfig.dataWarehousePath}/${S3DataframeReader.TRAIN}.sales")
 
-  lazy val SlpCsf01Src: DataFrame =
-    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_01",
-      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date")
-
-  lazy val MappingUnderLyingProductSrc: DataFrame =
-    readParquet(s"${sourceConfig.path}/${S3DataframeReader.ECI_SHEETS_ANAPLAN}/Mapping Underlying Product")
-
   def readParquet(path: String): DataFrame = {
     sparkSession
       .read
@@ -71,6 +64,15 @@ class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: Source
       sourceConfig.zonedDateTimeFromDate.minusDays(Duration),
       sourceConfig.zonedDateTimeToDate.plusDays(Duration),
       ColumnKey)
+  }
+
+  def getSlpCsf01Src(isMergeSchema: Boolean): DataFrame = {
+    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_01",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema)
+  }
+
+  def getMappingUnderLyingProductSrc(isMergeSchema: Boolean): DataFrame = {
+    readParquet(s"${sourceConfig.path}/${S3DataframeReader.ECI_SHEETS_ANAPLAN}/Mapping Underlying Product", isMergeSchema)
   }
 
   def getSlpCsf03Src(isMergeSchema: Boolean): DataFrame = {

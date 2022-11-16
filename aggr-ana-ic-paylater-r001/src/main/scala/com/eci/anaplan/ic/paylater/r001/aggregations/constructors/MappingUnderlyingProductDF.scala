@@ -11,8 +11,9 @@ class MappingUnderlyingProductDF @Inject()(
                                            ){
   import sparkSession.implicits._
 
+  lazy val MappingUnderLyingProductSrc = s3SourceService.getMappingUnderLyingProductSrc(true)
   def getData: DataFrame = {
-      s3SourceService.MappingUnderLyingProductSrc
+    MappingUnderLyingProductSrc
         .select(
           $"fs_product_type".as("fs_product_type"),
           $"underlying_product".as("underlying_product")

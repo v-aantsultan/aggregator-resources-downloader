@@ -8,13 +8,12 @@ import org.scalatest.mockito.MockitoSugar.mock
 class MappingUnderlyingProductDFTest extends SharedBaseTest with SharedDataFrameStubber with TestSparkSession {
 
   private val mockS3SourceService : S3SourceService  = mock[S3SourceService]
+  private var mappingUnderlyingProductDF : MappingUnderlyingProductDF = _
 
   before {
-    when(mockS3SourceService.MappingUnderLyingProductSrc).thenReturn(getMockMappingUnderlyingProductSrc())
+    when(mockS3SourceService.getMappingUnderLyingProductSrc(true)).thenReturn(getMockMappingUnderlyingProductSrc())
+    mappingUnderlyingProductDF = new MappingUnderlyingProductDF(testSparkSession, mockS3SourceService)
   }
-
-  private val mappingUnderlyingProductDF : MappingUnderlyingProductDF =
-    new MappingUnderlyingProductDF(testSparkSession, mockS3SourceService)
 
   it should "only contain valid columns" in {
     val resDf = mappingUnderlyingProductDF.getData

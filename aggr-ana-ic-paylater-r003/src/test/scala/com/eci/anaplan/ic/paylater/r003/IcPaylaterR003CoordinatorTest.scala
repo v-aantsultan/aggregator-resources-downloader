@@ -20,7 +20,7 @@ class IcPaylaterR003CoordinatorTest extends SharedBaseTest with SharedDataFrameS
   private var icPaylaterR003Coordinator : IcPaylaterR003Coordinator = _
 
   before {
-    Mockito.when(mockS3SourceService.SlpCsf01Src).thenReturn(getMockSlpCsf01Src())
+    Mockito.when(mockS3SourceService.getSlpCsf01Src(true)).thenReturn(getMockSlpCsf01Src())
     Mockito.when(mockS3SourceService.getSlpCsf03Src(false)).thenReturn(getMockSlpCsf03Src())
     Mockito.when(mockS3SourceService.getSlpCsf07Src(false)).thenReturn(getMockSlpCsf07Src())
     Mockito.when(mockS3SourceService.getSlpPlutusPlt01Src(false)).thenReturn(getMockSlpPlutusPlt01Src())

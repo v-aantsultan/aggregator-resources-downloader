@@ -22,9 +22,10 @@ class SlpCsf01DF @Inject()(
   private val INTERNAL = "INTERNAL"
   private val NA = "N/A"
 
+  private lazy val SlpCsf01Src = s3SourceService.getSlpCsf01Src(true)
   def getSpecific: DataFrame = {
 
-    s3SourceService.SlpCsf01Src
+    SlpCsf01Src
       .select(
         to_date($"transaction_date").as("report_date"),
         when($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER, lit(CSF))

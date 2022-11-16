@@ -14,12 +14,14 @@ class SlpCsf01DF @Inject()(
                                  ){
   import sparkSession.implicits._
 
+  lazy val SlpCsf01Src = s3SourceService.getSlpCsf01Src(true)
+
   def getSpecific: DataFrame = {
 
     val CHANNELING_AGENT_PAYLATER = "CHANNELING_AGENT-PAYLATER"
     val CHANNELING_AGENT_BNI_VCC = "CHANNELING_AGENT-BNI_VCC"
 
-    s3SourceService.SlpCsf01Src
+    SlpCsf01Src
       .select(
         to_date($"transaction_date" + expr("INTERVAL 7 HOURS")).as("report_date"),
         when($"channeling_agent_id" === CHANNELING_AGENT_PAYLATER, lit("CSF"))
