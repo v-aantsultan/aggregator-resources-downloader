@@ -35,8 +35,4 @@ class SlpCsf01DFTest extends SharedBaseTest with SharedDataFrameStubber with Tes
     assert(countData != 0)
   }
 
-  it should "show" in {
-    slpCsf01DF.getSpecific.show()
-  }
-
 }

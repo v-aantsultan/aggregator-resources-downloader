@@ -33,8 +33,4 @@ class SlpCsf03DFTest extends SharedBaseTest with SharedDataFrameStubber with Tes
     val countData = slpCsf03DF.getSpecific.count()
     assert(countData != 0)
   }
-
-  it should "show" in {
-    slpCsf03DF.getSpecific.show()
-  }
 }

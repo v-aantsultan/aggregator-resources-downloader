@@ -31,7 +31,6 @@ class SlpPlutusPlt07Test extends SharedBaseTest with SharedDataFrameStubber with
 
   it should "not 0" in {
     val countData = slpPlutusPlt07DF.getSpecific.count()
-    println(s"count data: $countData")
     assert(countData != 0)
   }
 

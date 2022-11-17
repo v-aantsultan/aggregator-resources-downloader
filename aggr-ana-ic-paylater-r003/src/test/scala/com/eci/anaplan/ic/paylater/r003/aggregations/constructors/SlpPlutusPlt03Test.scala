@@ -29,9 +29,8 @@ class SlpPlutusPlt03Test extends SharedBaseTest with SharedDataFrameStubber with
     resColumns shouldBe validationColumn
   }
 
-  it should "not 0" in {
+  it should "equals 0" in {
     val countData = slpPlutusPlt03DF.getSpecific.count()
-    println(s"count data: $countData")
-    assert(countData != 0)
+    assert(countData == 0)
   }
 }

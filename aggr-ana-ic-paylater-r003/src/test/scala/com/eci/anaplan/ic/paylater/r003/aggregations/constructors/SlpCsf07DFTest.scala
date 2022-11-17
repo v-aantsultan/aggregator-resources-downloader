@@ -33,8 +33,4 @@ class SlpCsf07DFTest extends SharedBaseTest with SharedDataFrameStubber with Tes
     val countData = slpCsf07DF.getSpecific.count()
     assert(countData != 0)
   }
-
-  it should "show table" in {
-    slpCsf07DF.getSpecific.show()
-  }
 }

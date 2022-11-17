@@ -47,12 +47,6 @@ class IcPaylaterR003DetailTest extends SharedBaseTest with SharedDataFrameStubbe
 
   it should "not 0" in {
     val countData = icPaylaterR003Detail.joinWithColumn().count()
-    println(s"count data : $countData")
     assert(countData != 0)
-  }
-
-  it should "show result" in {
-    icPaylaterR003Detail.joinWithColumn()
-      .orderBy(functions.col("report_date").asc, functions.col("transaction_type").asc).show()
   }
 }
