@@ -17,7 +17,7 @@ class SlpPlutusPlt01DF @Inject()(
   private val EXTERNAL = "EXTERNAL"
   private val LOAN_DISBURSED = "LOAN_DISBURSED"
 
-  lazy val SlpPlutusPlt01Src = s3SourceService.getSlpPlutusPlt01Src(false)
+  private lazy val SlpPlutusPlt01Src = s3SourceService.getSlpPlutusPlt01Src(false)
 
   def getSpecific: DataFrame = {
     SlpPlutusPlt01Src

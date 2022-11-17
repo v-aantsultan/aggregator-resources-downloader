@@ -18,7 +18,7 @@ class SlpPlutusPlt07DF @Inject()(
   private val EXTERNAL = "EXTERNAL"
   private val WRITE_OFF = "WRITE_OFF"
 
-  lazy val SlpPlutusPlt07Src = s3SourceService.getSlpPlutusPlt07Src(false)
+  private lazy val SlpPlutusPlt07Src = s3SourceService.getSlpPlutusPlt07Src(false)
 
   def getSpecific:DataFrame = {
     SlpPlutusPlt07Src

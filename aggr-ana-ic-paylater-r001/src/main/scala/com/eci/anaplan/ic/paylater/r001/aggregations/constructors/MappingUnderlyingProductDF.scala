@@ -3,15 +3,16 @@ package com.eci.anaplan.ic.paylater.r001.aggregations.constructors
 import com.eci.common.services.S3SourceService
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class MappingUnderlyingProductDF @Inject()(
                                             val sparkSession: SparkSession,
                                             s3SourceService: S3SourceService
                                            ){
   import sparkSession.implicits._
 
-  lazy val MappingUnderLyingProductSrc = s3SourceService.getMappingUnderLyingProductSrc(true)
+  private lazy val MappingUnderLyingProductSrc = s3SourceService.getMappingUnderLyingProductSrc(true)
   def getData: DataFrame = {
     MappingUnderLyingProductSrc
         .select(
