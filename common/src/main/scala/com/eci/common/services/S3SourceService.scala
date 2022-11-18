@@ -75,13 +75,23 @@ class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: Source
     readParquet(s"${sourceConfig.path}/${S3DataframeReader.ECI_SHEETS_ANAPLAN}/Mapping Underlying Product", isMergeSchema)
   }
 
-  def getSlpCsf03Src(isMergeSchema: Boolean): DataFrame = {
-    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_03",
-      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema)
+  def getSlpCsf03Src(isMergeSchema: Boolean, isDatalake: Boolean): DataFrame = {
+    if(isDatalake){
+      readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_03",
+        sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema)
+    } else {
+      readByCustomColumnDWH(s"${S3DataframeReader.CSF}.csf_03",
+        sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date_date", isMergeSchema)
+    }
   }
-  def getSlpCsf07Src(isMergeSchema: Boolean): DataFrame = {
-    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_07",
-      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema)
+  def getSlpCsf07Src(isMergeSchema: Boolean, isDataLake: Boolean): DataFrame = {
+    if(isDataLake){
+      readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_07",
+        sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema)
+    } else {
+      readByCustomColumnDWH(s"${S3DataframeReader.CSF}.csf_07",
+        sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date_date", isMergeSchema)
+    }
   }
   def getSlpPlutusPlt01Src(isMergeSchema: Boolean): DataFrame = {
     readByCustomColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_01",
@@ -110,6 +120,14 @@ class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: Source
     readParquet(s"${sourceConfig.path}/$domain", isMergeSchema)
       .filter(col(ColumnKey) >= fromDate && col(ColumnKey) <= toDate)
   }
+
+  def readByCustomColumnDWH(domain: String, zonedFromDate: ZonedDateTime, zonedToDate: ZonedDateTime,
+                            ColumnKey: String, isMergeSchema: Boolean): DataFrame = {
+    val fromDate = TimeUtils.utcDateTimeString(zonedFromDate)
+    val toDate = TimeUtils.utcDateTimeString(zonedToDate)
+    readParquet(s"${sourceConfig.dataWarehousePath}/$domain", isMergeSchema)
+      .filter(col(ColumnKey) >= fromDate && col(ColumnKey) <= toDate)
+  }
 }
 
 object S3DataframeReader {
@@ -120,4 +138,5 @@ object S3DataframeReader {
   val TRAIN = "train"
   val SLP_CSF = "slp_csf"
   val SLP_PLUTUS = "slp_plutus"
+  val CSF = "csf"
 }

@@ -11,7 +11,7 @@ class SlpCsf07DFTest extends SharedBaseTest with SharedDataFrameStubber with Tes
   private var slpCsf07DF: SlpCsf07DF = _
 
   before {
-    Mockito.when(mockS3SourceService.getSlpCsf07Src(false)).thenReturn(getMockSlpCsf07Src())
+    Mockito.when(mockS3SourceService.getSlpCsf07Src(false, false)).thenReturn(getMockSlpCsf07Src(false))
     slpCsf07DF = new SlpCsf07DF(testSparkSession, mockS3SourceService)
   }
 

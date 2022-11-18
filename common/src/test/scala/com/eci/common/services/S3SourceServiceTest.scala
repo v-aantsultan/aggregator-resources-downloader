@@ -58,11 +58,11 @@ class S3SourceServiceTest extends SharedBaseTest with TestSparkSession {
   }
 
   "SlpCsf03" should "read all csf 03" in {
-    dataframeReader.getSlpCsf03Src(false).count() shouldBe 0
+    dataframeReader.getSlpCsf03Src(false, false).count() shouldBe 0
   }
 
   "SlpCsf07" should "read all csf 07" in {
-    dataframeReader.getSlpCsf07Src(false).count() shouldBe 0
+    dataframeReader.getSlpCsf07Src(false, false).count() shouldBe 0
   }
 
   "SlpPlutusPlt01" should "read all plt 01" in {

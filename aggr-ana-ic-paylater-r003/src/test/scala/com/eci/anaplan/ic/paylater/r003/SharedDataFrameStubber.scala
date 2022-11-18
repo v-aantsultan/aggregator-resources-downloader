@@ -24,12 +24,20 @@ trait SharedDataFrameStubber extends TestSparkSession {
     this.getSparkSession(true).parquet(s"$MockResourcePath/slp_csf/csf_01/report_date=**")
   }
 
-  protected def getMockSlpCsf03Src(): DataFrame = {
-    this.getSparkSession(false).parquet(s"$MockResourcePath/slp_csf/csf_03/report_date=**")
+  protected def getMockSlpCsf03Src(isDataLake: Boolean): DataFrame = {
+    if(isDataLake){
+      this.getSparkSession(false).parquet(s"$MockResourcePath/slp_csf/csf_03/report_date=**")
+    } else {
+      this.getSparkSession(false).parquet(s"$MockResourcePath/csf.csf_03/report_date_date=**")
+    }
   }
 
-  protected def getMockSlpCsf07Src(): DataFrame = {
-    this.getSparkSession(false).parquet(s"$MockResourcePath/slp_csf/csf_07/report_date=**")
+  protected def getMockSlpCsf07Src(isDataLake: Boolean): DataFrame = {
+    if(isDataLake){
+      this.getSparkSession(false).parquet(s"$MockResourcePath/slp_csf/csf_07/report_date=**")
+    } else {
+      this.getSparkSession(false).parquet(s"$MockResourcePath/csf.csf_07/report_date_date=**")
+    }
   }
 
   protected def getMockSlpPlutusPlt01Src(): DataFrame = {

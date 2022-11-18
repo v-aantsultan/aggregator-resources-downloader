@@ -25,7 +25,7 @@ class SlpCsf07DF @Inject ()(
   private val INTERNAL = "INTERNAL"
   private val NA = "N/A"
 
-  private lazy val SlpCsf07Src = s3SourceService.getSlpCsf07Src(false)
+  private lazy val SlpCsf07Src = s3SourceService.getSlpCsf07Src(false, false)
 
   def getSpecific: DataFrame = {
     SlpCsf07Src

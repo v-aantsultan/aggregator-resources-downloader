@@ -1,9 +1,8 @@
 package com.eci.anaplan.ic.paylater.r003.aggregations.joiners
 
-import com.eci.anaplan.ic.paylater.r003.aggregations.constructors.{SlpCsf01DF, SlpCsf03DF, SlpCsf07DF, SlpPlutusPlt01DF, SlpPlutusPlt03DF, SlpPlutusPlt07DF}
+import com.eci.anaplan.ic.paylater.r003.aggregations.constructors._
 import com.eci.anaplan.ic.paylater.r003.{SharedBaseTest, SharedDataFrameStubber}
 import com.eci.common.services.S3SourceService
-import org.apache.spark.sql.functions
 import org.mockito.Mockito
 import org.scalatest.mockito.MockitoSugar
 
@@ -14,8 +13,8 @@ class IcPaylaterR003DetailTest extends SharedBaseTest with SharedDataFrameStubbe
 
   before {
     Mockito.when(mockS3SourceService.getSlpCsf01Src(true)).thenReturn(getMockSlpCsf01Src())
-    Mockito.when(mockS3SourceService.getSlpCsf03Src(false)).thenReturn(getMockSlpCsf03Src())
-    Mockito.when(mockS3SourceService.getSlpCsf07Src(false)).thenReturn(getMockSlpCsf07Src())
+    Mockito.when(mockS3SourceService.getSlpCsf03Src(false, false)).thenReturn(getMockSlpCsf03Src(false))
+    Mockito.when(mockS3SourceService.getSlpCsf07Src(false, false)).thenReturn(getMockSlpCsf07Src(false))
     Mockito.when(mockS3SourceService.getSlpPlutusPlt01Src(false)).thenReturn(getMockSlpPlutusPlt01Src())
     Mockito.when(mockS3SourceService.getSlpPlutusPlt03Src(false)).thenReturn(getMockSlpPlutusPlt03Src())
     Mockito.when(mockS3SourceService.getSlpPlutusPlt07Src(false)).thenReturn(getMockSlpPlutusPlt07Src())
