@@ -18,7 +18,5 @@ class SlpCsfReceivableAgingDF @Inject()(
   override def getSpecific: DataFrame = {
     s3SourceService.SlpCsfReceivableAgingSrc
       .select("*")
-      .withColumn("outstanding_principal_amount_-_customer",
-        functions.coalesce($"outstanding_principal_amount_-_customer", functions.lit(0)).cast("bigint"))
   }
 }

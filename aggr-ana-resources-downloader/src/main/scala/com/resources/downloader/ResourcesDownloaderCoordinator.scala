@@ -27,7 +27,7 @@ class ResourcesDownloaderCoordinator @Inject()(
     val partitionKey = sourceConfig.partitionKey
 
     var mergeSchema:Boolean = false
-    val constructorsTrait:ConstructorsTrait = constructor match {
+    val constructorsTrait: ConstructorsTrait = constructor match {
       case ObjectConstructors.SLP_CSF01 =>
         mergeSchema = true
         new SlpCsf01DF(sparkSession, s3SourceService)
@@ -45,17 +45,12 @@ class ResourcesDownloaderCoordinator @Inject()(
       case ObjectConstructors.SLP_PLUTUS_PLT01 =>
         // handling session for error Expected: int, Found: BINARY for slp-07
         sparkSession.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
-
         new SlpPlutusPlt01DF(sparkSession, s3SourceService)
       case ObjectConstructors.SLP_PLUTUS_PLT03 =>
         // handling session for error Expected: int, Found: BINARY for slp-07
         sparkSession.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
-
         new SlpPlutusPlt03DF(sparkSession, s3SourceService)
       case ObjectConstructors.SLP_PLUTUS_PLT07 =>
-        // handling session for error Expected: int, Found: BINARY for slp-07
-//        sparkSession.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
-
         new SlpPlutusPlt07DF(sparkSession, s3SourceService)
       case ObjectConstructors.POUT_RWCV2 =>
         mergeSchema = true
@@ -64,9 +59,7 @@ class ResourcesDownloaderCoordinator @Inject()(
         mergeSchema = true
         new OracleExchangeRateDF(sparkSession, s3SourceService)
       case ObjectConstructors.CSF_RECEIVABLE_AGING =>
-//        sparkSession.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
-//        sparkSession.sparkContext.hadoopConfiguration.set("parquet.enable.dictionary", "false")
-//        sparkSession.conf.set("spark.sql.files.ignoreCorruptFiles", "true")
+        sparkSession.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
         new SlpCsfReceivableAgingDF(sparkSession, s3SourceService)
       case ObjectConstructors.PLT_RECEIVABLE_AGING =>
         sparkSession.conf.set("spark.sql.parquet.enableVectorizedReader", "false")
