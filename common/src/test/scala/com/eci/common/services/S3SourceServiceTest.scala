@@ -2,6 +2,7 @@ package com.eci.common.services
 
 import com.eci.common.config.SourceConfig
 import com.eci.common.{SharedBaseTest, TestSparkSession}
+import org.apache.spark.sql.types.StructType
 import org.mockito.Mockito._
 
 import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
@@ -111,7 +112,9 @@ class S3SourceServiceTest extends SharedBaseTest with TestSparkSession {
       s"${S3DataframeReader.ECBPDF}/payment_in_data_fetcher.invoice",
       mockSourceConfig.zonedDateTimeFromDate.minusDays(7L),
       mockSourceConfig.zonedDateTimeToDate.plusDays(7L),
-      "created_at_date"
+      "created_at_date",
+      true,
+      new StructType()
     ).count() shouldBe 0
   }
 
@@ -122,7 +125,8 @@ class S3SourceServiceTest extends SharedBaseTest with TestSparkSession {
       mockSourceConfig.zonedDateTimeFromDate.minusDays(7L),
       mockSourceConfig.zonedDateTimeToDate.plusDays(7L),
       "created_at_date",
-      true
+      true,
+      new StructType()
     ).count() shouldBe 0
   }
 
@@ -133,7 +137,8 @@ class S3SourceServiceTest extends SharedBaseTest with TestSparkSession {
       mockSourceConfig.zonedDateTimeFromDate.minusDays(7L),
       mockSourceConfig.zonedDateTimeToDate.plusDays(7L),
       "created_at_date",
-      false
+      false,
+      new StructType()
     ).count() shouldBe 0
   }
 
@@ -143,7 +148,9 @@ class S3SourceServiceTest extends SharedBaseTest with TestSparkSession {
       s"${S3DataframeReader.ORACLE}.exchange_rates",
       mockSourceConfig.zonedDateTimeFromDate.minusDays(7L),
       mockSourceConfig.zonedDateTimeToDate.plusDays(7L),
-      "conversion_date_date"
+      "conversion_date_date",
+      true,
+      new StructType()
     ).count() shouldBe 0
   }
 }

@@ -5,7 +5,7 @@ import com.eci.common.config.{AppConfig, DestinationConfig, SourceConfig}
 import com.eci.common.exception.StatusManagerException
 import com.eci.common.services.{S3DestinationService, StatusManagerService}
 import com.eci.common.slack.SlackClient
-import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.functions.{col, to_timestamp}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 /**
@@ -26,7 +26,8 @@ trait AnaplanCoordinator extends LoggerSupport {
                  s3DataframeWriter: S3DestinationService,
                  appConfig: AppConfig,
                  sourceConfig: SourceConfig,
-                 destinationConfig: DestinationConfig): Unit = {
+                 destinationConfig: DestinationConfig,
+                 partitionKey: String): Unit = {
     val applicationId = sparkSession.sparkContext.applicationId
     val fromDate = sourceConfig.zonedDateTimeFromDate
     val toDate = sourceConfig.zonedDateTimeToDate
@@ -39,7 +40,8 @@ trait AnaplanCoordinator extends LoggerSupport {
       // Step 1: Get the dataframe, spark does nothing intensive here as there's no
       // terminal operation such as write or coalesce
       val df = dataFrame
-        .filter(col(destinationConfig.partitionKey).between(toTimestamp(fromDate), toTimestamp(toDate)))
+        .filter(col(partitionKey).between(toTimestamp(fromDate), toTimestamp(toDate)))
+//        .filter(col(destinationConfig.partitionKey).between(TimeUtils.utcDateTimeString(fromDate), TimeUtils.utcDateTimeString(toDate)))
       logger.info(s"Successful in getting dataframe from $appName")
 
       // Step 2: Write to dataframe
@@ -57,7 +59,7 @@ trait AnaplanCoordinator extends LoggerSupport {
         toDate,
         destinationConfig.schema,
         destinationConfig.table,
-        destinationConfig.partitionKey,
+        partitionKey,
         csvPath)
 
       logger.info("Success in calling statusDb")
@@ -73,7 +75,8 @@ trait AnaplanCoordinator extends LoggerSupport {
     }
   }
 
-  def coordinate(sparkSession: SparkSession,
+  def coordinate(
+                  sparkSession: SparkSession,
                  dataFrame: DataFrame,
                  slack: SlackClient,
                  statusDbService: StatusManagerService,
@@ -81,7 +84,10 @@ trait AnaplanCoordinator extends LoggerSupport {
                  appConfig: AppConfig,
                  sourceConfig: SourceConfig,
                  destinationConfig: DestinationConfig,
-                 isMergeSchema: Boolean): Unit = {
+                 isMergeSchema: Boolean,
+                 fileName:String,
+                 partitionKey: String
+                ): Unit = {
     val applicationId = sparkSession.sparkContext.applicationId
     val fromDate = sourceConfig.zonedDateTimeFromDate
     val toDate = sourceConfig.zonedDateTimeToDate
@@ -93,12 +99,24 @@ trait AnaplanCoordinator extends LoggerSupport {
     try {
       // Step 1: Get the dataframe, spark does nothing intensive here as there's no
       // terminal operation such as write or coalesce
+      val beforeCount = dataFrame.count()
+      println(s"count data before filter in coordonator : $beforeCount")
+
+
       val df = dataFrame
-        .filter(col(destinationConfig.partitionKey).between(toTimestamp(fromDate), toTimestamp(toDate)))
+        // fmt : yyyy-MM-dd
+//        .filter(to_timestamp(col(partitionKey)).between(toTimestamp(fromDate), toTimestamp(toDate)))
+
+        // fmt : yyyyMMdd
+        .filter(col(partitionKey).between(TimeUtils.utcDateTimeString(fromDate), TimeUtils.utcDateTimeString(toDate)))
       logger.info(s"Successful in getting dataframe from $appName")
 
+      val countData = df.count()
+      println(s"count data after filter in coordonator : $countData")
+
       // Step 2: Write to dataframe
-      val destination = s"${destinationConfig.path}/${destinationConfig.schema}/${destinationConfig.table}/${fromDate.toInstant}_${toDate.toInstant}_$applicationId"
+      val destination = s"${destinationConfig.path}/${destinationConfig.schema}/${destinationConfig.table}" +
+        s"/${fromDate.toInstant}_${toDate.toInstant}_${fileName}_$applicationId"
       logger.info(s"About to write to parquet at path: $destination")
       val csvPath = s3DataframeWriter.write(df, destination, isMergeSchema)
 
@@ -112,7 +130,7 @@ trait AnaplanCoordinator extends LoggerSupport {
         toDate,
         destinationConfig.schema,
         destinationConfig.table,
-        destinationConfig.partitionKey,
+        partitionKey,
         csvPath)
 
       logger.info("Success in calling statusDb")

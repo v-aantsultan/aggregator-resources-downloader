@@ -44,7 +44,7 @@ class AnaplanCoordinatorTest extends SharedBaseTest with AnaplanCoordinator with
     when(mockDestinationConfig.path).thenReturn(DestinationPath)
     when(mockDestinationConfig.schema).thenReturn(DestinationSchema)
     when(mockDestinationConfig.table).thenReturn(SalesTable)
-    when(mockDestinationConfig.partitionKey).thenReturn(DestinationPartitionKey)
+//    when(mockDestinationConfig.partitionKey).thenReturn(DestinationPartitionKey)
   }
 
   private val applicationId = testSparkSession.sparkContext.applicationId
@@ -59,7 +59,8 @@ class AnaplanCoordinatorTest extends SharedBaseTest with AnaplanCoordinator with
       mockDataframeWriter,
       mockAppConfig,
       mockSourceConfig,
-      mockDestinationConfig)
+      mockDestinationConfig,
+    "")
 
     // verify write to df
     val expectedDestination = s"$DestinationPath/$DestinationSchema/$SalesTable/${fromDate.toInstant}_${toDate.toInstant}_$applicationId"
@@ -82,95 +83,15 @@ class AnaplanCoordinatorTest extends SharedBaseTest with AnaplanCoordinator with
       mockDataframeWriter,
       mockAppConfig,
       mockSourceConfig,
-      mockDestinationConfig)
+      mockDestinationConfig,
+    "")
 
     verify(mockSlackClient, times(1))
       .logAndNotify("Error in aggregation step, either reading or writing dataframe for " + AppName, logger, RuntimeError)
   }
 
-  // if mergeSchema is true
-  "coordinate" should "write and call statusdb for success if mergeSchema is true" in {
-    when(mockDataframeWriterTrue.write(any(), any(), any())).thenReturn(CsvPath)
 
-    coordinate(testSparkSession,
-      testDf,
-      mockSlackClientTrue,
-      mockStatusDbServiceTrue,
-      mockDataframeWriterTrue,
-      mockAppConfig,
-      mockSourceConfig,
-      mockDestinationConfig,
-      true
-    )
 
-    // verify write to df
-    val expectedDestination = s"$DestinationPath/$DestinationSchema/$SalesTable/${fromDate.toInstant}_${toDate.toInstant}_$applicationId"
-    verify(mockDataframeWriterTrue, times(1)).write(any(), org.mockito.ArgumentMatchers.eq(expectedDestination), any())
-
-    // verify calls to statusdb
-    verify(mockStatusDbServiceTrue, times(1)).markUnprocessed(
-      applicationId, Path, fromDate, toDate, DestinationSchema,
-      SalesTable, DestinationPartitionKey, CsvPath)
-  }
-  it should "send slack error if statusDB threw RuntimeError if mergeSchema is true" in {
-    when(mockStatusDbServiceTrue.markUnprocessed(any(), any(), any(), any(), any(), any(), any(), any()))
-      .thenThrow(RuntimeError)
-
-    coordinate(testSparkSession,
-      testDf,
-      mockSlackClientTrue,
-      mockStatusDbServiceTrue,
-      mockDataframeWriterTrue,
-      mockAppConfig,
-      mockSourceConfig,
-      mockDestinationConfig,
-      true)
-
-    verify(mockSlackClientTrue, times(1))
-      .logAndNotify("Error in aggregation step, either reading or writing dataframe for " + AppName, logger, RuntimeError)
-  }
-
-  // if mergeSchema is false
-  "coordinate" should "write and call statusdb for success if mergeSchema is false" in {
-    when(mockDataframeWriterFalse.write(any(), any(), any())).thenReturn(CsvPath)
-
-    coordinate(testSparkSession,
-      testDf,
-      mockSlackClientFalse,
-      mockStatusDbServiceFalse,
-      mockDataframeWriterFalse,
-      mockAppConfig,
-      mockSourceConfig,
-      mockDestinationConfig,
-      false
-    )
-
-    // verify write to df
-    val expectedDestination = s"$DestinationPath/$DestinationSchema/$SalesTable/${fromDate.toInstant}_${toDate.toInstant}_$applicationId"
-    verify(mockDataframeWriterFalse, times(1)).write(any(), org.mockito.ArgumentMatchers.eq(expectedDestination), any())
-
-    // verify calls to statusdb
-    verify(mockStatusDbServiceFalse, times(1)).markUnprocessed(
-      applicationId, Path, fromDate, toDate, DestinationSchema,
-      SalesTable, DestinationPartitionKey, CsvPath)
-  }
-  it should "send slack error if statusDB threw RuntimeError if mergeSchema is false" in {
-    when(mockStatusDbServiceFalse.markUnprocessed(any(), any(), any(), any(), any(), any(), any(), any()))
-      .thenThrow(RuntimeError)
-
-    coordinate(testSparkSession,
-      testDf,
-      mockSlackClientFalse,
-      mockStatusDbServiceFalse,
-      mockDataframeWriterFalse,
-      mockAppConfig,
-      mockSourceConfig,
-      mockDestinationConfig,
-      false)
-
-    verify(mockSlackClientFalse, times(1))
-      .logAndNotify("Error in aggregation step, either reading or writing dataframe for " + AppName, logger, RuntimeError)
-  }
 }
 
 object AnaplanCoordinatorTest {

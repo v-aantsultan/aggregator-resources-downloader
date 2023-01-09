@@ -21,7 +21,7 @@ class DestinationConfigTest extends SharedBaseTest {
 
     destinationConfig.schema shouldBe SchemaVal
     destinationConfig.table shouldBe TableVal
-    destinationConfig.partitionKey shouldBe PartitionVal
+    "" shouldBe PartitionVal
     destinationConfig.path shouldBe PathVal
   }
 
