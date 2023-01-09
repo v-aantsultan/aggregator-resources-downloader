@@ -45,10 +45,6 @@ class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: Source
     readByDefaultColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_receivable_aging",
       "report_date", 1, false, SlpCsfReceivableAgingSchema.schema)
 
-//  lazy val SlpCsfReceivableAgingSrc: DataFrame =
-//    readByDefaultColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_receivable_aging",
-//      "report_date")
-
   lazy val SlpPlutusPltCReceivableAgingSrc: DataFrame =
     readByDefaultColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_receivable_aging", "report_date")
 

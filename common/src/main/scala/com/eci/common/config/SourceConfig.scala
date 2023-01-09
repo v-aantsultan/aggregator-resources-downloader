@@ -19,8 +19,8 @@ class SourceConfig @Inject()(conf: Config) {
   val zonedDateTimeToDate: ZonedDateTime = utcZonedDateTime(toDate)
   val path: String = conf.getString(PathKey)
   val dataWarehousePath: String = conf.getString(DataWarehouseKey)
-  val sourceName: String = conf.getString("source-name")
-  val partitionKey: String = conf.getString("partition-key")
+  val sourceName: String = conf.getString(SourceName)
+  val partitionKey: String = conf.getString(PartitionKey)
 
   require(TimeUtils.isZonedDateInWholeHour(zonedDateTimeFromDate), s"$FromDateKey: $zonedDateTimeFromDate  should be in whole hour")
   require(TimeUtils.isZonedDateInWholeHour(zonedDateTimeToDate), s"$ToDateKey: $zonedDateTimeToDate should be in whole hour")
@@ -46,4 +46,6 @@ object SourceConfig {
   private val ToDateKey = "end-date"
   private val PathKey = "flattener-srcdtl"
   private val DataWarehouseKey = "flattener-src"
+  private val PartitionKey = "partition-key"
+  private val SourceName = "source-name"
 }
