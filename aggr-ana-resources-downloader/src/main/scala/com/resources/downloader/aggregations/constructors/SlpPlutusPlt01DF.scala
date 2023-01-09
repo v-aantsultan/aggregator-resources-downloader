@@ -14,9 +14,6 @@ class SlpPlutusPlt01DF @Inject() (
                                  ) extends ConstructorsTrait {
 
   override def getSpecific: DataFrame = {
-    s3SourceService.getSlpPlutusPlt01Src(false)
-      .drop("merchant_payment_request_id", "loan_id")
-      .select("*")
-//      .withColumn("loan_id", col("loan_id").cast("decimal(30,4)"))
+    s3SourceService.SlpPlutusPlt01Src.select("*")
   }
 }

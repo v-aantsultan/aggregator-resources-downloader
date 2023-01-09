@@ -3,7 +3,7 @@ package com.eci.common.services
 import com.eci.common.TimeUtils
 import com.eci.common.config.SourceConfig
 import com.eci.common.schema.SlpCsfReceivableAgingSchema
-import org.apache.spark.sql.functions.{col, struct}
+import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.types.StructType
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
@@ -15,8 +15,6 @@ import javax.inject.{Inject, Singleton}
  */
 @Singleton
 class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: SourceConfig) {
-
-  import sparkSession.implicits._
 
   lazy val ExchangeRateSrc: DataFrame =
     readDefaultColumnDWH(s"${S3DataframeReader.ORACLE}.exchange_rates","conversion_date_date")
@@ -47,6 +45,30 @@ class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: Source
 
   lazy val SlpPlutusPltCReceivableAgingSrc: DataFrame =
     readByDefaultColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_receivable_aging", "report_date")
+
+  lazy val SlpCsf01Src: DataFrame =
+    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_01",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", false, new StructType())
+
+  lazy val SlpCsf03Src: DataFrame =
+    readByCustomColumnDWH(s"${S3DataframeReader.CSF}.csf_03",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date_date", false)
+
+  lazy val SlpCsf07Src: DataFrame =
+    readByCustomColumnDWH(s"${S3DataframeReader.CSF}.csf_07",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date_date", false)
+
+  lazy val SlpPlutusPlt01Src: DataFrame =
+    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_01",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", false, new StructType())
+
+  lazy val SlpPlutusPlt03Src: DataFrame =
+    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_03",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", false, new StructType())
+
+  lazy val SlpPlutusPlt07Src: DataFrame =
+    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_07",
+      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", false, new StructType())
 
   def readParquet(path: String, mergeSchema: Boolean = false, schema: StructType = new StructType()): DataFrame = {
     if(schema.isEmpty){
@@ -115,47 +137,6 @@ class S3SourceService @Inject()(sparkSession: SparkSession, sourceConfig: Source
       mergeSchema,
       schema
     )
-  }
-
-
-  def getSlpCsf01Src(isMergeSchema: Boolean): DataFrame = {
-    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_01",
-      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema, new StructType())
-  }
-
-  def getMappingUnderLyingProductSrc(isMergeSchema: Boolean): DataFrame = {
-    readParquet(s"${sourceConfig.path}/${S3DataframeReader.ECI_SHEETS_ANAPLAN}/Mapping Underlying Product", isMergeSchema)
-  }
-
-  def getSlpCsf03Src(isMergeSchema: Boolean, isDatalake: Boolean): DataFrame = {
-    if(isDatalake){
-      readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_03",
-        sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema, new StructType())
-    } else {
-      readByCustomColumnDWH(s"${S3DataframeReader.CSF}.csf_03",
-        sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date_date", isMergeSchema)
-    }
-  }
-  def getSlpCsf07Src(isMergeSchema: Boolean, isDataLake: Boolean): DataFrame = {
-    if(isDataLake){
-      readByCustomColumnDatalake(s"${S3DataframeReader.SLP_CSF}/csf_07",
-        sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema, new StructType())
-    } else {
-      readByCustomColumnDWH(s"${S3DataframeReader.CSF}.csf_07",
-        sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date_date", isMergeSchema)
-    }
-  }
-  def getSlpPlutusPlt01Src(isMergeSchema: Boolean): DataFrame = {
-    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_01",
-      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema, new StructType())
-  }
-  def getSlpPlutusPlt03Src(isMergeSchema: Boolean): DataFrame = {
-    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_03",
-      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema, new StructType())
-  }
-  def getSlpPlutusPlt07Src(isMergeSchema: Boolean):DataFrame = {
-    readByCustomColumnDatalake(s"${S3DataframeReader.SLP_PLUTUS}/plt_07",
-      sourceConfig.zonedDateTimeFromDate, sourceConfig.zonedDateTimeToDate, "report_date", isMergeSchema, new StructType())
   }
 
 }

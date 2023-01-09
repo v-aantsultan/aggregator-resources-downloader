@@ -15,8 +15,6 @@ class SlpPlutusPlt03DF @Inject()(
   import sparkSession.implicits._
 
   override def getSpecific: DataFrame = {
-    s3SourceService.getSlpPlutusPlt03Src(false)
-//      .drop("merchant_payment_request_id")
-      .select("*")
+    s3SourceService.SlpPlutusPlt03Src.select("*")
   }
 }

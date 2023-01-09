@@ -14,10 +14,7 @@ class SlpCsf01DF @Inject()(
 
   import sparkSession.implicits._
 
-  private lazy val slpCsf01DF = s3SourceService.getSlpCsf01Src(true)
-
   override def getSpecific: DataFrame = {
-    slpCsf01DF
-      .select("*")
+    s3SourceService.SlpCsf01Src.select("*")
   }
 }

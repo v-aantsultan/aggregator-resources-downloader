@@ -16,10 +16,6 @@ class SlpPlutusPlt07DF @Inject()(
   import sparkSession.implicits._
 
   override def getSpecific: DataFrame = {
-    s3SourceService.getSlpPlutusPlt07Src(false)
-      .drop("loan_id", "write_off_id", "installment_id", "days_overdue", "total_write_off_amount")
-      .select("*")
-//      .withColumn("principal_amount_write_off", col("principal_amount_write_off").cast("decimal(38,18)"))
-
+    s3SourceService.SlpPlutusPlt07Src.select("*")
   }
 }
